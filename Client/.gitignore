@@ -1,3 +1,14 @@
+# Dependencies
+**/node_modules/
+
+# Build
+**/dist/
+**/dist-ssr/
+
+# Environment
+**/.env
+*.local
+
 # Logs
 logs
 *.log
@@ -7,16 +18,17 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# OS
+.DS_Store
 
-# Editor directories and files
+# VSCode
 .vscode/*
 !.vscode/extensions.json
+
+# IntelliJ
 .idea
-.DS_Store
+
+# Windows
 *.suo
 *.ntvs*
 *.njsproj

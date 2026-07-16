@@ -3,43 +3,63 @@ import {
   combineReducers,
 } from "@reduxjs/toolkit";
 
-import cartReducer from "./slices/cartSlice";
+import cartReducer
+from "./slices/cartSlice";
+
+import authReducer
+from "./slices/authSlice";
+
+import favouritesReducer
+from "./slices/favouritesSlice";
 
 import {
   persistReducer,
   persistStore,
 } from "redux-persist";
 
-import authReducer
-from "./slices/authSlice";
+import createWebStorage
+from "redux-persist/es/storage/createWebStorage";
 
-import createWebStorage from "redux-persist/es/storage/createWebStorage";
+const storage =
+  createWebStorage("local");
 
-const storage = createWebStorage("local");
+const rootReducer =
+  combineReducers({
 
-const rootReducer = combineReducers({
-  cart: cartReducer,
+    cart: cartReducer,
 
-  auth: authReducer,
-});
+    auth: authReducer,
+
+    favourites:
+      favouritesReducer,
+  });
 
 const persistConfig = {
   key: "root",
   storage,
 };
 
-const persistedReducer = persistReducer(
-  persistConfig,
-  rootReducer
-);
+const persistedReducer =
+  persistReducer(
+    persistConfig,
+    rootReducer
+  );
 
-export const store = configureStore({
-  reducer: persistedReducer,
+export const store =
+  configureStore({
 
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: false,
-    }),
-});
+    reducer:
+      persistedReducer,
 
-export const persistor = persistStore(store);
+    middleware:
+      (
+        getDefaultMiddleware
+      ) =>
+        getDefaultMiddleware({
+          serializableCheck:
+            false,
+        }),
+  });
+
+export const persistor =
+  persistStore(store);

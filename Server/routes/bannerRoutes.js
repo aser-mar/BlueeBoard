@@ -17,6 +17,9 @@ const {
 } = require(
   "../middleware/authMiddleware"
 );
+const {
+  bannerValidators,
+} = require("../middleware/validators/bannerValidators");
 
 const router =
 express.Router();
@@ -26,6 +29,7 @@ router
 .post(
   protect,
   adminOnly,
+  bannerValidators,
   createBanner
 )
 .get(getBanners);
@@ -36,6 +40,7 @@ router
 .put(
   protect,
   adminOnly,
+  bannerValidators,
   updateBanner
 )
 .delete(

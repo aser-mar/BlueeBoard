@@ -1,198 +1,277 @@
 const Banner =
 require("../models/Banner");
+const { deleteImage } = require("../utils/cloudinaryHelper");
 
 const createBanner =
 async (req, res) => {
 
-  try {
+try {
 
-    const {
-      title,
-      image,
-      link,
-      company,
-      position,
-      isActive,
-    } = req.body;
 
-    const banner =
-      await Banner.create({
-        title,
-        image,
-        link,
-        company,
-        position,
-        isActive,
-      });
+const {
+  title,
+  image,
+  link,
+  company,
+  position,
+  isActive,
+  product,
+} = req.body;
 
-    res.status(201).json(
-      banner
-    );
+const existingPosition = await Banner.findOne({
+  position,
+});
 
-  } catch (error) {
+if (existingPosition) {
+  return res.status(400).json({
+    message: "This position is already used",
+  });
+}
 
-    console.log(error);
+const banner =
+  await Banner.create({
+    title,
+    image: {
+      url: image.url,
+      public_id: image.public_id,
+    },
+    link,
+    company,
+    position,
+    isActive,
+    product,
+  });
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
-  }
+res.status(201).json(
+  banner
+);
+
+
+} catch (error) {
+
+
+console.log(error);
+
+res.status(500).json({
+  message:
+    error.message,
+});
+
+
+}
 };
 
 const getBanners =
 async (req, res) => {
 
-  try {
+try {
 
-    const banners =
-      await Banner.find()
-      .populate("company")
-      .sort({
-        position: 1,
-      });
 
-    res.json(banners);
+const banners =
+  await Banner.find()
+  .populate("company")
+  .populate("product")
+  .sort({
+    position: 1,
+  });
 
-  } catch (error) {
+res.json(banners);
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
-  }
+
+} catch (error) {
+
+
+res.status(500).json({
+  message:
+    error.message,
+});
+
+
+}
 };
 
 const getBannerById =
 async (req, res) => {
 
-  try {
+try {
 
-    const banner =
-      await Banner.findById(
-        req.params.id
-      );
 
-    if (!banner) {
+const banner =
+  await Banner.findById(
+    req.params.id
+  )
+  .populate("product");
 
-      return res
-      .status(404)
-      .json({
-        message:
-          "Banner not found",
-      });
-    }
+if (!banner) {
 
-    res.json(banner);
+  return res
+  .status(404)
+  .json({
+    message:
+      "Banner not found",
+  });
+}
 
-  } catch (error) {
+res.json(banner);
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
-  }
+
+} catch (error) {
+
+
+res.status(500).json({
+  message:
+    error.message,
+});
+
+
+}
 };
 
 const updateBanner =
 async (req, res) => {
 
-  try {
+try {
 
-    const banner =
-      await Banner.findById(
-        req.params.id
-      );
 
-    if (!banner) {
+const banner =
+  await Banner.findById(
+    req.params.id
+  );
 
-      return res
-      .status(404)
-      .json({
-        message:
-          "Banner not found",
-      });
-    }
+if (!banner) {
 
-    banner.title =
-      req.body.title ||
-      banner.title;
+  return res
+  .status(404)
+  .json({
+    message:
+      "Banner not found",
+  });
+}
 
-    banner.image =
-      req.body.image ||
-      banner.image;
+banner.title =
+  req.body.title ||
+  banner.title;
 
-    banner.link =
-      req.body.link ||
-      banner.link;
+if (req.body.image) {
 
-    banner.company =
-      req.body.company ||
-      banner.company;
+  if (banner.image?.public_id) {
 
-    banner.position =
-      req.body.position ||
-      banner.position;
-
-    banner.isActive =
-      req.body.isActive;
-
-    const updatedBanner =
-      await banner.save();
-
-    res.json(
-      updatedBanner
+    await deleteImage(
+      banner.image.public_id
     );
 
-  } catch (error) {
+  }
 
-    res.status(500).json({
-      message:
-        error.message,
+  banner.image = {
+    url: req.body.image.url,
+    public_id: req.body.image.public_id,
+  };
+
+}
+
+if (req.body.position != null) {
+  const existingPosition = await Banner.findOne({
+    position: req.body.position,
+  });
+
+  if (
+    existingPosition &&
+    existingPosition._id.toString() !== banner._id.toString()
+  ) {
+    return res.status(400).json({
+      message: "This position is already used",
     });
   }
+}
+
+banner.link =
+  req.body.link ||
+  banner.link;
+
+banner.company =
+  req.body.company ||
+  banner.company;
+
+banner.product =
+  req.body.product ||
+  banner.product;
+
+banner.position =
+  req.body.position ||
+  banner.position;
+
+banner.isActive =
+  req.body.isActive;
+
+const updatedBanner =
+  await banner.save();
+
+res.json(
+  updatedBanner
+);
+
+
+} catch (error) {
+
+
+res.status(500).json({
+  message:
+    error.message,
+});
+
+
+}
 };
 
 const deleteBanner =
 async (req, res) => {
 
-  try {
+try {
 
-    const banner =
-      await Banner.findById(
-        req.params.id
-      );
 
-    if (!banner) {
+const banner =
+  await Banner.findById(
+    req.params.id
+  );
 
-      return res
-      .status(404)
-      .json({
-        message:
-          "Banner not found",
-      });
-    }
+if (!banner) {
 
-    await banner.deleteOne();
+  return res
+  .status(404)
+  .json({
+    message:
+      "Banner not found",
+  });
+}
 
-    res.json({
-      message:
-        "Banner deleted",
-    });
+if (banner.image?.public_id) {
+    await deleteImage(banner.image.public_id);
+}
 
-  } catch (error) {
+await banner.deleteOne();
 
-    res.status(500).json({
-      message:
-        error.message,
-    });
-  }
+res.json({
+  message:
+    "Banner deleted",
+});
+
+
+} catch (error) {
+
+
+res.status(500).json({
+  message:
+    error.message,
+});
+
+
+}
 };
 
 module.exports = {
-  createBanner,
-  getBanners,
-  getBannerById,
-  updateBanner,
-  deleteBanner,
+createBanner,
+getBanners,
+getBannerById,
+updateBanner,
+deleteBanner,
 };

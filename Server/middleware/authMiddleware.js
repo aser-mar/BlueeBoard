@@ -40,7 +40,18 @@ const adminOnly = (req, res, next) => {
   }
 };
 
+const companyManagerOnly = (req, res, next) => {
+  if (req.user && req.user.role === "companyManager") {
+    next();
+  } else {
+    return res.status(403).json({
+      message: "Company Manager access only",
+    });
+  }
+};
+
 module.exports = {
   protect,
   adminOnly,
+  companyManagerOnly,
 };

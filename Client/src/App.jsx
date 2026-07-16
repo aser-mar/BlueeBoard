@@ -4,6 +4,10 @@ import {
   Route,
 } from "react-router-dom";
 
+import AdminLayout from "./layouts/AdminLayout";
+
+import CompanyManagerLayout from "./layouts/CompanyManagerLayout";
+
 import HomePage from "./pages/HomePage";
 
 import CompanyProductsPage from "./pages/CompanyProductsPage";
@@ -18,55 +22,84 @@ import NotFoundPage from "./pages/NotFoundPage";
 
 import LoginPage from "./pages/LoginPage";
 
-import Header from "./components/Header";
+import FavouritesPage from "./pages/FavouritesPage";
+
+import PublicLayout from "./layouts/PublicLayout";
 
 import AdminDashboard
-from "./pages/Admin/AdminDashboard";
+  from "./pages/Admin/AdminDashboard";
 
 import AdminProductsPage
-from "./pages/Admin/AdminProductsPage";
+  from "./pages/Admin/AdminProductsPage";
 
 import AdminAddProductPage
-from "./pages/admin/AdminAddProductPage";
+  from "./pages/Admin/AdminAddProductPage";
 
 import AdminAddCompanyPage
-from "./pages/admin/AdminAddCompanyPage";
+  from "./pages/Admin/AdminAddCompanyPage";
 
 import AdminCompaniesPage
-from "./pages/admin/AdminCompaniesPage";
+  from "./pages/Admin/AdminCompaniesPage";
 
 import AdminEditProductPage
-from "./pages/admin/AdminEditProductPage";
+  from "./pages/Admin/AdminEditProductPage";
 
 import AdminEditCompanyPage
-from "./pages/admin/AdminEditCompanyPage";
+  from "./pages/Admin/AdminEditCompanyPage";
 
 import AdminRoute
-from "./components/AdminRoute";
+  from "./components/AdminRoute";
 
 import AdminBannersPage
-from "./pages/admin/AdminBannersPage";
+  from "./pages/Admin/AdminBannersPage";
 
 import AdminAddBannerPage
-from "./pages/admin/AdminAddBannerPage";
+  from "./pages/Admin/AdminAddBannerPage";
 
 import AdminEditBannerPage
-from "./pages/admin/AdminEditBannerPage";
+  from "./pages/Admin/AdminEditBannerPage";
 
 import AdminOrdersPage
-from "./pages/admin/AdminOrdersPage";
+  from "./pages/Admin/AdminOrdersPage";
 
 import AdminCategoriesPage
-from "./pages/admin/AdminCategoriesPage";
+  from "./pages/Admin/AdminCategoriesPage";
 
-import RegisterPage 
-from "./pages/RegisterPage";
+import RegisterPage
+  from "./pages/RegisterPage";
 
 import MyOrdersPage
-from "./pages/MyOrdersPage";
+  from "./pages/MyOrdersPage";
 
 import UserProfilePage
-from "./pages/UserProfilePage";
+  from "./pages/UserProfilePage";
+
+import AdminCompanyManagersPage
+  from "./pages/Admin/AdminCompanyManagersPage";
+
+import AdminAddCompanyManagerPage
+  from "./pages/Admin/AdminAddCompanyManagerPage";
+
+import AdminEditCompanyManagerPage
+  from "./pages/Admin/AdminEditCompanyManagerPage";
+
+import CompanyManagerRoute
+  from "./routes/CompanyManagerRoute";
+
+import CompanyManagerProductsPage
+  from "./pages/Manager/CompanyManagerProductsPage";
+
+import CompanyManagerAddProductPage
+  from "./pages/Manager/CompanyManagerAddProductPage";
+
+import CompanyManagerEditProductPage
+  from "./pages/Manager/CompanyManagerEditProductPage";
+
+import CompanyManagerDashboardPage
+  from "./pages/Manager/CompanyManagerDashboardPage";
+
+import AdminProfilePage 
+  from "./pages/Admin/AdminProfilePage";
 
 function App() {
 
@@ -74,170 +107,182 @@ function App() {
 
     <BrowserRouter>
 
-      <Header />
-
       <Routes>
 
-        <Route
-          path="/"
-          element={<HomePage />}
-        />
+  <Route element={<PublicLayout />}>
 
-        <Route
-          path="/company/:id"
-          element={
-            <CompanyProductsPage />
-          }
-        />
+    <Route
+      path="/"
+      element={<HomePage />}
+    />
 
-        <Route
-          path="/product/:id"
-          element={
-            <ProductDetailsPage />
-          }
-        />
+    <Route
+      path="/company/:id"
+      element={<CompanyProductsPage />}
+    />
 
-        <Route
-          path="/cart"
-          element={<CartPage />}
-        />
+    <Route
+      path="/product/:id"
+      element={<ProductDetailsPage />}
+    />
 
-        <Route
-          path="/checkout"
-          element={<CheckoutPage />}
-        />
+    <Route
+      path="/cart"
+      element={<CartPage />}
+    />
 
-        <Route
-          path="/login"
-          element={<LoginPage />}
-        />
+    <Route
+      path="/checkout"
+      element={<CheckoutPage />}
+    />
+
+    <Route
+      path="/login"
+      element={<LoginPage />}
+    />
+
+    <Route
+      path="/register"
+      element={<RegisterPage />}
+    />
+
+    <Route
+      path="/my-orders"
+      element={<MyOrdersPage />}
+    />
+
+    <Route
+      path="/profile"
+      element={<UserProfilePage />}
+    />
+
+    <Route
+    path="/favourites"
+    element={<FavouritesPage />}
+/>
+  </Route>
 
         <Route
           path="/admin"
           element={
             <AdminRoute>
-              <AdminDashboard />
+              <AdminLayout />
             </AdminRoute>
           }
-        />
+        >
+          <Route
+            index
+            element={<AdminDashboard />}
+          />
+
+          <Route
+            path="products"
+            element={<AdminProductsPage />}
+          />
+
+          <Route
+            path="products/add"
+            element={<AdminAddProductPage />}
+          />
+
+          <Route
+            path="products/:id/edit"
+            element={<AdminEditProductPage />}
+          />
+
+          <Route
+            path="companies"
+            element={<AdminCompaniesPage />}
+          />
+
+          <Route
+            path="add-company"
+            element={<AdminAddCompanyPage />}
+          />
+
+          <Route
+            path="companies/:id/edit"
+            element={<AdminEditCompanyPage />}
+          />
+
+          <Route
+            path="banners"
+            element={<AdminBannersPage />}
+          />
+
+          <Route
+            path="add-banner"
+            element={<AdminAddBannerPage />}
+          />
+
+          <Route
+            path="banners/:id/edit"
+            element={<AdminEditBannerPage />}
+          />
+
+          <Route
+            path="orders"
+            element={<AdminOrdersPage />}
+          />
+
+          <Route
+            path="categories"
+            element={<AdminCategoriesPage />}
+          />
+
+          <Route
+            path="company-managers"
+            element={<AdminCompanyManagersPage />}
+          />
+
+          <Route
+            path="company-managers/add"
+            element={<AdminAddCompanyManagerPage />}
+          />
+
+          <Route
+            path="company-managers/:id/edit"
+            element={<AdminEditCompanyManagerPage />}
+          />
+
+          <Route
+            path="profile"
+            element={<AdminProfilePage />}
+          />
+        </Route>
 
         <Route
-          path="/admin/products"
+          path="/company-manager"
           element={
-            <AdminRoute>
-              <AdminProductsPage />
-            </AdminRoute>
+            <CompanyManagerRoute>
+              <CompanyManagerLayout />
+            </CompanyManagerRoute>
           }
-        />
+        >
+          <Route
+            index
+            element={<CompanyManagerDashboardPage />}
+          />
 
-        <Route
-          path="/admin/add-product"
-          element={
-            <AdminRoute>
-              <AdminAddProductPage />
-            </AdminRoute>
-          }
-        />
+          <Route
+            path="products"
+            element={<CompanyManagerProductsPage />}
+          />
 
-        <Route
-          path="/admin/products/:id/edit"
-          element={
-            <AdminRoute>
-              <AdminEditProductPage />
-            </AdminRoute>
-          }
-        />
+          <Route
+            path="products/add"
+            element={<CompanyManagerAddProductPage />}
+          />
 
-        <Route
-          path="/admin/add-company"
-          element={
-            <AdminRoute>
-              <AdminAddCompanyPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/companies"
-          element={
-            <AdminRoute>
-              <AdminCompaniesPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/companies/:id/edit"
-          element={
-            <AdminRoute>
-              <AdminEditCompanyPage />
-            </AdminRoute>
-          }
-        />
+          <Route
+            path="products/:id/edit"
+            element={<CompanyManagerEditProductPage />}
+          />
+        </Route>
 
         <Route
           path="*"
           element={<NotFoundPage />}
-        />
-
-        <Route
-          path="/admin/banners"
-          element={
-            <AdminRoute>
-              <AdminBannersPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/banners/:id/edit"
-          element={
-            <AdminRoute>
-              <AdminEditBannerPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/add-banner"
-          element={
-            <AdminRoute>
-              <AdminAddBannerPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/orders"
-          element={
-            <AdminRoute>
-              <AdminOrdersPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/admin/categories"
-          element={
-            <AdminRoute>
-              <AdminCategoriesPage />
-            </AdminRoute>
-          }
-        />
-
-        <Route
-          path="/register"
-          element={<RegisterPage />}
-        />
-
-        <Route
-          path="/my-orders"
-          element={<MyOrdersPage />}
-        />
-
-        <Route
-          path="/profile"
-          element={<UserProfilePage />}
         />
 
       </Routes>

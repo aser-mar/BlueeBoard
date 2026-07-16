@@ -1,0 +1,245 @@
+:root {
+  --bb-blue: #0866d6;
+  --bg: #ffffff;
+  --muted: #6b7280;
+  --surface-shadow: 0 6px 18px rgba(12, 28, 56, 0.06);
+  --rounded: 12px;
+  --border-light: rgba(15, 23, 42, 0.06);
+}
+
+.manager-form-container {
+  padding: 24px;
+  max-width: 900px;
+}
+
+/* Hero Section */
+.manager-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.manager-hero-icon {
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(8, 102, 214, 0.06), rgba(8, 102, 214, 0.03));
+  color: var(--bb-blue);
+  font-size: 26px;
+  box-shadow: var(--surface-shadow);
+  flex-shrink: 0;
+}
+
+.manager-hero-text h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.manager-hero-text p {
+  margin: 6px 0 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Error Banner */
+.manager-error {
+  background: #fff4f4;
+  color: #991b1b;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(239, 68, 68, 0.12);
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Form Grid */
+.manager-form {
+  display: grid;
+  gap: 20px;
+}
+
+.form-section {
+  background: var(--bg);
+  padding: 20px;
+  border-radius: var(--rounded);
+  box-shadow: var(--surface-shadow);
+  transition: box-shadow 0.2s ease;
+}
+
+.form-section:hover {
+  box-shadow: 0 10px 25px rgba(12, 28, 56, 0.1);
+}
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.form-section-title svg {
+  font-size: 18px;
+  color: var(--bb-blue);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.form-row.full {
+  grid-template-columns: 1fr;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  background: white;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.form-group input::placeholder {
+  color: var(--muted);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--bb-blue);
+  box-shadow: 0 0 0 3px rgba(8, 102, 214, 0.08);
+}
+
+.form-group select {
+  cursor: pointer;
+}
+
+.form-group select option {
+  padding: 8px;
+}
+
+/* Form Actions */
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.form-actions button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-submit {
+  background: var(--bb-blue);
+  color: white;
+}
+
+.btn-submit:hover:not(:disabled) {
+  background: #0a55c4;
+  box-shadow: 0 4px 12px rgba(8, 102, 214, 0.2);
+}
+
+.btn-submit:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--bb-blue);
+  border: 1px solid var(--bb-blue);
+}
+
+.btn-cancel:hover {
+  background: rgba(8, 102, 214, 0.04);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .manager-form-container {
+    padding: 16px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .manager-hero {
+    gap: 12px;
+  }
+
+  .manager-hero-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 22px;
+  }
+
+  .manager-hero-text h1 {
+    font-size: 20px;
+  }
+
+  .form-section {
+    padding: 16px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    justify-content: stretch;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .manager-form-container {
+    padding: 12px;
+  }
+
+  .manager-hero {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .manager-hero-icon {
+    margin-bottom: 4px;
+  }
+
+  .form-section-title {
+    justify-content: center;
+  }
+}

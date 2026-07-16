@@ -17,6 +17,9 @@ const {
 } = require(
   "../middleware/authMiddleware"
 );
+const {
+  companyValidators,
+} = require("../middleware/validators/companyValidators");
 
 const router =
   express.Router();
@@ -25,6 +28,7 @@ router.post(
   "/",
   protect,
   adminOnly,
+  companyValidators,
   createCompany
 );
 
@@ -49,6 +53,7 @@ router.put(
   "/:id",
   protect,
   adminOnly,
+  companyValidators,
   updateCompany
 );
 

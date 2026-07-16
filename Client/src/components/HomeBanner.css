@@ -1,0 +1,18 @@
+/* ===================================================
+   BLUEEBOARD — HomeBanner Styles
+   Carousel with Blue Bus design system
+   =================================================== */
+
+/* Styles are primarily in HomePage.css under .bb-banner* classes.
+   This file handles any banner-specific overrides. */
+
+/* Smooth image transition between slides */
+.bb-banner__image-enter {
+  opacity: 0;
+  transform: scale(1.03);
+}
+
+.bb-banner__image-enter-active {
+  opacity: 1;
+  transform: scale(1);
+}

@@ -1,6 +1,6 @@
 const Company =
   require("../models/Company");
-
+const { deleteImage } = require("../utils/cloudinaryHelper");
 const createCompany =
   async (req, res) => {
 
@@ -12,12 +12,14 @@ const createCompany =
         logo,
       } = req.body;
 
-      const company =
-        await Company.create({
-          name,
-          description,
-          logo,
-        });
+      const company = await Company.create({
+        name,
+        description,
+        logo: {
+          url: logo.url,
+          public_id: logo.public_id,
+        },
+      });
 
       res.status(201).json(
         company
@@ -97,6 +99,10 @@ const deleteCompany =
         });
       }
 
+      if (company.logo?.public_id) {
+    await deleteImage(company.logo.public_id);
+}
+
       await company.deleteOne();
 
       res.json({
@@ -137,9 +143,24 @@ const updateCompany =
         req.body.description ||
         company.description;
 
-      company.logo =
-        req.body.logo ||
-        company.logo;
+      if (req.body.logo) {
+
+        if (
+          company.logo?.public_id
+        ) {
+
+          await deleteImage(
+            company.logo.public_id
+          );
+
+        }
+
+        company.logo = {
+          url: req.body.logo.url,
+          public_id: req.body.logo.public_id,
+        };
+
+      }
 
       const updatedCompany =
         await company.save();
@@ -149,6 +170,8 @@ const updateCompany =
       );
 
     } catch (error) {
+      console.error("UPDATE COMPANY ERROR:");
+      console.error(error);
 
       res.status(500).json({
         message: error.message,

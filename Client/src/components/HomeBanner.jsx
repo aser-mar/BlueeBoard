@@ -11,6 +11,8 @@ import {
   getBanners,
 } from "../services/bannerService";
 
+import "./HomeBanner.css";
+
 const HomeBanner = () => {
 
   const [banners, setBanners] =
@@ -85,53 +87,69 @@ const HomeBanner = () => {
   }
 
   return (
-  <div
-    style={{
-      position: "relative",
-    }}
-  >
 
-    <Link
-      to={
-        banners[current]
-          .link
-      }
-    >
+    <div className="bb-banner">
 
-      <img
-        src={
-          banners[current]
-            .image
-        }
+      <div className="bb-banner__viewport">
 
-        alt={
-          banners[current]
-            .title
-        }
+        <Link
+          to={
+            banners[current]
+              ?.product?._id
+              ? `/product/${banners[current].product._id}`
+              : banners[current].link
+          }
+          className="bb-banner__link"
+        >
 
-        width="100%"
-      />
+          <img
+            key={current}
+            src={
+              banners[current]
+                .image?.url
+            }
 
-      <h2
-        style={{
-          position: "absolute",
-          bottom: "20px",
-          left: "20px",
-          color: "white",
-          background:
-            "rgba(0,0,0,0.5)",
-          padding: "10px",
-        }}
-      >
-        {
-          banners[current]
-            .title
-        }
-      </h2>
+            alt={
+              banners[current]
+                .title
+            }
 
-    </Link>
+            className="bb-banner__image"
+          />
 
-  </div>
-);}
+          <div className="bb-banner__overlay">
+            <h2 className="bb-banner__title">
+              {
+                banners[current]
+                  .title
+              }
+            </h2>
+          </div>
+
+        </Link>
+
+      </div>
+
+      {/* Dot Indicators */}
+      {banners.length > 1 && (
+        <div className="bb-banner__dots">
+          {banners.map((_, index) => (
+            <button
+              key={index}
+              className={
+                `bb-banner__dot${index === current ? " bb-banner__dot--active" : ""}`
+              }
+              onClick={() =>
+                setCurrent(index)
+              }
+              aria-label={`Go to slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      )}
+
+    </div>
+  );
+};
 
 export default HomeBanner;

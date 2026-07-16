@@ -1,14 +1,13 @@
-import axios
-from "axios";
+import api from "./api";
 
 const API_URL =
-"http://localhost:5000/api/banners";
+"/banners";
 
 export const getBanners =
 async () => {
 
   const { data } =
-    await axios.get(
+    await api.get(
       API_URL
     );
 
@@ -19,7 +18,7 @@ export const getBannerById =
 async (id) => {
 
   const { data } =
-    await axios.get(
+    await api.get(
       `${API_URL}/${id}`
     );
 
@@ -28,22 +27,13 @@ async (id) => {
 
 export const createBanner =
 async (
-  bannerData,
-  token
+  bannerData
 ) => {
 
-  const config = {
-    headers: {
-      Authorization:
-        `Bearer ${token}`,
-    },
-  };
-
   const { data } =
-    await axios.post(
+    await api.post(
       API_URL,
-      bannerData,
-      config
+      bannerData
     );
 
   return data;
@@ -52,22 +42,13 @@ async (
 export const updateBanner =
 async (
   id,
-  bannerData,
-  token
+  bannerData
 ) => {
 
-  const config = {
-    headers: {
-      Authorization:
-        `Bearer ${token}`,
-    },
-  };
-
   const { data } =
-    await axios.put(
+    await api.put(
       `${API_URL}/${id}`,
-      bannerData,
-      config
+      bannerData
     );
 
   return data;
@@ -75,21 +56,12 @@ async (
 
 export const deleteBanner =
 async (
-  id,
-  token
+  id
 ) => {
 
-  const config = {
-    headers: {
-      Authorization:
-        `Bearer ${token}`,
-    },
-  };
-
   const { data } =
-    await axios.delete(
-      `${API_URL}/${id}`,
-      config
+    await api.delete(
+      `${API_URL}/${id}`
     );
 
   return data;

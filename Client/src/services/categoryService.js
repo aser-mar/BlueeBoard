@@ -5,10 +5,16 @@ const API =
 
 // GET
 export const getCategories =
-  async () => {
+  async (companyId) => {
+
+    console.log("CATEGORY COMPANY ID =", companyId);
 
     const { data } =
-      await axios.get(API);
+      await axios.get(API, {
+        params: {
+          company: companyId,
+        },
+      });
 
     return data;
   };

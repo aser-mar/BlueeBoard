@@ -1,40 +1,58 @@
 const mongoose = require("mongoose");
 
 const bannerSchema = new mongoose.Schema(
-  {
-    title: {
-      type: String,
-      required: true,
-    },
+{
+title: {
+type: String,
+required: true,
+},
 
-    image: {
-      type: String,
-      required: true,
-    },
 
-    link: {
-      type: String,
-      default: "",
-    },
-
-    company: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Company",
-    },
-
-    isActive: {
-      type: Boolean,
-      default: true,
-    },
-
-    position: {
-      type: Number,
-      default: 1,
-    },
+image: {
+  url: {
+    type: String,
+    required: true,
   },
-  {
-    timestamps: true,
-  }
+  public_id: {
+    type: String,
+    required: true,
+  },
+},
+
+link: {
+  type: String,
+  default: "",
+},
+
+// ⭐ NEW
+product: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Product",
+},
+
+company: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: "Company",
+},
+
+isActive: {
+  type: Boolean,
+  default: true,
+},
+
+position: {
+  type: Number,
+  default: 1,
+},
+
+
+},
+{
+timestamps: true,
+}
 );
 
-module.exports = mongoose.model("Banner", bannerSchema);
+module.exports = mongoose.model(
+"Banner",
+bannerSchema
+);

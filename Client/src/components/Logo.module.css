@@ -1,0 +1,238 @@
+.logoWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  padding: 10px 6px;
+  border-radius: 12px;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  --logo-icon: 56px;
+  --logo-title: 28px;
+}
+
+.logoWrap:hover,
+.logoWrap:focus-visible {
+  transform: translateY(-2px);
+}
+
+.logoIcon {
+  width: var(--logo-icon);
+  height: var(--logo-icon);
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logoWrap:hover .logoIcon,
+.logoWrap:focus-visible .logoIcon {
+  transform: scale(1.03);
+}
+
+.hexBorder {
+  transition: stroke 0.35s ease, filter 0.35s ease;
+}
+
+.logoWrap:hover .hexBorder,
+.logoWrap:focus-visible .hexBorder {
+  stroke: #4A90D9;
+  filter: drop-shadow(0 0 8px #4A90D9aa);
+}
+
+.plank {
+  transform-origin: left center;
+  transition: transform 0.35s ease;
+}
+
+.plank1 {
+  transition-delay: 0s;
+}
+
+.plank2 {
+  transition-delay: 0.06s;
+}
+
+.plank3 {
+  transition-delay: 0.12s;
+}
+
+.logoWrap:hover .plank,
+.logoWrap:focus-visible .plank {
+  transform: scaleX(1.05);
+}
+
+.nail {
+  transition: r 0.3s ease;
+}
+
+.logoWrap:hover .nail,
+.logoWrap:focus-visible .nail {
+  r: 1.8;
+}
+
+.logoText {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  gap: 3px;
+  min-width: 0;
+}
+
+.logoName {
+  display: flex;
+  align-items: baseline;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: var(--logo-title);
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nameBluee {
+  color: #ffffff;
+  transition: color 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.nameBoard {
+  color: #2E6DB4;
+  transition: color 0.3s ease, letter-spacing 0.3s ease;
+}
+
+.logoWrap:hover .nameBluee,
+.logoWrap:focus-visible .nameBluee {
+  color: #ffffff;
+  letter-spacing: 1.6px;
+}
+
+.logoWrap:hover .nameBoard,
+.logoWrap:focus-visible .nameBoard {
+  color: #4A90D9;
+  letter-spacing: 1.6px;
+}
+
+.nameBar {
+  height: 2.5px;
+  background: linear-gradient(90deg, #2E6DB4, #4A90D9);
+  border-radius: 2px;
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.logoWrap:hover .nameBar,
+.logoWrap:focus-visible .nameBar {
+  transform: scaleX(1.04);
+}
+
+.logoTagline {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: #5A7FA8;
+  text-transform: uppercase;
+  transition: letter-spacing 0.35s ease, color 0.3s ease;
+}
+
+.logoWrap:hover .logoTagline,
+.logoWrap:focus-visible .logoTagline {
+  letter-spacing: 4px;
+  color: #2E6DB4;
+}
+
+.large {
+  /* preserved for fallback, but we will mostly use variants */
+  --logo-icon: 68px;
+  --logo-title: 34px;
+}
+
+.medium {
+  --logo-icon: 56px;
+  --logo-title: 28px;
+}
+
+.compact {
+  --logo-icon: 42px;
+  --logo-title: 22px;
+}
+
+/* NEW VARIANTS */
+
+.variantHeader {
+  --logo-icon: 46px;
+  --logo-title: 24px;
+  gap: 1px;
+  padding: 8px 12px;
+}
+
+.variantLogin {
+  --logo-icon: 72px;
+  --logo-title: 36px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+}
+
+.variantLogin .logoText {
+  align-items: center;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.variantLogin .nameBar {
+  width: 100%;
+  transform-origin: center;
+}
+
+.variantLogin .nameBluee {
+  color: #1A3A5C;
+}
+
+.variantLogin:hover .nameBluee,
+.variantLogin:focus-visible .nameBluee {
+  color: #1A3A5C;
+  letter-spacing: 1.6px;
+}
+
+.variantLogin .logoTagline {
+  font-size: 12px;
+  letter-spacing: 5px;
+}
+
+.variantSidebar {
+  --logo-icon: 42px;
+  --logo-title: 22px;
+  width: 100%;
+  gap: 1px;
+}
+
+.variantSidebar .nameBluee {
+  color: #f1f5f9;
+}
+
+.variantSidebar:hover .nameBluee,
+.variantSidebar:focus-visible .nameBluee {
+  color: #ffffff;
+}
+
+.collapsed {
+  justify-content: center;
+  padding: 10px 0;
+}
+
+.collapsed .logoText {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .variantHeader {
+    --logo-icon: 38px;
+    --logo-title: 20px;
+    gap: 1px;
+  }
+
+  .variantLogin {
+    --logo-icon: 64px;
+    --logo-title: 32px;
+  }
+}

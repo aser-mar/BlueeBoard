@@ -8,13 +8,25 @@ const companySchema = new mongoose.Schema(
     },
 
     logo: {
-      type: String,
-      default: "",
+      url: {
+        type: String,
+        default: "",
+      },
+      public_id: {
+        type: String,
+        default: "",
+      },
     },
 
     banner: {
-      type: String,
-      default: "",
+      url: {
+        type: String,
+        default: "",
+      },
+      public_id: {
+        type: String,
+        default: "",
+      },
     },
 
     description: {

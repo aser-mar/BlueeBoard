@@ -6,7 +6,8 @@ const {
   updateUserProfile,
 } = require("../controllers/userController");
 
-const { protect } = require("../middleware/authMiddleware");
+const { protect, adminOnly, } = require("../middleware/authMiddleware");
+
 
 // PROFILE
 router.get("/profile", protect, getUserProfile);

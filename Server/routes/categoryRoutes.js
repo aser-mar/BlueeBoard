@@ -11,6 +11,9 @@ const {
   protect,
   adminOnly,
 } = require("../middleware/authMiddleware");
+const {
+  categoryValidators,
+} = require("../middleware/validators/categoryValidators");
 
 const router = express.Router();
 
@@ -25,6 +28,7 @@ router.post(
   "/",
   protect,
   adminOnly,
+  categoryValidators,
   createCategory
 );
 
@@ -32,6 +36,7 @@ router.put(
   "/:id",
   protect,
   adminOnly,
+  categoryValidators,
   updateCategory
 );
 

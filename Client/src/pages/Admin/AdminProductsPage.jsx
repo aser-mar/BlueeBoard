@@ -1,7 +1,11 @@
 import {
   useEffect,
+  useMemo,
   useState,
 } from "react";
+import "./AdminProductsPage.css";
+import { HiOutlineSearch, HiOutlinePencil, HiOutlineTrash } from "react-icons/hi";
+
 
 import {
   getProducts,
@@ -30,6 +34,33 @@ const AdminProductsPage =
 
     const [error, setError] =
       useState("");
+
+    const [searchTerm, setSearchTerm] =
+      useState("");
+
+
+
+    const filteredProducts = useMemo(() => {
+      const query = searchTerm.trim().toLowerCase();
+      if (!query) return products;
+
+      return products.filter((product) => {
+        const title = product.name?.toLowerCase() || "";
+        const categoryName = product.category?.name?.toLowerCase() || "";
+        const companyName =
+          typeof product.company === "string"
+            ? product.company.toLowerCase()
+            : product.company?.name?.toLowerCase() || "";
+        const priceText = product.price?.toString().toLowerCase() || "";
+
+        return (
+          title.includes(query) ||
+          categoryName.includes(query) ||
+          companyName.includes(query) ||
+          priceText.includes(query)
+        );
+      });
+    }, [products, searchTerm]);
 
     // FETCH PRODUCTS
     useEffect(() => {
@@ -87,9 +118,7 @@ const AdminProductsPage =
             id
           );
 
-          await deleteProduct(
-            id
-          );
+          await deleteProduct(id);
 
           setProducts(
             (
@@ -126,331 +155,146 @@ const AdminProductsPage =
     if (loading) {
 
       return (
-
-        <div
-          className="container"
-
-          style={{
-            paddingTop:
-              "40px",
-          }}
-        >
-
-          <h2>
-            Loading Products...
-          </h2>
-
+        <div className="admin-products-page">
+          <div className="admin-products-header">
+            <div className="skeleton skeleton--text-large"></div>
+          </div>
+          <div className="admin-products-grid">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="admin-products-skeleton-card">
+                <div className="skeleton skeleton--icon-small"></div>
+                <div className="skeleton skeleton--text-medium"></div>
+                <div className="skeleton skeleton--text-sm"></div>
+              </div>
+            ))}
+          </div>
         </div>
       );
     }
 
     return (
 
-      <div
-        className="container"
+      <div className="admin-products-page">
 
-        style={{
-          paddingTop:
-            "40px",
+        <div className="admin-products-header">
 
-          paddingBottom:
-            "40px",
-        }}
-      >
+          <div className="page-title-group">
+            <h1 className="page-title">Admin Products</h1>
+            <p className="page-subtitle">Manage catalog, pricing and inventory</p>
+          </div>
 
-        <div
-          style={{
-            display:
-              "flex",
-
-            justifyContent:
-              "space-between",
-
-            alignItems:
-              "center",
-
-            marginBottom:
-              "30px",
-
-            flexWrap:
-              "wrap",
-
-            gap: "15px",
-          }}
-        >
-
-          <h1>
-            Admin Products
-          </h1>
-
-          <Link
-            to="/admin/products/add"
-
-            style={{
-              padding:
-                "12px 18px",
-
-              background:
-                "#111",
-
-              color:
-                "#fff",
-
-              borderRadius:
-                "8px",
-
-              textDecoration:
-                "none",
-            }}
-          >
+          <Link to="/admin/products/add" className="admin-products-add-button">
             Add Product
           </Link>
 
         </div>
 
-        {
-          error && (
+        <div className="admin-products-search-card">
+          <div className="admin-products-search">
+            <HiOutlineSearch className="admin-products-search__icon" />
+            <input
+              className="admin-products-search__input"
+              type="search"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search products, categories, companies, or price"
+              aria-label="Search products"
+            />
+          </div>
+          <Link to="/admin/products/add" className="admin-products-add-button">
+            Add Product
+          </Link>
+        </div>
 
-            <div
-              style={{
-                background:
-                  "#ffebee",
+        {error && <div className="alert alert-error">{error}</div>}
 
-                color:
-                  "#c62828",
+        {products.length === 0 ? (
 
-                padding:
-                  "12px",
+          <div className="admin-products-empty-state">
+            <svg className="admin-products-empty-state__icon" width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 6h18" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <h2>No Products Found</h2>
+            <p>Start adding products to populate your catalog.</p>
+            <Link to="/admin/products/add" className="admin-products-empty-state__button">Add Product</Link>
+          </div>
 
-                borderRadius:
-                  "8px",
+        ) : filteredProducts.length === 0 ? (
 
-                marginBottom:
-                  "20px",
-              }}
-            >
-              {error}
+          <div className="admin-products-empty-state">
+            <div className="admin-products-empty-state__icon">
+              <HiOutlineSearch />
             </div>
-          )
-        }
+            <h2>No matching products found.</h2>
+            <p>Try another keyword or clear the search to view all products.</p>
+            <Link to="/admin/products/add" className="admin-products-empty-state__button">Add Product</Link>
+          </div>
 
-        {
-          products.length ===
-          0 ? (
+        ) : (
 
-            <div
-              style={{
-                border:
-                  "1px solid #ddd",
+          <div className="admin-products-grid">
 
-                borderRadius:
-                  "12px",
+            {filteredProducts.map((product) => (
 
-                padding:
-                  "30px",
+              <div key={product._id} className="product-card admin-products-card">
 
-                textAlign:
-                  "center",
-              }}
-            >
+                <div className="product-main">
 
-              <h3>
-                No Products Found
-              </h3>
+                  <div className="product-media">
+                    <img
+                      src={product.images?.[0]?.url || product.images?.[0] || "/no-image.png"}
+                      alt={product.name}
+                      className="product-image admin-products-image"
+                    />
+                  </div>
 
-              <p>
-                Start adding products
-              </p>
-
-            </div>
-
-          ) : (
-
-            products.map(
-              (
-                product
-              ) => (
-
-                <div
-                  key={
-                    product._id
-                  }
-
-                  style={{
-                    border:
-                      "1px solid #ddd",
-
-                    borderRadius:
-                      "12px",
-
-                    padding:
-                      "20px",
-
-                    marginBottom:
-                      "20px",
-                  }}
-                >
-
-                  <div
-                    style={{
-                      display:
-                        "flex",
-
-                      justifyContent:
-                        "space-between",
-
-                      alignItems:
-                        "center",
-
-                      gap: "20px",
-
-                      flexWrap:
-                        "wrap",
-                    }}
-                  >
-
-                    {/* INFO */}
-
-                    <div>
-
-                      <h3
-                        style={{
-                          marginBottom:
-                            "10px",
-                        }}
-                      >
-                        {
-                          product.name
-                        }
-                      </h3>
-
-                      <p>
-                        Price:
-                        {" "}
-                        {
-                          product.price
-                        }
-                        {" "}
-                        EGP
-                      </p>
-
-                      <p>
-                        Stock:
-                        {" "}
-                        {
-                          product.stock
-                        }
-                      </p>
-
-                      <p>
-                        Category:
-                        {" "}
-                        {
-                          product
-                            .category
-                            ?.name ||
-                          "No Category"
-                        }
-                      </p>
-
+                  <div className="product-info">
+                    <h3 className="product-name admin-products-name">{product.name}</h3>
+                    <div className="product-meta admin-products-meta">
+                      <span className="badge muted">{product.category?.name || "No Category"}</span>
+                      <span className="badge muted">{product.company?.name || "-"}</span>
+                      <span className="badge muted">Stock: {product.stock}</span>
                     </div>
-
-                    {/* ACTIONS */}
-
-                    <div
-                      style={{
-                        display:
-                          "flex",
-
-                        gap: "10px",
-
-                        flexWrap:
-                          "wrap",
-                      }}
-                    >
-
-                      <Link
-                        to={`/admin/products/${product._id}/edit`}
-
-                        style={{
-                          padding:
-                            "10px 16px",
-
-                          background:
-                            "#111",
-
-                          color:
-                            "#fff",
-
-                          borderRadius:
-                            "8px",
-
-                          textDecoration:
-                            "none",
-                        }}
-                      >
-                        Edit
-                      </Link>
-
-                      <button
-                        onClick={() =>
-                          deleteHandler(
-                            product._id
-                          )
-                        }
-
-                        disabled={
-                          deleteLoadingId ===
-                          product._id
-                        }
-
-                        style={{
-                          padding:
-                            "10px 16px",
-
-                          border:
-                            "none",
-
-                          borderRadius:
-                            "8px",
-
-                          background:
-                            "#c62828",
-
-                          color:
-                            "#fff",
-
-                          cursor:
-                            "pointer",
-
-                          opacity:
-                            deleteLoadingId ===
-                            product._id
-                              ? 0.7
-                              : 1,
-                        }}
-                      >
-                        {
-                          deleteLoadingId ===
-                          product._id
-                            ? "Deleting..."
-                            : "Delete"
-                        }
-                      </button>
-
-                    </div>
-
+                    <div className="product-price admin-products-price">{product.price} EGP</div>
                   </div>
 
                 </div>
-              )
-            )
-          )
-        }
+
+                <div className="admin-products-actions">
+                  <Link to={`/admin/products/${product._id}/edit`} className="admin-products-action-button">
+                    <HiOutlinePencil className="admin-products-action-button__icon" />
+                    Edit
+                  </Link>
+
+                  <button
+                    onClick={() => deleteHandler(product._id)}
+                    disabled={deleteLoadingId === product._id}
+                    className="admin-products-action-button admin-products-action-button--danger"
+                    aria-disabled={deleteLoadingId === product._id}
+                  >
+                    {deleteLoadingId === product._id ? (
+                      "Deleting..."
+                    ) : (
+                      <>
+                        <HiOutlineTrash className="admin-products-action-button__icon" />
+                        Delete
+                      </>
+                    )}
+                  </button>
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
 
       </div>
     );
   };
 
 export default
-AdminProductsPage;
+  AdminProductsPage;

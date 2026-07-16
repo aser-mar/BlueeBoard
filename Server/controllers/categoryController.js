@@ -8,12 +8,12 @@ const getCategories = async (req, res) => {
     const filter = {};
 
     if (req.query.company) {
-      filter.company = req.query.company;
+      filter.companies = req.query.company;
     }
 
     const categories =
       await Category.find(filter)
-        .populate("company")
+        .populate("companies")
         .sort({ createdAt: -1 });
 
     res.status(200).json(categories);
@@ -33,14 +33,17 @@ const createCategory = async (req, res) => {
 
     const {
       name,
-      company,
+      companies,
     } = req.body;
 
-    const exist =
-      await Category.findOne({
-        name,
-        company,
-      });
+    const cleanName = name.trim();
+
+    const exist = await Category.findOne({
+      name: {
+        $regex: `^${cleanName}$`,
+        $options: "i",
+      },
+    });
 
     if (exist) {
 
@@ -52,14 +55,14 @@ const createCategory = async (req, res) => {
 
     const category =
       await Category.create({
-        name,
-        company,
+        name: cleanName,
+        companies,
       });
 
     const populatedCategory =
       await Category.findById(
         category._id
-      ).populate("company");
+      ).populate("companies");
 
     res.status(201).json(
       populatedCategory
@@ -78,8 +81,10 @@ const updateCategory = async (req, res) => {
 
   try {
 
-    const { name } =
-      req.body;
+    const {
+      name,
+      companies,
+    } = req.body;
 
     const category =
       await Category.findById(
@@ -94,14 +99,18 @@ const updateCategory = async (req, res) => {
       });
     }
 
-    category.name = name;
+    category.name = name.trim();
+
+    if (Array.isArray(companies)) {
+      category.companies = companies;
+    }
 
     await category.save();
 
     const updatedCategory =
       await Category.findById(
         category._id
-      ).populate("company");
+      ).populate("companies");
 
     res.status(200).json(
       updatedCategory

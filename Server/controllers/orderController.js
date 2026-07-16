@@ -5,53 +5,122 @@ const sendEmail =
   require("../utils/sendEmail");
 
 // CREATE ORDER
-const createOrder = async (req, res) => {
-  try {
-    console.log("CREATE ORDER HIT");
+const Product =
+  require("../models/Product");
 
-    const {
-      customerName,
-      phone,
-      address,
-      items,
-      totalPrice,
-    } = req.body;
+// CREATE ORDER
+const createOrder =
+  async (req, res) => {
 
-    const order = await Order.create({
-      user: req.user._id,
-      customerName,
-      phone,
-      address,
-      items,
-      totalPrice,
-    });
+    try {
 
-    console.log("ORDER CREATED:", order._id);
+      const {
+  customerName,
+  phone,
+  address,
+  items,
+  totalPrice,
+  paymentMethod, // ⭐ الجديد
+} = req.body;
 
-    // EMAIL (optional)
-    await sendEmail({
-      to: process.env.EMAIL_USER,
-      subject: "🛒 New Order Received",
-      html: `
-        <h2>New Order</h2>
-        <p><b>Name:</b> ${order.customerName}</p>
-        <p><b>Phone:</b> ${order.phone}</p>
-        <p><b>Address:</b> ${order.address}</p>
-        <p><b>Total:</b> ${order.totalPrice} EGP</p>
-      `,
-    });
+      // CHECK STOCK
+      for (const item of items) {
 
-    return res.status(201).json(order);
+        const product =
+          await Product.findById(
+            item.product
+          );
 
-  } catch (error) {
-    console.log("CREATE ORDER ERROR:", error);
+        if (!product) {
 
-    return res.status(500).json({
-      message: error.message,
-    });
-  }
-};
+          return res
+            .status(404)
+            .json({
+              message:
+                "Product not found",
+            });
+        }
 
+        // OUT OF STOCK
+        if (
+          product.stock <
+          item.quantity
+        ) {
+
+          return res
+            .status(400)
+            .json({
+              message:
+                `${product.name} is out of stock`,
+            });
+        }
+      }
+
+      // CREATE ORDER
+      const order =
+        await Order.create({
+          user:
+            req.user._id,
+
+          customerName,
+
+          phone,
+
+          address,
+
+          items,
+
+          totalPrice,
+
+          paymentMethod, // 💳 حفظ طريقة الدفع
+        });
+
+      // DEDUCT STOCK
+      for (const item of items) {
+
+        const product =
+          await Product.findById(
+            item.product
+          );
+
+        product.stock -=
+          item.quantity;
+
+        await product.save();
+      }
+
+      await sendEmail({
+        to: process.env.EMAIL_USER,
+        subject: "🛒 New Order Received",
+        html: `
+          <h2>New Order</h2>
+          <p><b>Name:</b> ${order.customerName}</p>
+          <p><b>Phone:</b> ${order.phone}</p>
+          <p><b>Address:</b> ${order.address}</p>
+          <p><b>Payment Method:</b> ${order.paymentMethod}</p>
+          <p><b>Total:</b> ${order.totalPrice} EGP</p>
+        `,
+      });
+
+      return res
+        .status(201)
+        .json(order);
+
+    } catch (error) {
+
+      console.log(
+        "CREATE ORDER ERROR:",
+        error
+      );
+
+      return res
+        .status(500)
+        .json({
+          message:
+            error.message,
+        });
+    }
+  };
 
 
 // GET USER ORDERS
@@ -121,48 +190,32 @@ const getOrders =
   };
 
 // UPDATE ORDER STATUS
-const updateOrderStatus =
-  async (req, res) => {
+const updateOrderStatus = async (req, res) => {
+  try {
 
-    try {
+    const order = await Order.findById(req.params.id);
 
-      const { status } =
-        req.body;
-
-      const order =
-        await Order.findById(
-          req.params.id
-        );
-
-      if (!order) {
-
-        return res
-          .status(404)
-          .json({
-            message:
-              "Order not found",
-          });
-      }
-
-      order.status =
-        status;
-
-      await order.save();
-
-      return res
-        .status(200)
-        .json(order);
-
-    } catch (error) {
-
-      return res
-        .status(500)
-        .json({
-          message:
-            error.message,
-        });
+    if (!order) {
+      return res.status(404).json({
+        message: "Order not found",
+      });
     }
-  };
+
+    order.status = req.body.status;
+
+    await order.save();
+
+    res.json(order);
+
+  } catch (error) {
+
+    console.log("UPDATE STATUS ERROR:", error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
 
   // CANCEL ORDER (USER)
   const cancelOrder = async (req, res) => {
@@ -207,4 +260,3 @@ module.exports = {
   cancelOrder,
   updateOrderStatus,
 };
-

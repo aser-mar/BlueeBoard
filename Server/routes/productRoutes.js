@@ -6,11 +6,20 @@ const {
   getProductById,
   createProduct,
   updateProduct,
+  deleteProduct,
 } = require("../controllers/productController");
+
+const {
+  protect,
+  adminOnly,
+} = require("../middleware/authMiddleware");
+const {
+  productValidators,
+} = require("../middleware/validators/productValidators");
 
 const router = express.Router();
 
-// ⭐ FEATURED PRODUCTS
+// FEATURED PRODUCTS
 router.get(
   "/featured",
   getFeaturedProducts
@@ -23,9 +32,12 @@ router.get("/", getProducts);
 router.get("/:id", getProductById);
 
 // CREATE PRODUCT
-router.post("/", createProduct);
+router.post("/", protect, productValidators, createProduct);
 
 // UPDATE PRODUCT
-router.put("/:id", updateProduct);
+router.put("/:id", protect, productValidators, updateProduct);
+
+// DELETE PRODUCT
+router.delete("/:id",  protect,adminOnly,deleteProduct);
 
 module.exports = router;

@@ -10,270 +10,360 @@ import {
 
 import {
   useDispatch,
+  useSelector,
 } from "react-redux";
+
+import {
+  useNavigate,
+} from "react-router-dom";
+
+import {
+  FaHeart,
+} from "react-icons/fa";
+
+import {
+  HiOutlineOfficeBuilding,
+  HiOutlineArrowLeft,
+  HiOutlineArrowRight,
+  HiOutlineShoppingCart,
+  HiOutlineCheckCircle,
+  HiOutlineXCircle,
+} from "react-icons/hi";
 
 import {
   addToCart,
 } from "../redux/slices/cartSlice";
 
 import {
+  addToFavourites,
+  removeFromFavourites,
+} from "../redux/slices/favouritesSlice";
+
+import {
   getProductById,
 } from "../services/productService";
 
-const ProductDetailsPage =
-  () => {
+import "./ProductDetailsPage.css";
 
-    const [product, setProduct] =
-      useState(null);
+const ProductDetailsPage = () => {
 
-    const { id } =
-      useParams();
+  const [product, setProduct] =
+    useState(null);
 
-    const dispatch =
-      useDispatch();
+  const [activeImageIndex, setActiveImageIndex] =
+    useState(0);
 
-    useEffect(() => {
+  const { id } =
+    useParams();
 
-      const fetchProduct =
-        async () => {
+  const dispatch =
+    useDispatch();
 
-          try {
+  const {
+    favouritesItems,
+  } = useSelector(
+    (state) => state.favourites
+  );
 
-            const data =
-              await getProductById(
-                id
-              );
+  const {
+    userInfo,
+  } = useSelector(
+    (state) => state.auth
+  );
 
-            setProduct(data);
+  const navigate = useNavigate();
 
-          } catch (error) {
+  useEffect(() => {
 
-            console.log(error);
-          }
-        };
+    const fetchProduct =
+      async () => {
 
-      fetchProduct();
+        try {
 
-    }, [id]);
+          const data =
+            await getProductById(
+              id
+            );
 
-    const addProductToCart =
-      () => {
+          setProduct(data);
+          setActiveImageIndex(0);
 
-        dispatch(
-          addToCart(product)
-        );
+        } catch (error) {
+
+          console.log(error);
+        }
       };
 
-    if (!product) {
+    fetchProduct();
 
-      return (
+  }, [id]);
 
-        <div
-          className="container"
+  const addProductToCart =
+    () => {
 
-          style={{
-            paddingTop: "40px",
-          }}
-        >
+      if (!userInfo) {
+        navigate("/login");
+        return;
+      }
 
-          <h1>
-            Loading...
-          </h1>
-
-        </div>
+      dispatch(
+        addToCart(product)
       );
-    }
+    };
+
+  const isFavourite =
+    favouritesItems.some(
+      (item) =>
+        item._id ===
+        product?._id
+    );
+
+  const handleFavourite =
+    () => {
+
+      if (!userInfo) {
+        navigate("/login");
+        return;
+      }
+
+      if (isFavourite) {
+
+        dispatch(
+          removeFromFavourites(
+            product._id
+          )
+        );
+
+      } else {
+
+        dispatch(
+          addToFavourites(
+            product
+          )
+        );
+      }
+    };
+
+  if (!product) {
 
     return (
+      <div className="bb-details-page bb-details-page--loading">
+        <div className="container">
+          <div className="bb-breadcrumbs-skeleton shimmer"></div>
+          
+          <div className="bb-details-grid">
+            <div className="bb-details-image-col">
+              <div className="bb-image-skeleton shimmer"></div>
+              <div className="bb-thumbnail-skeleton-row">
+                <div className="bb-thumbnail-skeleton shimmer"></div>
+                <div className="bb-thumbnail-skeleton shimmer"></div>
+                <div className="bb-thumbnail-skeleton shimmer"></div>
+              </div>
+            </div>
+            
+            <div className="bb-details-info-col">
+              <div className="bb-info-card-skeleton">
+                <div className="bb-skeleton-meta shimmer"></div>
+                <div className="bb-skeleton-title shimmer"></div>
+                <div className="bb-skeleton-title-short shimmer"></div>
+                <div className="bb-skeleton-price shimmer"></div>
+                <div className="bb-skeleton-text shimmer"></div>
+                <div className="bb-skeleton-text shimmer"></div>
+                <div className="bb-skeleton-text-short shimmer"></div>
+                <div className="bb-skeleton-actions">
+                  <div className="bb-skeleton-btn shimmer"></div>
+                  <div className="bb-skeleton-btn-square shimmer"></div>
+                  <div className="bb-skeleton-btn shimmer"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-      <div
-        className="container"
+  return (
+    <div className="bb-details-page">
+      <div className="container">
+        
+        {/* ========== BREADCRUMBS ========== */}
+        <div className="bb-breadcrumbs">
+          <Link to="/" className="bb-breadcrumbs__link">
+            <HiOutlineArrowLeft /> Back to Home
+          </Link>
+        </div>
 
-        style={{
-          paddingTop: "40px",
-          paddingBottom: "40px",
-        }}
-      >
-
-        <div
-          style={{
-            display: "grid",
-
-            gridTemplateColumns:
-              "repeat(auto-fit, minmax(300px, 1fr))",
-
-            gap: "40px",
-
-            alignItems: "start",
-          }}
-        >
-
-          {/* IMAGE */}
-
-          <div>
-
-            {
-              product.images?.[0] && (
-
+        {/* ========== MAIN GRID ========== */}
+        <div className="bb-details-grid">
+          
+          {/* Left Column: Gallery */}
+          <div className="bb-details-image-col">
+            <div className="bb-gallery-container">
+              <div className="bb-main-image-wrap">
                 <img
                   src={
-                    product.images[0]
+                    product.images?.[activeImageIndex]?.url ||
+                    "https://dummyimage.com/600x450/cbd5e1/0f172a&text=No+Image"
                   }
-
-                  alt={
-                    product.name
-                  }
-
-                  style={{
-                    width: "100%",
-
-                    borderRadius:
-                      "12px",
-
-                    objectFit:
-                      "cover",
-
-                    maxHeight:
-                      "500px",
+                  alt={product.name}
+                  className="bb-main-image"
+                  onError={(e) => {
+                    e.target.src =
+                      "https://dummyimage.com/600x450/cbd5e1/0f172a&text=No+Image";
                   }}
                 />
-              )
-            }
+              </div>
 
+              {product.images && product.images.length > 1 && (
+                <div className="bb-thumbnail-row">
+                  {product.images.map((imgUrl, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setActiveImageIndex(index)}
+                      className={`bb-thumbnail-btn ${
+                        activeImageIndex === index ? "active" : ""
+                      }`}
+                      aria-label={`View image ${index + 1}`}
+                    >
+                      <img
+                        src={imgUrl?.url}
+                        alt={`${product.name} thumbnail ${index + 1}`}
+                        onError={(e) => {
+                          e.target.src =
+                            "https://dummyimage.com/80x80/cbd5e1/0f172a&text=No+Image";
+                        }}
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* DETAILS */}
+          {/* Right Column: Information */}
+          <div className="bb-details-info-col">
+            <div className="bb-info-card">
+              
+              {/* Meta Row: category & stock badge */}
+              <div className="bb-info-meta">
+                <span className="bb-category-badge">
+                  {product.category?.name || "Product"}
+                </span>
 
-          <div>
+                {product.stock > 0 ? (
+                  <span className="bb-stock-badge in-stock">
+                    <HiOutlineCheckCircle /> In Stock ({product.stock})
+                  </span>
+                ) : (
+                  <span className="bb-stock-badge out-of-stock">
+                    <HiOutlineXCircle /> Out of Stock
+                  </span>
+                )}
+              </div>
 
-            <h1
-              style={{
-                marginBottom:
-                  "20px",
-              }}
-            >
-              {product.name}
-            </h1>
+              {/* Product Title */}
+              <h1 className="bb-info-title">{product.name}</h1>
 
-            <p
-              style={{
-                color: "#666",
+              {/* Price display */}
+              <div className="bb-info-price">
+                <span className="bb-price-val">
+                  {product.price?.toLocaleString()}
+                </span>
+                <span className="bb-price-cur">EGP</span>
+              </div>
 
-                marginBottom:
-                  "20px",
+              <hr className="bb-info-divider" />
 
-                lineHeight:
-                  "1.8",
-              }}
-            >
-              {
-                product.description
-              }
-            </p>
+              {/* Description */}
+              <div className="bb-info-description">
+                <h3 className="bb-info-subtitle">Description</h3>
+                <p className="bb-description-text">
+                  {product.description || "No description available for this product."}
+                </p>
+              </div>
 
-            <h2
-              style={{
-                marginBottom:
-                  "20px",
-              }}
-            >
-              {product.price} EGP
-            </h2>
+              {/* Action buttons */}
+              <div className="bb-info-actions">
+                <button
+                  onClick={addProductToCart}
+                  disabled={product.stock <= 0}
+                  className="bb-btn bb-btn--primary"
+                >
+                  <HiOutlineShoppingCart /> Add To Cart
+                </button>
 
-            <p
-              style={{
-                marginBottom:
-                  "25px",
-              }}
-            >
-              Stock:
-              {" "}
+                <button
+                  onClick={handleFavourite}
+                  className={`bb-btn-fav ${isFavourite ? "is-fav" : ""}`}
+                  aria-label={
+                    isFavourite
+                      ? "Remove from favourites"
+                      : "Add to favourites"
+                  }
+                >
+                  <FaHeart />
+                </button>
 
-              {
-                product.stock
-              }
-            </p>
+                <Link to={userInfo ? "/cart" : "/login"} className="bb-btn bb-btn--secondary">
+                  Go To Cart
+                </Link>
+              </div>
 
-            {/* BUTTONS */}
-
-            <div
-              style={{
-                display: "flex",
-
-                gap: "15px",
-
-                flexWrap: "wrap",
-              }}
-            >
-
-              <button
-                onClick={
-                  addProductToCart
-                }
-
-                style={{
-                  padding:
-                    "12px 20px",
-
-                  border: "none",
-
-                  borderRadius:
-                    "8px",
-
-                  background:
-                    "#111",
-
-                  color:
-                    "white",
-
-                  cursor:
-                    "pointer",
-
-                  fontSize:
-                    "16px",
-                }}
-              >
-                Add To Cart
-              </button>
-
-              <Link
-                to="/cart"
-
-                style={{
-                  padding:
-                    "12px 20px",
-
-                  borderRadius:
-                    "8px",
-
-                  background:
-                    "#eee",
-
-                  textDecoration:
-                    "none",
-
-                  color:
-                    "#111",
-
-                  display:
-                    "flex",
-
-                  alignItems:
-                    "center",
-                }}
-              >
-                Go To Cart
-              </Link>
+              {/* Company Info Section */}
+              {product.company && (
+                <>
+                  <hr className="bb-info-divider" />
+                  <div className="bb-company-section">
+                    <h3 className="bb-info-subtitle">Seller Information</h3>
+                    
+                    <div className="bb-company-card-mini">
+                      {product.company.logo ? (
+                        <img
+                          src={product.company.logo?.url}
+                          alt={product.company.name}
+                          className="bb-company-logo-mini"
+                          onError={(e) => {
+                            e.target.style.display = "none";
+                          }}
+                        />
+                      ) : (
+                        <div className="bb-company-logo-placeholder-mini">
+                          <HiOutlineOfficeBuilding />
+                        </div>
+                      )}
+                      
+                      <div className="bb-company-details-mini">
+                        <h4 className="bb-company-name-mini">
+                          {product.company.name}
+                        </h4>
+                        
+                        {product.company.description && (
+                          <p className="bb-company-desc-mini">
+                            {product.company.description}
+                          </p>
+                        )}
+                        
+                        <Link
+                          to={`/company/${product.company._id}`}
+                          className="bb-company-link-mini"
+                        >
+                          Visit Store <HiOutlineArrowRight />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
 
             </div>
-
           </div>
 
         </div>
 
       </div>
-    );
-  };
+    </div>
+  );
+};
 
-export default
-ProductDetailsPage;
+export default ProductDetailsPage;

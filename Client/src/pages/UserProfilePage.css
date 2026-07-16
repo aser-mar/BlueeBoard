@@ -1,0 +1,414 @@
+/* ===================================================
+   BLUEEBOARD — UserProfilePage Styles
+   =================================================== */
+
+/* ---------- Keyframes ---------- */
+@keyframes bbProfileFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes bbProfilePulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 0 10px rgba(37, 99, 235, 0);
+  }
+}
+
+@keyframes bbCheckSlide {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes bbShakeError {
+
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  20% {
+    transform: translateX(-4px);
+  }
+
+  40% {
+    transform: translateX(4px);
+  }
+
+  60% {
+    transform: translateX(-3px);
+  }
+
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+/* ---------- Page Wrapper ---------- */
+.bb-profile-page {
+  min-height: calc(100vh - 68px);
+  background: var(--bb-surface-primary);
+  padding: 48px 24px 80px;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--bb-text-body);
+}
+
+/* ---------- Container ---------- */
+.bb-profile-container {
+  max-width: 640px;
+  margin: 0 auto;
+  animation: bbProfileFadeIn 0.6s var(--bb-ease) both;
+}
+
+/* ---------- Profile Header Card ---------- */
+.bb-profile-header {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--bb-card-radius);
+  background: linear-gradient(135deg,
+      var(--bb-surface-dark) 0%,
+      var(--bb-surface-dark-alt) 50%,
+      #0c2756 100%);
+  padding: 40px 36px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--bb-card-shadow);
+  text-align: center;
+}
+
+.bb-profile-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 30%,
+      rgba(37, 99, 235, 0.18) 0%,
+      transparent 65%);
+  pointer-events: none;
+}
+
+.bb-profile-header__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Avatar */
+.bb-profile-avatar {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--bb-blue) 0%, var(--bb-cyan) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 800;
+  color: #ffffff;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  border: 3px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.3);
+  animation: bbProfilePulse 3s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.bb-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bb-profile-header__name {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+.bb-profile-header__email {
+  font-size: 0.9rem;
+  color: var(--bb-text-muted);
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ---------- Section Title ---------- */
+.bb-profile-section-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.bb-profile-section-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--bb-blue), var(--bb-cyan));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  flex-shrink: 0;
+}
+
+.bb-profile-section-icon svg {
+  width: 20px;
+  height: 20px;
+  color: #ffffff;
+}
+
+.bb-profile-section-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--bb-text-heading);
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+/* ---------- Settings Card ---------- */
+.bb-profile-card {
+  background: var(--bb-surface-card);
+  border: 1px solid var(--bb-card-border);
+  box-shadow: var(--bb-card-shadow);
+  border-radius: var(--bb-card-radius);
+  padding: 32px;
+  margin-bottom: 24px;
+  transition: box-shadow var(--bb-duration) var(--bb-ease);
+  animation: bbProfileFadeIn 0.6s var(--bb-ease) 0.1s both;
+}
+
+.bb-profile-card:hover {
+  box-shadow: var(--bb-card-shadow-hover);
+}
+
+/* ---------- Alerts ---------- */
+.bb-profile-alert {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 18px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  border: 1px solid transparent;
+}
+
+.bb-profile-alert svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.bb-profile-alert--success {
+  background: rgba(34, 197, 94, 0.08);
+  color: #15803d;
+  border-color: rgba(34, 197, 94, 0.2);
+  animation: bbCheckSlide 0.4s var(--bb-ease) both;
+}
+
+.bb-profile-alert--error {
+  background: rgba(239, 68, 68, 0.08);
+  color: #b91c1c;
+  border-color: rgba(239, 68, 68, 0.2);
+  animation: bbShakeError 0.4s ease both;
+}
+
+/* ---------- Form ---------- */
+.bb-profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ---------- Form Group ---------- */
+.bb-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.bb-form-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--bb-text-muted);
+  margin: 0;
+}
+
+.bb-form-input {
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid var(--bb-card-border);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: var(--bb-surface-primary);
+  color: var(--bb-text-heading);
+  outline: none;
+  font-family: inherit;
+  transition: all var(--bb-duration) var(--bb-ease);
+  box-sizing: border-box;
+}
+
+.bb-form-input:focus {
+  border-color: var(--bb-blue);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.bb-form-input::placeholder {
+  color: var(--bb-text-muted);
+  font-weight: 400;
+}
+
+/* ---------- Divider ---------- */
+.bb-profile-divider {
+  border: 0;
+  height: 1px;
+  background: rgba(148, 163, 184, 0.15);
+  margin: 4px 0;
+}
+
+/* ---------- Submit Button ---------- */
+.bb-profile-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 15px 28px;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  background: linear-gradient(135deg, var(--bb-blue) 0%, var(--bb-indigo) 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+  transition: all var(--bb-duration) var(--bb-ease);
+}
+
+.bb-profile-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+.bb-profile-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+.bb-profile-submit:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+}
+
+.bb-profile-submit:disabled {
+  background: #cbd5e1;
+  color: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Loading spinner inside button */
+.bb-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: bbSpin 0.6s linear infinite;
+}
+
+@keyframes bbSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .bb-profile-page {
+    padding: 24px 16px 60px;
+  }
+
+  .bb-profile-header {
+    padding: 32px 24px;
+  }
+
+  .bb-profile-header__name {
+    font-size: 1.35rem;
+  }
+
+  .bb-profile-avatar {
+    width: 72px;
+    height: 72px;
+    font-size: 1.6rem;
+  }
+
+  .bb-profile-card {
+    padding: 24px 20px;
+  }
+
+  .bb-form-input {
+    padding: 12px 16px;
+  }
+
+  .bb-profile-submit {
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 400px) {
+  .bb-profile-page {
+    padding: 16px 12px 48px;
+  }
+
+  .bb-profile-header {
+    padding: 28px 18px;
+  }
+
+  .bb-profile-header__name {
+    font-size: 1.2rem;
+  }
+
+  .bb-profile-card {
+    padding: 20px 16px;
+  }
+
+  .bb-profile-section-title {
+    font-size: 1.1rem;
+  }
+}

@@ -1,5 +1,6 @@
 import {
   useState,
+  useEffect,
 } from "react";
 
 import {
@@ -18,6 +19,18 @@ import {
 import {
   createOrder,
 } from "../services/orderService";
+
+import {
+  HiOutlineShoppingCart,
+  HiOutlineCreditCard,
+  HiOutlineCash,
+  HiOutlineLocationMarker,
+  HiOutlinePhone,
+  HiOutlineUser,
+  HiOutlineExclamationCircle,
+} from "react-icons/hi";
+
+import "./CheckoutPage.css";
 
 const CheckoutPage =
   () => {
@@ -58,6 +71,12 @@ const {
     const navigate =
       useNavigate();
 
+    useEffect(() => {
+      if (!userInfo) {
+        navigate("/login");
+      }
+    }, [userInfo, navigate]);
+
     const totalPrice =
       cartItems.reduce(
         (total, item) =>
@@ -66,6 +85,8 @@ const {
             item.quantity,
         0
       );
+
+      const [paymentMethod, setPaymentMethod] = useState("cash");
 
     const validateForm = () => {
 
@@ -177,6 +198,8 @@ console.log(
 
               address,
 
+              paymentMethod,
+
               items:
                 cartItems.map(
                   (item) => ({
@@ -226,367 +249,218 @@ console.log(error);
 
     return (
 
-      <div
-        className="container"
-
-        style={{
-          paddingTop:
-            "40px",
-
-          paddingBottom:
-            "40px",
-        }}
-      >
-
-        <h1
-          style={{
-            marginBottom:
-              "30px",
-          }}
-        >
-          Checkout
-        </h1>
-
-        {
-          error && (
-
-            <div
-              style={{
-                background:
-                  "#ffebee",
-
-                color:
-                  "#c62828",
-
-                padding:
-                  "12px",
-
-                borderRadius:
-                  "8px",
-
-                marginBottom:
-                  "20px",
-              }}
-            >
-              {error}
-            </div>
-          )
-        }
-
-        <div
-          style={{
-            display: "grid",
-
-            gridTemplateColumns:
-              "2fr 1fr",
-
-            gap: "30px",
-          }}
-        >
-
-          {/* FORM */}
-
-          <form
-            onSubmit={
-              submitHandler
-            }
-
-            style={{
-              border:
-                "1px solid #ddd",
-
-              borderRadius:
-                "12px",
-
-              padding:
-                "30px",
-            }}
-          >
-
-            <div
-              style={{
-                marginBottom:
-                  "20px",
-              }}
-            >
-
-              <label>
-                Full Name
-              </label>
-
-              <input
-                type="text"
-
-                placeholder="Your Name"
-
-                value={name}
-
-                onChange={(e) =>
-                  setName(
-                    e.target.value
-                  )
-                }
-
-                style={{
-                  width:
-                    "100%",
-
-                  padding:
-                    "12px",
-
-                  marginTop:
-                    "8px",
-
-                  border:
-                    "1px solid #ccc",
-
-                  borderRadius:
-                    "8px",
-                }}
-              />
-
-            </div>
-
-            <div
-              style={{
-                marginBottom:
-                  "20px",
-              }}
-            >
-
-              <label>
-                Phone Number
-              </label>
-
-              <input
-                type="text"
-
-                placeholder="01xxxxxxxxx"
-
-                value={phone}
-
-                onChange={(e) =>
-                  setPhone(
-                    e.target.value
-                  )
-                }
-
-                style={{
-                  width:
-                    "100%",
-
-                  padding:
-                    "12px",
-
-                  marginTop:
-                    "8px",
-
-                  border:
-                    "1px solid #ccc",
-
-                  borderRadius:
-                    "8px",
-                }}
-              />
-
-            </div>
-
-            <div
-              style={{
-                marginBottom:
-                  "25px",
-              }}
-            >
-
-              <label>
-                Address
-              </label>
-
-              <textarea
-                placeholder="Your Address"
-
-                value={address}
-
-                onChange={(e) =>
-                  setAddress(
-                    e.target.value
-                  )
-                }
-
-                rows="5"
-
-                style={{
-                  width:
-                    "100%",
-
-                  padding:
-                    "12px",
-
-                  marginTop:
-                    "8px",
-
-                  border:
-                    "1px solid #ccc",
-
-                  borderRadius:
-                    "8px",
-
-                  resize:
-                    "none",
-                }}
-              />
-
-            </div>
-
-            <button
-              type="submit"
-
-              disabled={loading}
-
-              style={{
-                width:
-                  "100%",
-
-                padding:
-                  "14px",
-
-                border:
-                  "none",
-
-                borderRadius:
-                  "8px",
-
-                background:
-                  loading
-                    ? "#777"
-                    : "#111",
-
-                color:
-                  "#fff",
-
-                cursor:
-                  loading
-                    ? "not-allowed"
-                    : "pointer",
-
-                fontSize:
-                  "16px",
-              }}
-            >
-              {
-                loading
-                  ? "Placing Order..."
-                  : "Place Order"
-              }
-            </button>
-
-          </form>
-
-          {/* SUMMARY */}
-
-          <div
-            style={{
-              border:
-                "1px solid #ddd",
-
-              borderRadius:
-                "12px",
-
-              padding:
-                "25px",
-
-              height:
-                "fit-content",
-            }}
-          >
-
-            <h2
-              style={{
-                marginBottom:
-                  "20px",
-              }}
-            >
-              Order Summary
-            </h2>
-
-            {
-              cartItems.length ===
-              0 ? (
-
-                <p>
-                  Your cart is empty
-                </p>
-
-              ) : (
-
-                cartItems.map(
-                  (item) => (
-
-                    <div
-                      key={
-                        item._id
-                      }
-
-                      style={{
-                        display:
-                          "flex",
-
-                        justifyContent:
-                          "space-between",
-
-                        marginBottom:
-                          "15px",
-
-                        gap: "10px",
-                      }}
-                    >
-
-                      <span>
-                        {
-                          item.name
-                        }
-                        {" "}
-                        x
-                        {" "}
-                        {
-                          item.quantity
-                        }
-                      </span>
-
-                      <span>
-                        {
-                          item.price *
-                          item.quantity
-                        }
-                        {" "}
-                        EGP
-                      </span>
-
-                    </div>
-                  )
-                )
-              )
-            }
-
-            <hr
-              style={{
-                margin:
-                  "20px 0",
-              }}
-            />
-
-            <h3>
-              Total:
-              {" "}
-              {totalPrice}
-              {" "}
-              EGP
-            </h3>
-
+      <div className="bb-checkout-page">
+        <div className="bb-checkout-hero">
+          <div className="bb-checkout-hero-icon">
+            <HiOutlineShoppingCart />
           </div>
-
+          <div>
+            <h1 className="bb-checkout-title">Checkout</h1>
+            <p className="bb-checkout-subtitle">
+              Finalize your order with secure payment and delivery details.
+            </p>
+          </div>
         </div>
 
+        {error && (
+          <div className="bb-checkout-alert">
+            <HiOutlineExclamationCircle />
+            <span>{error}</span>
+          </div>
+        )}
+
+        {cartItems.length === 0 ? (
+          <div className="bb-checkout-empty">
+            <div className="bb-checkout-empty-icon">
+              <HiOutlineShoppingCart />
+            </div>
+            <h2 className="bb-checkout-empty-title">Your cart is empty</h2>
+            <p className="bb-checkout-empty-text">
+              Add products to your cart before checking out, and enjoy a premium shopping experience.
+            </p>
+            <button
+              className="bb-checkout-empty-button"
+              onClick={() => navigate("/")}
+            >
+              Continue Shopping
+            </button>
+          </div>
+        ) : (
+          <div className="bb-checkout-grid">
+            <form
+              onSubmit={
+                submitHandler
+              }
+              className="bb-checkout-form"
+            >
+              <div className="bb-checkout-card">
+                <div className="bb-checkout-card-header">
+                  <div className="bb-checkout-card-icon">
+                    <HiOutlineUser />
+                  </div>
+                  <div>
+                    <h2 className="bb-checkout-card-title">Customer Information</h2>
+                    <p className="bb-checkout-card-copy">
+                      Provide details to complete delivery.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bb-checkout-field">
+                  <label className="bb-checkout-label" htmlFor="name">
+                    Full Name
+                  </label>
+                  <div className="bb-checkout-input-group">
+                    <HiOutlineUser className="bb-checkout-input-icon" />
+                    <input
+                      id="name"
+                      type="text"
+                      placeholder="Your Name"
+                      value={name}
+                      onChange={(e) =>
+                        setName(
+                          e.target.value
+                        )
+                      }
+                      className="bb-checkout-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="bb-checkout-field">
+                  <label className="bb-checkout-label" htmlFor="phone">
+                    Phone Number
+                  </label>
+                  <div className="bb-checkout-input-group">
+                    <HiOutlinePhone className="bb-checkout-input-icon" />
+                    <input
+                      id="phone"
+                      type="text"
+                      placeholder="01xxxxxxxxx"
+                      value={phone}
+                      onChange={(e) =>
+                        setPhone(
+                          e.target.value
+                        )
+                      }
+                      className="bb-checkout-input"
+                    />
+                  </div>
+                </div>
+
+                <div className="bb-checkout-field">
+                  <label className="bb-checkout-label" htmlFor="address">
+                    Address
+                  </label>
+                  <div className="bb-checkout-textarea-group">
+                    <HiOutlineLocationMarker className="bb-checkout-input-icon bb-checkout-input-icon--textarea" />
+                    <textarea
+                      id="address"
+                      placeholder="Your Address"
+                      value={address}
+                      onChange={(e) =>
+                        setAddress(
+                          e.target.value
+                        )
+                      }
+                      rows="5"
+                      className="bb-checkout-textarea"
+                    />
+                  </div>
+                </div>
+
+                <div className="bb-checkout-field">
+                  <label className="bb-checkout-label">
+                    Payment Method
+                  </label>
+                  <div className="bb-checkout-payment-grid">
+                    <label className={`bb-checkout-payment-card ${paymentMethod === "cash" ? "bb-checkout-payment-card--active" : ""}`}>
+                      <input
+                        type="radio"
+                        value="cash"
+                        checked={paymentMethod === "cash"}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="bb-checkout-hidden-radio"
+                      />
+                      <div className="bb-checkout-payment-icon">
+                        <HiOutlineCash />
+                      </div>
+                      <div>
+                        <div className="bb-checkout-payment-title">Cash on Delivery</div>
+                      </div>
+                    </label>
+
+                    <label className={`bb-checkout-payment-card ${paymentMethod === "card" ? "bb-checkout-payment-card--active" : ""}`}>
+                      <input
+                        type="radio"
+                        value="card"
+                        checked={paymentMethod === "card"}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="bb-checkout-hidden-radio"
+                      />
+                      <div className="bb-checkout-payment-icon">
+                        <HiOutlineCreditCard />
+                      </div>
+                      <div>
+                        <div className="bb-checkout-payment-title">Card</div>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bb-checkout-submit"
+                >
+                  {loading ? "Placing Order..." : "Place Order"}
+                </button>
+              </div>
+            </form>
+
+            <aside className="bb-checkout-summary">
+              <div className="bb-checkout-card bb-checkout-summary-card">
+                <div className="bb-checkout-card-header">
+                  <div className="bb-checkout-card-icon">
+                    <HiOutlineCreditCard />
+                  </div>
+                  <div>
+                    <h2 className="bb-checkout-card-title">Order Summary</h2>
+                    <p className="bb-checkout-card-copy">
+                      Review your items before placing the order.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bb-checkout-summary-list">
+                  {cartItems.map((item) => (
+                    <div key={item._id} className="bb-checkout-summary-item">
+                      <div>
+                        <div className="bb-checkout-summary-item-name">{item.name}</div>
+                        <div className="bb-checkout-summary-item-meta">Qty: {item.quantity}</div>
+                      </div>
+                      <div className="bb-checkout-summary-item-price">
+                        {item.price * item.quantity} EGP
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="bb-checkout-summary-divider"></div>
+
+                <div className="bb-checkout-total-row">
+                  <span>Subtotal</span>
+                  <span>{totalPrice} EGP</span>
+                </div>
+
+                <div className="bb-checkout-total-row bb-checkout-total-row--grand">
+                  <span>Total</span>
+                  <span>{totalPrice} EGP</span>
+                </div>
+              </div>
+            </aside>
+          </div>
+        )}
       </div>
     );
   };

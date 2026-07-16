@@ -9,11 +9,12 @@ trim: true,
 },
 
 
-company: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: "Company",
-  required: true,
-},
+companies: [
+  {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Company",
+  },
+],
 
 isActive: {
   type: Boolean,

@@ -17,6 +17,9 @@ const {
 } = require(
   "../middleware/authMiddleware"
 );
+const {
+  orderValidators,
+} = require("../middleware/validators/orderValidators");
 
 const router =
   express.Router();
@@ -25,6 +28,7 @@ const router =
 router.post(
   "/",
   protect,
+  orderValidators,
   createOrder
 );
 
