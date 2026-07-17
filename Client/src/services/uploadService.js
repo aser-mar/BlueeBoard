@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "./api";
 
 /**
  * UPLOAD IMAGE TO CLOUDINARY
@@ -9,8 +9,8 @@ export const uploadImage = async (file) => {
     const formData = new FormData();
     formData.append("image", file);
 
-    const { data } = await axios.post(
-      "http://localhost:5000/api/upload",
+    const { data } = await api.post(
+      "/upload",
       formData,
       {
         headers: {
@@ -33,8 +33,8 @@ export const deleteImage = async (publicId) => {
   if (!publicId) return;
 
   try {
-    const { data } = await axios.post(
-      "http://localhost:5000/api/upload/delete",
+    const { data } = await api.post(
+      "/upload/delete",
       {
         publicId,
       }

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useSelector } from "react-redux";
-import axios from "axios";
+import api from "../../services/api";
 import { getCompanies } from "../../services/companyService";
 import {
   HiOutlineOfficeBuilding,
@@ -25,8 +24,7 @@ const AdminCategoriesPage = () => {
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { token } = useSelector((state) => state.auth);
-  const API = "http://localhost:5000/api/categories";
+  const API = "/categories";
 
   const totalCategories = useMemo(() => categories.length, [categories]);
 
@@ -58,7 +56,7 @@ const AdminCategoriesPage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const categoriesRes = await axios.get(API);
+        const categoriesRes = await api.get(API);
         setCategories(categoriesRes.data || []);
         const companiesData = await getCompanies();
         setCompanies(companiesData || []);
@@ -71,7 +69,7 @@ const AdminCategoriesPage = () => {
     };
 
     loadData();
-  }, []);
+  }, [API]);
 
   const addCategory = async (e) => {
     e.preventDefault();
@@ -90,20 +88,12 @@ const AdminCategoriesPage = () => {
 
     try {
       setError("");
-      await axios.post(
-        API,
-        {
-          name,
-          companies: selectedCompanies,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.post(API, {
+      name,
+      companies: selectedCompanies,
+    });
 
-      const { data } = await axios.get(API);
+      const { data } = await api.get(API);
       setCategories(data || []);
       setName("");
       setSelectedCompanies([]);
@@ -137,20 +127,12 @@ const AdminCategoriesPage = () => {
 
     try {
       setActionLoadingId(id);
-      await axios.put(
-        `${API}/${id}`,
-        {
-          name: editName,
-          companies: editCompanies,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      await api.put(`${API}/${id}`, {
+      name: editName,
+      companies: editCompanies,
+    });
 
-      const { data } = await axios.get(API);
+      const { data } = await api.get(API);
       setCategories(data);
       setEditingId(null);
       setEditName("");
@@ -173,11 +155,7 @@ const AdminCategoriesPage = () => {
 
     try {
       setActionLoadingId(id);
-      await axios.delete(`${API}/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.delete(`${API}/${id}`);
       setCategories((prev) => prev.filter((cat) => cat._id !== id));
     } catch (error) {
       console.log(error);

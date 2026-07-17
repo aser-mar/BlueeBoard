@@ -16,13 +16,14 @@ const {apiLimiter,} = require("./middleware/rateLimiter");
 const mongoSanitize = require("express-mongo-sanitize");
 
 const app = express();
+console.log("CLIENT_URL =", process.env.CLIENT_URL);
+const corsOptions = {
+  origin: "http://localhost:5173",
+  credentials: true,
+};
 
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    credentials: true,
-  })
-);
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
 
 app.use(
   helmet({

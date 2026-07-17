@@ -1,16 +1,13 @@
-import axios from "axios";
+import api from "./api";
 
-const API =
-  "http://localhost:5000/api/categories";
+const API = "/categories";
 
 // GET
 export const getCategories =
   async (companyId) => {
 
-    console.log("CATEGORY COMPANY ID =", companyId);
-
     const { data } =
-      await axios.get(API, {
+      await api.get(API, {
         params: {
           company: companyId,
         },
@@ -26,11 +23,11 @@ export const updateCategory =
     categoryData
   ) => {
 
-    const { data } =
-      await axios.put(
-        `${API}/${id}`,
-        categoryData
-      );
+   const { data } =
+    await api.put(
+      `${API}/${id}`,
+      categoryData
+    );
 
     return data;
   };
