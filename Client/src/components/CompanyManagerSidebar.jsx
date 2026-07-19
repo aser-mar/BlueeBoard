@@ -53,6 +53,8 @@ const CompanyManagerSidebar = () => {
 
     dispatch(logout());
 
+    closeMobile();
+
     navigate("/");
 
   };
