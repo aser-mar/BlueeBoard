@@ -189,3 +189,94 @@
     transform: translateX(0);
   }
 }
+
+/* ---------- Mobile Hamburger Toggle ---------- */
+
+/* Hidden by default on desktop */
+.sidebar__hamburger {
+  display: none;
+}
+
+/* ---------- Mobile Overlay ---------- */
+
+/* Hidden by default on desktop */
+.sidebar__overlay {
+  display: none;
+}
+
+@media (max-width: 768px) {
+
+  /* --- Hamburger button --- */
+  .sidebar__hamburger {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    position: fixed;
+    top: 16px;
+    left: 16px;
+    z-index: 1100;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    background: rgba(10, 22, 40, 0.92);
+    cursor: pointer;
+    transition: background 200ms ease, border-color 200ms ease;
+  }
+
+  .sidebar__hamburger:hover {
+    background: rgba(37, 99, 235, 0.2);
+    border-color: rgba(37, 99, 235, 0.4);
+  }
+
+  .sidebar__hamburger-line {
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: #cbd5e1;
+    transition:
+      transform 0.35s cubic-bezier(0.68, -0.6, 0.32, 1.6),
+      opacity 0.25s ease,
+      background 200ms ease;
+  }
+
+  .sidebar__hamburger:hover .sidebar__hamburger-line {
+    background: #60a5fa;
+  }
+
+  /* Hamburger → X animation */
+  .sidebar__hamburger--open .sidebar__hamburger-line:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .sidebar__hamburger--open .sidebar__hamburger-line:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .sidebar__hamburger--open .sidebar__hamburger-line:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  /* --- Overlay --- */
+  .sidebar__overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 1049;
+    background: rgba(10, 22, 40, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  .sidebar__overlay--visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

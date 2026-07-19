@@ -1,4 +1,8 @@
 import {
+  useState,
+} from "react";
+
+import {
   NavLink,
   useNavigate,
 } from "react-router-dom";
@@ -42,6 +46,12 @@ const AdminSidebar = () => {
 
   const navigate = useNavigate();
 
+  const [mobileOpen, setMobileOpen] =
+    useState(false);
+
+  const closeMobile = () =>
+    setMobileOpen(false);
+
   const logoutHandler = () => {
 
     dispatch(clearCart());
@@ -56,95 +66,126 @@ const AdminSidebar = () => {
 
   return (
 
-    <aside className="sidebar">
+    <>
 
-      <div className="sidebar__logo">
-        <Logo
-          variant="sidebar"
-          clickable={false}
-        />
-      </div>
-
-      <nav className="sidebar__nav">
-
-        <NavLink to="/admin" end>
-
-          <HiOutlineViewGrid />
-
-          Dashboard
-
-        </NavLink>
-
-        <NavLink to="/admin/profile">
-
-          <HiOutlineUserCircle />
-
-          Profile
-
-        </NavLink>
-
-        <NavLink to="/admin/products">
-
-          <HiOutlineShoppingBag />
-
-          Products
-
-        </NavLink>
-
-        <NavLink to="/admin/companies">
-
-          <HiOutlineOfficeBuilding />
-
-          Companies
-
-        </NavLink>
-
-        <NavLink to="/admin/company-managers">
-
-          <HiOutlineUsers />
-
-          Managers
-
-        </NavLink>
-
-        <NavLink to="/admin/categories">
-
-          <HiOutlineCollection />
-
-          Categories
-
-        </NavLink>
-
-        <NavLink to="/admin/banners">
-
-          <HiOutlinePhotograph />
-
-          Banners
-
-        </NavLink>
-
-        <NavLink to="/admin/orders">
-
-          <HiOutlineClipboardList />
-
-          Orders
-
-        </NavLink>
-
-      </nav>
+      {/* ===== MOBILE HAMBURGER (hidden on desktop via CSS) ===== */}
 
       <button
-        className="sidebar__logout"
-        onClick={logoutHandler}
+        className={
+          `sidebar__hamburger${mobileOpen ? " sidebar__hamburger--open" : ""}`
+        }
+        onClick={() =>
+          setMobileOpen((prev) => !prev)
+        }
+        aria-label="Toggle sidebar menu"
       >
-
-        <HiOutlineLogout />
-
-        Logout
-
+        <span className="sidebar__hamburger-line" />
+        <span className="sidebar__hamburger-line" />
+        <span className="sidebar__hamburger-line" />
       </button>
 
-    </aside>
+      {/* ===== MOBILE OVERLAY (closes sidebar on outside click) ===== */}
+
+      <div
+        className={
+          `sidebar__overlay${mobileOpen ? " sidebar__overlay--visible" : ""}`
+        }
+        onClick={closeMobile}
+      />
+
+      {/* ===== SIDEBAR ===== */}
+
+      <aside className={`sidebar${mobileOpen ? " open" : ""}`}>
+
+        <div className="sidebar__logo">
+          <Logo
+            variant="sidebar"
+            clickable={false}
+          />
+        </div>
+
+        <nav className="sidebar__nav">
+
+          <NavLink to="/admin" end onClick={closeMobile}>
+
+            <HiOutlineViewGrid />
+
+            Dashboard
+
+          </NavLink>
+
+          <NavLink to="/admin/profile" onClick={closeMobile}>
+
+            <HiOutlineUserCircle />
+
+            Profile
+
+          </NavLink>
+
+          <NavLink to="/admin/products" onClick={closeMobile}>
+
+            <HiOutlineShoppingBag />
+
+            Products
+
+          </NavLink>
+
+          <NavLink to="/admin/companies" onClick={closeMobile}>
+
+            <HiOutlineOfficeBuilding />
+
+            Companies
+
+          </NavLink>
+
+          <NavLink to="/admin/company-managers" onClick={closeMobile}>
+
+            <HiOutlineUsers />
+
+            Managers
+
+          </NavLink>
+
+          <NavLink to="/admin/categories" onClick={closeMobile}>
+
+            <HiOutlineCollection />
+
+            Categories
+
+          </NavLink>
+
+          <NavLink to="/admin/banners" onClick={closeMobile}>
+
+            <HiOutlinePhotograph />
+
+            Banners
+
+          </NavLink>
+
+          <NavLink to="/admin/orders" onClick={closeMobile}>
+
+            <HiOutlineClipboardList />
+
+            Orders
+
+          </NavLink>
+
+        </nav>
+
+        <button
+          className="sidebar__logout"
+          onClick={logoutHandler}
+        >
+
+          <HiOutlineLogout />
+
+          Logout
+
+        </button>
+
+      </aside>
+
+    </>
 
   );
 
