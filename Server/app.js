@@ -18,7 +18,7 @@ const mongoSanitize = require("express-mongo-sanitize");
 const app = express();
 console.log("CLIENT_URL =", process.env.CLIENT_URL);
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: "https://blueeboard.com",
   credentials: true,
 };
 
