@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /company-manager
+Disallow: /cart
+Disallow: /checkout
+Disallow: /profile
+Disallow: /my-orders
+
+Sitemap: https://blueeboard.com/sitemap.xml
