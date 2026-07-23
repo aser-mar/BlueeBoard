@@ -16,6 +16,7 @@ const {apiLimiter,} = require("./middleware/rateLimiter");
 const mongoSanitize = require("express-mongo-sanitize");
 
 const app = express();
+app.set('trust proxy', 1);
 console.log("CLIENT_URL =", process.env.CLIENT_URL);
 const corsOptions = {
   origin: "https://blueeboard.com",
