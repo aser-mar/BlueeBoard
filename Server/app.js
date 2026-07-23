@@ -19,7 +19,7 @@ const app = express();
 app.set('trust proxy', 1);
 console.log("CLIENT_URL =", process.env.CLIENT_URL);
 const corsOptions = {
-  origin: "https://blueeboard.com",
+  origin: ["https://blueeboard.com", "https://www.blueeboard.com"],
   credentials: true,
 };
 
@@ -30,7 +30,7 @@ app.use(
   helmet({
     crossOriginResourcePolicy: false,
   })
-);
+);  
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
