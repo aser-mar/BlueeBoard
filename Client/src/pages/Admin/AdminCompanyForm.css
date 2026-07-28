@@ -349,3 +349,30 @@
     justify-content: center;
   }
 }
+
+.admin-categories-companies-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.admin-categories-company-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.company-form-region-heading {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin: 16px 0 8px;
+}
+
+.company-form-region-heading:first-child {
+  margin-top: 0;
+}

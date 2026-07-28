@@ -7,10 +7,12 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const bannerRoutes = require("./routes/bannerRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
+const sectorRoutes = require("./routes/sectorRoutes");
 const userRoutes = require("./routes/userRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const companyManagerRoutes = require("./routes/companyManagerRoutes");
 const companyManagerProductRoutes = require("./routes/companyManagerProductRoutes");
+const companyManagerOrderRoutes = require("./routes/companyManagerOrderRoutes");
 const helmet = require("helmet");
 const {apiLimiter,} = require("./middleware/rateLimiter");
 const mongoSanitize = require("express-mongo-sanitize");
@@ -19,7 +21,11 @@ const app = express();
 app.set('trust proxy', 1);
 console.log("CLIENT_URL =", process.env.CLIENT_URL);
 const corsOptions = {
-  origin: ["https://blueeboard.com", "https://www.blueeboard.com"],
+  origin: [
+    "https://blueeboard.com",
+    "https://www.blueeboard.com",
+    "http://localhost:5173",
+  ],
   credentials: true,
 };
 
@@ -44,10 +50,12 @@ app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/banners", bannerRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/sectors", sectorRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/company-managers", companyManagerRoutes);
 app.use("/api/company-manager/products",companyManagerProductRoutes);
+app.use("/api/company-manager/orders", companyManagerOrderRoutes);
 // middleware to parse URL-encoded data
 app.get("/", (req, res) => {
   res.json({ message: "Server is running" });

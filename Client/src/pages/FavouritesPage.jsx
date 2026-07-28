@@ -33,6 +33,11 @@ const FavouritesPage =
         (state) => state.auth
       );
 
+    const { isPreviewMode } =
+      useSelector(
+        (state) => state.previewMode
+      );
+
     useEffect(() => {
 
       if (userInfo?.isAdmin) {
@@ -49,6 +54,10 @@ const FavouritesPage =
     );
 
     const handleRemove = (productId) => {
+      if (isPreviewMode) {
+        alert("This action is disabled in Preview Mode.");
+        return;
+      }
       dispatch(
         removeFromFavourites(productId)
       );

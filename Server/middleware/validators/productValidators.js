@@ -35,11 +35,6 @@ const productValidators = [
     .withMessage("Price is required")
     .isFloat({ gt: 0 })
     .withMessage("Price must be greater than 0"),
-  body("stock")
-    .notEmpty()
-    .withMessage("Stock is required")
-    .isInt({ min: 0 })
-    .withMessage("Stock must be a non-negative integer"),
   body("category")
     .notEmpty()
     .withMessage("Category is required")
@@ -71,11 +66,6 @@ const updateProductValidators = [
     .withMessage("Price is required")
     .isFloat({ gt: 0 })
     .withMessage("Price must be greater than 0"),
-  body("stock")
-    .notEmpty()
-    .withMessage("Stock is required")
-    .isInt({ min: 0 })
-    .withMessage("Stock must be a non-negative integer"),
   body("category")
     .notEmpty()
     .withMessage("Category is required")

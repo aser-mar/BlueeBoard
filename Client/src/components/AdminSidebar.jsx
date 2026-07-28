@@ -16,6 +16,10 @@ import {
 } from "../redux/slices/authSlice";
 
 import {
+  enterPreviewMode,
+} from "../redux/slices/previewModeSlice";
+
+import {
   clearCart,
 } from "../redux/slices/cartSlice";
 
@@ -32,6 +36,8 @@ import {
   HiOutlineClipboardList,
   HiOutlineUsers,
   HiOutlineLogout,
+  HiOutlineTag,
+  HiOutlineEye,
 } from "react-icons/hi";
 
 import { HiOutlineUserCircle } from "react-icons/hi2";
@@ -62,6 +68,11 @@ const AdminSidebar = () => {
 
     navigate("/");
 
+  };
+
+  const enterPreview = () => {
+    dispatch(enterPreviewMode());
+    navigate("/");
   };
 
   return (
@@ -154,6 +165,14 @@ const AdminSidebar = () => {
 
           </NavLink>
 
+          <NavLink to="/admin/sectors" onClick={closeMobile}>
+
+            <HiOutlineTag />
+
+            Sectors
+
+          </NavLink>
+
           <NavLink to="/admin/banners" onClick={closeMobile}>
 
             <HiOutlinePhotograph />
@@ -172,16 +191,29 @@ const AdminSidebar = () => {
 
         </nav>
 
-        <button
-          className="sidebar__logout"
-          onClick={logoutHandler}
-        >
+        <div className="sidebar__bottom-actions">
+          <button
+            className="sidebar__preview-btn"
+            onClick={enterPreview}
+          >
 
-          <HiOutlineLogout />
+            <HiOutlineEye />
 
-          Logout
+            View as User
 
-        </button>
+          </button>
+
+          <button
+            className="sidebar__logout"
+            onClick={logoutHandler}
+          >
+
+            <HiOutlineLogout />
+
+            Logout
+
+          </button>
+        </div>
 
       </aside>
 

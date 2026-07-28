@@ -7,6 +7,7 @@ import {
   HiOutlinePhotograph,
   HiOutlineShoppingBag,
   HiOutlinePlus,
+  HiOutlineTag,
 } from "react-icons/hi";
 import {
   Area,
@@ -26,6 +27,7 @@ import { getBanners } from "../../services/bannerService";
 import { getOrders } from "../../services/orderService";
 import { getCategories } from "../../services/categoryService";
 import { getCompanyManagers } from "../../services/companyManagerService";
+import { getSectors } from "../../services/sectorService";
 
 import { useSelector } from "react-redux";
 
@@ -51,6 +53,7 @@ import "./AdminDashboard.css";
 
   (orders || []).forEach((order) => {
     if (!order?.createdAt) return;
+    if (order.status === "cancelled") return;
 
     const orderDate = new Date(order.createdAt);
     if (Number.isNaN(orderDate.getTime())) return;
@@ -60,9 +63,12 @@ import "./AdminDashboard.css";
 
     const dayIndex = 6 - diffDays;
     trend[dayIndex].orders += 1;
-    const revenue = Number(order.totalPrice || 0);
-    trend[dayIndex].revenue += revenue;
-    totalRevenue += revenue;
+
+    if (order.status === "delivered") {
+      const revenue = Number(order.totalPrice || 0);
+      trend[dayIndex].revenue += revenue;
+      totalRevenue += revenue;
+    }
   });
 
   return {
@@ -81,6 +87,7 @@ const AdminDashboard = () => {
     banners: 0,
     orders: 0,
     managers: 0,
+    sectors: 0,
   });
   const [analytics, setAnalytics] = useState({
     trend: [],
@@ -91,7 +98,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const loadStats = async () => {
       try {
-        const [products, companies, categories, banners, orders, managers] =
+        const [products, companies, categories, banners, orders, managers, sectors] =
           await Promise.all([
             getProducts(),
             getCompanies(),
@@ -99,6 +106,7 @@ const AdminDashboard = () => {
             getBanners(),
             getOrders(token),
             getCompanyManagers(),
+            getSectors(),
           ]);
 
         const { trend, totalRevenue } = buildOrderAnalytics(orders || []);
@@ -110,6 +118,7 @@ const AdminDashboard = () => {
           banners: banners?.length || 0,
           orders: orders?.length || 0,
           managers: managers?.length || 0,
+          sectors: sectors?.length || 0,
         });
         setAnalytics({
           trend,
@@ -178,6 +187,19 @@ const AdminDashboard = () => {
             {stats.categories}
             </h2>
             <p className="admin-card__note">Organized sections</p>
+          </div>
+        </article>
+
+        <article className="admin-card admin-card--stat">
+          <div className="admin-card__icon admin-card__icon--accent">
+            <HiOutlineTag />
+          </div>
+          <div>
+            <p className="admin-card__label">Sectors</p>
+            <h2 className="admin-card__value">
+            {stats.sectors}
+            </h2>
+            <p className="admin-card__note">Business classification sectors</p>
           </div>
         </article>
 
@@ -442,6 +464,25 @@ const AdminDashboard = () => {
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/categories">
               Manage Categories
+            </Link>
+          </div>
+        </article>
+
+        <article className="admin-section-card">
+          <div className="admin-section-card__top">
+            <div className="admin-section-card__icon-wrap">
+              <HiOutlineTag />
+            </div>
+            <div>
+              <h3 className="admin-section-card__heading">Sectors</h3>
+              <p className="admin-section-card__copy">
+                Manage business sectors used to classify and filter companies.
+              </p>
+            </div>
+          </div>
+          <div className="admin-section-card__actions">
+            <Link className="admin-button" to="/admin/sectors">
+              Manage Sectors
             </Link>
           </div>
         </article>

@@ -11,6 +11,7 @@ import {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  setQuantity,
 } from "../redux/slices/cartSlice";
 
 import {
@@ -203,6 +204,38 @@ const CartPage = () => {
           font-size: 14px;
           background: transparent;
           border: none;
+        }
+
+        .bb-qty-input {
+          width: 50px;
+          text-align: center;
+          color: #0f172a;
+          font-weight: 700;
+          font-size: 14px;
+          background: #ffffff;
+          border: 1.5px solid rgba(148, 163, 184, 0.3);
+          border-radius: 8px;
+          padding: 6px 4px;
+          outline: none;
+          font-family: inherit;
+          -moz-appearance: textfield;
+          cursor: text;
+          transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .bb-qty-input:hover {
+          border-color: rgba(37, 99, 235, 0.4);
+        }
+
+        .bb-qty-input::-webkit-outer-spin-button,
+        .bb-qty-input::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        .bb-qty-input:focus {
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .bb-cart-remove-btn {
@@ -519,9 +552,32 @@ const CartPage = () => {
                       >
                         −
                       </button>
-                      <div className="bb-qty-display">
-                        {item.quantity}
-                      </div>
+                      <input
+                        type="number"
+                        min="1"
+                        className="bb-qty-input"
+                        value={item.quantity}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "") return;
+                          dispatch(
+                            setQuantity({
+                              id: item._id,
+                              quantity: value,
+                            })
+                          );
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value === "" || Number(e.target.value) < 1) {
+                            dispatch(
+                              setQuantity({
+                                id: item._id,
+                                quantity: 1,
+                              })
+                            );
+                          }
+                        }}
+                      />
                       <button
                         onClick={() =>
                           dispatch(

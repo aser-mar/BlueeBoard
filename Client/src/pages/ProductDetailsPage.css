@@ -217,32 +217,6 @@
   letter-spacing: 0.03em;
 }
 
-.bb-stock-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.825rem;
-  font-weight: 600;
-  padding: 6px 14px;
-  border-radius: 20px;
-}
-
-.bb-stock-badge svg {
-  width: 16px;
-  height: 16px;
-}
-
-.bb-stock-badge.in-stock {
-  background: rgba(34, 197, 94, 0.08);
-  color: #15803d;
-  border: 1px solid rgba(34, 197, 94, 0.2);
-}
-
-.bb-stock-badge.out-of-stock {
-  background: rgba(239, 68, 68, 0.08);
-  color: #b91c1c;
-  border: 1px solid rgba(239, 68, 68, 0.2);
-}
 
 /* Title */
 .bb-info-title {

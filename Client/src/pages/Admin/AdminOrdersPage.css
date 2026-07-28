@@ -94,3 +94,136 @@
 /* small tweaks */
 .orders-table th:first-child, .orders-table td:first-child{width:18%}
 .orders-table th:last-child, .orders-table td:last-child{text-align:right}
+
+.view-details-btn {
+  background: transparent;
+  border: 1px solid rgba(8, 102, 214, 0.2);
+  color: var(--bb-blue);
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  transition: background 0.2s ease;
+}
+
+.view-details-btn:hover {
+  background: rgba(8, 102, 214, 0.08);
+}
+
+.order-details-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.order-details-modal {
+  background: #fff;
+  border-radius: var(--rounded);
+  box-shadow: var(--surface-shadow);
+  width: 100%;
+  max-width: 520px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.order-details-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+}
+
+.order-details-modal__header h2 {
+  margin: 0;
+  font-size: 18px;
+  color: #0f172a;
+}
+
+.order-details-modal__close {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  line-height: 1;
+  padding: 4px;
+}
+
+.order-details-modal__close:hover {
+  color: #0f172a;
+}
+
+.order-details-modal__body {
+  padding: 20px 24px 24px;
+}
+
+.order-details-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 10px 0;
+  font-size: 14px;
+}
+
+.order-details-label {
+  color: #6b7280;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.order-details-value {
+  color: #0f172a;
+  text-align: right;
+  word-break: break-word;
+}
+
+.order-details-value.mono {
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.order-details-divider {
+  height: 1px;
+  background: rgba(15, 23, 42, 0.08);
+  margin: 12px 0;
+}
+
+.order-details-items-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 10px;
+}
+
+.order-details-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.order-details-item-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 13px;
+  color: #374151;
+  padding: 6px 0;
+  border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
+}
+
+.order-details-row--total {
+  font-weight: 800;
+  font-size: 16px;
+}

@@ -12,6 +12,9 @@ from "./slices/authSlice";
 import favouritesReducer
 from "./slices/favouritesSlice";
 
+import previewModeReducer
+from "./slices/previewModeSlice";
+
 import {
   persistReducer,
   persistStore,
@@ -32,6 +35,8 @@ const rootReducer =
 
     favourites:
       favouritesReducer,
+
+    previewMode: previewModeReducer,
   });
 
 const persistConfig = {

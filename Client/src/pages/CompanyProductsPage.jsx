@@ -120,6 +120,21 @@ const CompanyProductsPage = () => {
 
             <div className="bb-company-info">
               <h1 className="bb-company-name">{companyName}</h1>
+              
+              {(companyInfo?.region?.length > 0 || companyInfo?.governorates?.length > 0 || companyInfo?.sectors?.length > 0) && (
+                <div className="bb-company-meta-badges">
+                  {companyInfo?.region?.map((r) => (
+                    <span key={r} className="bb-company-meta-badge">📍 {r}</span>
+                  ))}
+                  {companyInfo?.governorates?.map((g) => (
+                    <span key={g} className="bb-company-meta-badge">🏛️ {g}</span>
+                  ))}
+                  {companyInfo?.sectors?.map((s) => (
+                    <span key={s._id} className="bb-company-meta-badge">🏷️ {s.name}</span>
+                  ))}
+                </div>
+              )}
+
               <p className="bb-company-desc">
                 {companyInfo?.description || "No description available."}
               </p>

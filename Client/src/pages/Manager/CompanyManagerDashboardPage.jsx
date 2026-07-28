@@ -2,13 +2,65 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getMyCompanyProducts } from "../../services/companyManagerProductService";
+import { getMyCompanyOrders } from "../../services/companyManagerOrderService";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import "../Admin/AdminDashboard.css";
 import "../Admin/AdminProductsPage.css";
+
+const buildOrderAnalytics = (orders = []) => {
+  const now = new Date();
+  const trend = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(now);
+    date.setDate(now.getDate() - (6 - index));
+    return {
+      name: date.toLocaleDateString("en", { month: "short", day: "numeric" }),
+      orders: 0,
+      revenue: 0,
+    };
+  });
+
+  let totalRevenue = 0;
+
+  (orders || []).forEach((order) => {
+    if (!order?.createdAt) return;
+    if (order.status === "cancelled") return;
+
+    const orderDate = new Date(order.createdAt);
+    if (Number.isNaN(orderDate.getTime())) return;
+
+    const diffDays = Math.floor((now - orderDate) / (1000 * 60 * 60 * 24));
+    if (diffDays < 0 || diffDays >= 7) return;
+
+    const dayIndex = 6 - diffDays;
+    trend[dayIndex].orders += 1;
+
+    if (order.status === "delivered") {
+      const revenue = Number(order.companySubtotal || 0);
+      trend[dayIndex].revenue += revenue;
+      totalRevenue += revenue;
+    }
+  });
+
+  return { trend, totalRevenue };
+};
 
 const CompanyManagerDashboardPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useSelector((state) => state.auth);
+  const [analytics, setAnalytics] = useState({
+    trend: [],
+    totalRevenue: 0,
+    loading: true,
+  });
 
   useEffect(() => {
     const loadProducts = async () => {
@@ -18,11 +70,17 @@ const CompanyManagerDashboardPage = () => {
       }
 
       try {
-        const data = await getMyCompanyProducts(token);
-        setProducts(data);
+        const [productData, orderData] = await Promise.all([
+          getMyCompanyProducts(token),
+          getMyCompanyOrders(),
+        ]);
+        setProducts(productData);
+        const { trend, totalRevenue } = buildOrderAnalytics(orderData || []);
+        setAnalytics({ trend, totalRevenue, loading: false });
       } catch (error) {
         console.error(error);
         setProducts([]);
+        setAnalytics((prev) => ({ ...prev, loading: false }));
       } finally {
         setLoading(false);
       }
@@ -53,12 +111,101 @@ const CompanyManagerDashboardPage = () => {
       <div className="admin-dashboard__hero">
         <div className="admin-dashboard__hero-content">
           <h1 className="admin-dashboard__title">Company Manager Dashboard</h1>
-          <p className="admin-dashboard__subtitle">Manage your company products</p>
+          <p className="admin-dashboard__subtitle">Manage your company products and orders</p>
         </div>
         <Link to="/company-manager/products/add" className="admin-button">
           Add Product
         </Link>
       </div>
+
+      {/* ===== ANALYTICS ===== */}
+      <section className="admin-dashboard__analytics">
+        <div className="admin-dashboard__section-header">
+          <div>
+            <h2 className="admin-dashboard__section-title">Sales Insights</h2>
+            <p className="admin-dashboard__section-subtitle">
+              A quick view of your company's recent order momentum and revenue.
+            </p>
+          </div>
+        </div>
+
+        {analytics.loading ? (
+          <div className="admin-dashboard__analytics-grid">
+            <article className="admin-card admin-analytics-card admin-analytics-card--loading">
+              <div className="admin-analytics-card__placeholder" />
+              <div className="admin-analytics-card__placeholder admin-analytics-card__placeholder--wide" />
+            </article>
+            <article className="admin-card admin-analytics-card admin-analytics-card--loading">
+              <div className="admin-analytics-card__placeholder" />
+              <div className="admin-analytics-card__placeholder admin-analytics-card__placeholder--wide" />
+            </article>
+          </div>
+        ) : analytics.trend.length ? (
+          <div className="admin-dashboard__analytics-grid">
+            <article className="admin-card admin-analytics-card">
+              <div className="admin-analytics-card__header">
+                <div>
+                  <p className="admin-card__label">Order Trend</p>
+                  <h3 className="admin-analytics-card__title">Daily orders</h3>
+                </div>
+                <span className="admin-analytics-card__badge">Last 7 days</span>
+              </div>
+              <div className="admin-analytics-card__chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={analytics.trend}>
+                    <defs>
+                      <linearGradient id="cmOrdersFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#2563eb" stopOpacity={0.42} />
+                        <stop offset="95%" stopColor="#2563eb" stopOpacity={0.04} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="rgba(148, 163, 184, 0.22)" vertical={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="orders" stroke="#2563eb" fill="url(#cmOrdersFill)" strokeWidth={3} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </article>
+
+            <article className="admin-card admin-analytics-card">
+              <div className="admin-analytics-card__header">
+                <div>
+                  <p className="admin-card__label">Revenue Trend</p>
+                  <h3 className="admin-analytics-card__title">Daily revenue</h3>
+                </div>
+                <span className="admin-analytics-card__badge">{analytics.totalRevenue.toLocaleString()} EGP</span>
+              </div>
+              <div className="admin-analytics-card__chart">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={analytics.trend}>
+                    <defs>
+                      <linearGradient id="cmRevenueFill" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#06b6d4" stopOpacity={0.42} />
+                        <stop offset="95%" stopColor="#06b6d4" stopOpacity={0.04} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid stroke="rgba(148, 163, 184, 0.22)" vertical={false} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <Tooltip formatter={(value) => [`${value} EGP`, "Revenue"]} />
+                    <Area type="monotone" dataKey="revenue" stroke="#06b6d4" fill="url(#cmRevenueFill)" strokeWidth={3} />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </article>
+          </div>
+        ) : (
+          <article className="admin-card admin-analytics-card admin-analytics-card--empty">
+            <p className="admin-card__label">Analytics</p>
+            <h3 className="admin-analytics-card__title">No order activity yet</h3>
+            <p className="admin-dashboard__section-subtitle">
+              Orders will appear here as soon as customers purchase your products.
+            </p>
+          </article>
+        )}
+      </section>
 
       {products.length === 0 ? (
         <div className="admin-products-empty-state">
@@ -80,7 +227,6 @@ const CompanyManagerDashboardPage = () => {
                     <th>Product Name</th>
                     <th>Category</th>
                     <th>Price</th>
-                    <th>Stock</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -94,9 +240,6 @@ const CompanyManagerDashboardPage = () => {
                       </td>
                       <td>
                         <div className="admin-products-table__meta">${product.price}</div>
-                      </td>
-                      <td>
-                        <div className="admin-products-table__meta">{product.stock}</div>
                       </td>
                     </tr>
                   ))}
@@ -117,7 +260,6 @@ const CompanyManagerDashboardPage = () => {
                   </div>
                   <div className="admin-products-card__footer" style={{marginTop: '12px'}}>
                     <span className="admin-products-card__price">${product.price}</span>
-                    <span className="admin-products-card__placement">Stock: {product.stock}</span>
                   </div>
                 </div>
               </article>

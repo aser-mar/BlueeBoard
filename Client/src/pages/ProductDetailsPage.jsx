@@ -71,6 +71,10 @@ const ProductDetailsPage = () => {
     (state) => state.auth
   );
 
+  const { isPreviewMode } = useSelector(
+    (state) => state.previewMode
+  );
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -101,6 +105,11 @@ const ProductDetailsPage = () => {
   const addProductToCart =
     () => {
 
+      if (isPreviewMode) {
+        alert("This action is disabled in Preview Mode.");
+        return;
+      }
+
       if (!userInfo) {
         navigate("/login");
         return;
@@ -120,6 +129,11 @@ const ProductDetailsPage = () => {
 
   const handleFavourite =
     () => {
+
+      if (isPreviewMode) {
+        alert("This action is disabled in Preview Mode.");
+        return;
+      }
 
       if (!userInfo) {
         navigate("/login");
@@ -245,21 +259,11 @@ const ProductDetailsPage = () => {
           <div className="bb-details-info-col">
             <div className="bb-info-card">
               
-              {/* Meta Row: category & stock badge */}
+              {/* Meta Row: category badge */}
               <div className="bb-info-meta">
                 <span className="bb-category-badge">
                   {product.category?.name || "Product"}
                 </span>
-
-                {product.stock > 0 ? (
-                  <span className="bb-stock-badge in-stock">
-                    <HiOutlineCheckCircle /> In Stock ({product.stock})
-                  </span>
-                ) : (
-                  <span className="bb-stock-badge out-of-stock">
-                    <HiOutlineXCircle /> Out of Stock
-                  </span>
-                )}
               </div>
 
               {/* Product Title */}
@@ -287,7 +291,6 @@ const ProductDetailsPage = () => {
               <div className="bb-info-actions">
                 <button
                   onClick={addProductToCart}
-                  disabled={product.stock <= 0}
                   className="bb-btn bb-btn--primary"
                 >
                   <HiOutlineShoppingCart /> Add To Cart
@@ -305,9 +308,19 @@ const ProductDetailsPage = () => {
                   <FaHeart />
                 </button>
 
-                <Link to={userInfo ? "/cart" : "/login"} className="bb-btn bb-btn--secondary">
-                  Go To Cart
-                </Link>
+                {isPreviewMode ? (
+                  <button
+                    type="button"
+                    className="bb-btn bb-btn--secondary"
+                    onClick={() => alert("This action is disabled in Preview Mode.")}
+                  >
+                    Go To Cart
+                  </button>
+                ) : (
+                  <Link to={userInfo ? "/cart" : "/login"} className="bb-btn bb-btn--secondary">
+                    Go To Cart
+                  </Link>
+                )}
               </div>
 
               {/* Company Info Section */}

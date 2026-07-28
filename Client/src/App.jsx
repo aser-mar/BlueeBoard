@@ -65,6 +65,9 @@ import AdminOrdersPage
 import AdminCategoriesPage
   from "./pages/Admin/AdminCategoriesPage";
 
+import AdminSectorsPage
+  from "./pages/Admin/AdminSectorsPage";
+
 import RegisterPage
   from "./pages/RegisterPage";
 
@@ -98,16 +101,21 @@ import CompanyManagerEditProductPage
 import CompanyManagerDashboardPage
   from "./pages/Manager/CompanyManagerDashboardPage";
 
+import CompanyManagerOrdersPage
+  from "./pages/Manager/CompanyManagerOrdersPage";
+
 import AdminProfilePage 
   from "./pages/Admin/AdminProfilePage";
+
+import SessionGuard from "./components/SessionGuard";
 
 function App() {
 
   return (
 
     <BrowserRouter>
-
-      <Routes>
+      <SessionGuard>
+        <Routes>
 
   <Route element={<PublicLayout />}>
 
@@ -231,6 +239,11 @@ function App() {
           />
 
           <Route
+            path="sectors"
+            element={<AdminSectorsPage />}
+          />
+
+          <Route
             path="company-managers"
             element={<AdminCompanyManagersPage />}
           />
@@ -278,6 +291,11 @@ function App() {
             path="products/:id/edit"
             element={<CompanyManagerEditProductPage />}
           />
+
+          <Route
+            path="orders"
+            element={<CompanyManagerOrdersPage />}
+          />
         </Route>
 
         <Route
@@ -285,8 +303,8 @@ function App() {
           element={<NotFoundPage />}
         />
 
-      </Routes>
-
+        </Routes>
+      </SessionGuard>
     </BrowserRouter>
   );
 }

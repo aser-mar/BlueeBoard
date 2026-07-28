@@ -10,12 +10,13 @@ const AdminRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (
-  userInfo.role !== "admin" &&
-  userInfo.role !== "company_manager"
-) {
-  return <Navigate to="/" replace />;
-}
+  if (userInfo.role === "companyManager") {
+    return <Navigate to="/company-manager" replace />;
+  }
+
+  if (userInfo.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
 
   return children;
 };

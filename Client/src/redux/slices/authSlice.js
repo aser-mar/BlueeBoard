@@ -45,6 +45,11 @@ const authSlice = createSlice({
         "token",
         action.payload.token
       );
+
+      const role = action.payload.userInfo?.role;
+      if (role === "admin" || role === "companyManager") {
+        sessionStorage.setItem("privilegedSessionActive", "true");
+      }
     },
 
     logout: (state) => {
@@ -60,6 +65,8 @@ const authSlice = createSlice({
       localStorage.removeItem(
         "token"
       );
+
+      sessionStorage.removeItem("privilegedSessionActive");
     },
   },
 });

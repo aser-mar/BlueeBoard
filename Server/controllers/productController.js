@@ -115,7 +115,6 @@ const createProduct =
         description,
         price,
         images,
-        stock,
         category,
         company,
         placement,
@@ -127,7 +126,6 @@ const createProduct =
           description,
           price,
           images,
-          stock,
           category,
           company,
           placement:
@@ -200,10 +198,6 @@ const updateProduct = async (req, res) => {
     product.price =
       req.body.price ??
       product.price;
-
-    product.stock =
-      req.body.stock ??
-      product.stock;
 
     product.category =
       req.body.category ||

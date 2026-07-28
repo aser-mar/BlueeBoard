@@ -1,6 +1,7 @@
 import {
   useEffect,
   useState,
+  useRef,
 } from "react";
 
 import {
@@ -16,11 +17,13 @@ import {
 } from "../services/productService";
 
 import HomeBanner from "../components/HomeBanner";
+import CompanyFilters from "../components/CompanyFilters";
 
 import {
   HiOutlineOfficeBuilding,
   // HiOutlineStar,
   HiOutlineArrowRight,
+  HiOutlineArrowLeft,
   // HiOutlineSparkles,
 } from "react-icons/hi";
 
@@ -33,10 +36,51 @@ const HomePage = () => {
   const [companies, setCompanies] =
     useState([]);
 
+  const [filters, setFilters] = useState({
+    region: "All",
+    governorate: "All",
+    sector: "All",
+    search: "",
+  });
+
   const [
     featuredProducts,
     setFeaturedProducts,
   ] = useState([]);
+
+  const companiesTrackRef = useRef(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
+  const [dragMoved, setDragMoved] = useState(false);
+
+  const scrollCompanies = (direction) => {
+    const track = companiesTrackRef.current;
+    if (!track) return;
+    const scrollAmount = track.clientWidth * 0.8;
+    track.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
+
+  const handleMouseDown = (e) => {
+    const track = companiesTrackRef.current;
+    setIsDragging(true);
+    setDragMoved(false);
+    setDragStart({ x: e.pageX - track.offsetLeft, scrollLeft: track.scrollLeft });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    e.preventDefault();
+    setDragMoved(true);
+    const track = companiesTrackRef.current;
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x - dragStart.x) * 1.5;
+    track.scrollLeft = dragStart.scrollLeft - walk;
+  };
+
+  const handleMouseUp = () => setIsDragging(false);
 
   // FETCH COMPANIES
   useEffect(() => {
@@ -45,9 +89,14 @@ const HomePage = () => {
       async () => {
 
         try {
+          const params = {};
+          if (filters.region !== "All") params.region = filters.region;
+          if (filters.governorate !== "All") params.governorate = filters.governorate;
+          if (filters.sector !== "All") params.sector = filters.sector;
+          if (filters.search) params.search = filters.search;
 
           const data =
-            await getCompanies();
+            await getCompanies(params);
 
           setCompanies(data);
 
@@ -59,7 +108,7 @@ const HomePage = () => {
 
     fetchCompanies();
 
-  }, []);
+  }, [filters]);
 
   // FETCH FEATURED PRODUCTS
   useEffect(() => {
@@ -135,7 +184,26 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className="bb-companies-grid">
+        <CompanyFilters onFilterChange={setFilters} companies={companies} />
+
+        <div className="bb-companies-carousel-wrap">
+          <button
+            type="button"
+            className="bb-companies-carousel-arrow bb-companies-carousel-arrow--left"
+            onClick={() => scrollCompanies("left")}
+            aria-label="Scroll left"
+          >
+            <HiOutlineArrowLeft />
+          </button>
+
+          <div 
+            className="bb-companies-carousel-track" 
+            ref={companiesTrackRef}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
 
           {
             companies.map(
@@ -149,6 +217,9 @@ const HomePage = () => {
                   to={`/company/${company._id}`}
 
                   className="bb-company-card"
+                  onClick={(e) => {
+                    if (dragMoved) e.preventDefault();
+                  }}
                 >
 
                   {
@@ -197,6 +268,16 @@ const HomePage = () => {
             )
           }
 
+          </div>
+
+          <button
+            type="button"
+            className="bb-companies-carousel-arrow bb-companies-carousel-arrow--right"
+            onClick={() => scrollCompanies("right")}
+            aria-label="Scroll right"
+          >
+            <HiOutlineArrowRight />
+          </button>
         </div>
 
       </div>

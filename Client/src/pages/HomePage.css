@@ -283,12 +283,94 @@
   font-weight: 400;
 }
 
-/* ---------- Company Cards Grid ---------- */
-.bb-companies-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 20px;
+/* ---------- Company Carousel ---------- */
+.bb-companies-carousel-wrap {
+  position: relative;
+  width: 100%;
   animation: bbFadeInUp 0.6s var(--bb-ease) 0.1s both;
+}
+
+.bb-companies-carousel-track {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scroll-snap-type: x proximity;
+  padding: 4px 56px 12px;
+  cursor: grab;
+  user-select: none;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.bb-companies-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.bb-companies-carousel-track:active {
+  cursor: grabbing;
+}
+
+.bb-companies-carousel-track .bb-company-card {
+  flex: 0 0 auto;
+  width: 180px;
+  scroll-snap-align: start;
+}
+
+.bb-companies-carousel-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--bb-surface-card);
+  border: 1px solid var(--bb-card-border);
+  box-shadow: var(--bb-card-shadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--bb-blue);
+  font-size: 1.2rem;
+  transition: transform var(--bb-duration) var(--bb-ease), box-shadow var(--bb-duration) var(--bb-ease), background var(--bb-duration) var(--bb-ease);
+  z-index: 2;
+}
+
+.bb-companies-carousel-arrow--left {
+  left: 0;
+}
+
+.bb-companies-carousel-arrow--right {
+  right: 0;
+}
+
+.bb-companies-carousel-arrow:hover {
+  background: var(--bb-blue);
+  color: #fff;
+  transform: translateY(-50%) scale(1.08);
+  box-shadow: var(--bb-card-shadow-hover);
+}
+
+.bb-companies-carousel-arrow:active {
+  transform: translateY(-50%) scale(0.96);
+}
+
+@media (max-width: 640px) {
+  .bb-companies-carousel-arrow {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .bb-companies-carousel-track {
+    padding: 4px 44px 12px;
+    gap: 14px;
+  }
+
+  .bb-companies-carousel-track .bb-company-card {
+    width: 140px;
+  }
 }
 
 .bb-company-card {
@@ -740,11 +822,6 @@
     padding: 0 16px;
   }
 
-  .bb-companies-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 14px;
-  }
-
   .bb-company-card {
     padding: 20px 12px 18px;
   }
@@ -795,11 +872,6 @@
 
   .bb-hero__title {
     font-size: 1.6rem;
-  }
-
-  .bb-companies-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
   }
 
   .bb-product-card__body {

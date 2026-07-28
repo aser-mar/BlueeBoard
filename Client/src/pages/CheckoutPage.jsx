@@ -48,6 +48,10 @@ const {
   (state) => state.auth
 );
 
+const { isPreviewMode } = useSelector(
+  (state) => state.previewMode
+);
+
     const [name, setName] =
       useState("");
 
@@ -169,6 +173,11 @@ console.log(
         navigate("/login");
 
         return;
+        }
+
+        if (isPreviewMode) {
+          alert("Checkout is disabled in Preview Mode.");
+          return;
         }
 
         console.log("BUTTON CLICKED");

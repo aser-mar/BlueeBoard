@@ -254,7 +254,6 @@ const AdminProductsPage =
                     <div className="product-meta admin-products-meta">
                       <span className="badge muted">{product.category?.name || "No Category"}</span>
                       <span className="badge muted">{product.company?.name || "-"}</span>
-                      <span className="badge muted">Stock: {product.stock}</span>
                     </div>
                     <div className="product-price admin-products-price">{product.price} EGP</div>
                   </div>

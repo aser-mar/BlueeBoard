@@ -188,6 +188,8 @@ const AdminCompaniesPage = () => {
                     <th>Logo</th>
                     <th>Company Name</th>
                     <th>Description</th>
+                    <th>Governorates</th>
+                    <th>Sectors</th>
                     <th>Status</th>
                     <th>Actions</th>
                   </tr>
@@ -212,6 +214,16 @@ const AdminCompaniesPage = () => {
                       <td>
                         <div className="admin-companies-table__description">
                           {company.description || "No description available"}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="admin-companies-table__description">
+                          {company.governorates?.length > 0 ? company.governorates.join(", ") : "No governorates"}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="admin-companies-table__description">
+                          {company.sectors?.length > 0 ? company.sectors.map(s => s.name).join(", ") : "No sectors"}
                         </div>
                       </td>
                       <td>
@@ -265,6 +277,12 @@ const AdminCompaniesPage = () => {
                     <h3>{company.name}</h3>
                     <p className="admin-companies-card__company-description">
                       {company.description || "No description available"}
+                    </p>
+                    <p className="admin-companies-card__company-description">
+                      <strong>Governorates:</strong> {company.governorates?.length > 0 ? company.governorates.join(", ") : "None"}
+                    </p>
+                    <p className="admin-companies-card__company-description">
+                      <strong>Sectors:</strong> {company.sectors?.length > 0 ? company.sectors.map(s => s.name).join(", ") : "None"}
                     </p>
                   </div>
                 </div>

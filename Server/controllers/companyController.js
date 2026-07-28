@@ -10,6 +10,9 @@ const createCompany =
         name,
         description,
         logo,
+        governorates,
+        region,
+        sectors,
       } = req.body;
 
       const company = await Company.create({
@@ -19,6 +22,9 @@ const createCompany =
           url: logo.url,
           public_id: logo.public_id,
         },
+        governorates,
+        region,
+        sectors,
       });
 
       res.status(201).json(
@@ -33,24 +39,36 @@ const createCompany =
     }
 };
 
-const getCompanies =
-  async (req, res) => {
+const getCompanies = async (req, res) => {
+  try {
+    const { governorate, region, sector, search } = req.query;
 
-    try {
+    let filter = {};
 
-      const companies =
-        await Company.find();
-
-      res.status(200).json(
-        companies
-      );
-
-    } catch (error) {
-
-      res.status(500).json({
-        message: error.message,
-      });
+    if (governorate && governorate !== "All") {
+      filter.governorates = governorate;
     }
+
+    if (region && region !== "All") {
+      filter.region = region;
+    }
+
+    if (sector && sector !== "All") {
+      filter.sectors = sector;
+    }
+
+    if (search) {
+      filter.name = { $regex: search, $options: "i" };
+    }
+
+    const companies = await Company.find(filter).populate("sectors");
+
+    res.status(200).json(companies);
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
 };
 
 const getCompanyById =
@@ -61,7 +79,7 @@ const getCompanyById =
       const company =
         await Company.findById(
           req.params.id
-        );
+        ).populate("sectors");
 
       if (!company) {
         return res.status(404).json({
@@ -142,6 +160,18 @@ const updateCompany =
       company.description =
         req.body.description ||
         company.description;
+
+      company.governorates =
+        req.body.governorates ||
+        company.governorates;
+
+      company.region =
+        req.body.region ||
+        company.region;
+
+      company.sectors =
+        req.body.sectors ||
+        company.sectors;
 
       if (req.body.logo) {
 

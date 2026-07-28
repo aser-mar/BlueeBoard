@@ -51,7 +51,6 @@ const createMyCompanyProduct = async (req, res) => {
       description,
       price,
       images,
-      stock,
       category,
     } = req.body;
 
@@ -82,7 +81,6 @@ const createMyCompanyProduct = async (req, res) => {
       description,
       price,
       images,
-      stock,
       category,
       company: req.user.company,
       placement: "normal",
@@ -183,10 +181,6 @@ product.description =
 product.price =
   req.body.price ??
   product.price;
-
-product.stock =
-  req.body.stock ??
-  product.stock;
 
 product.category =
   req.body.category ||

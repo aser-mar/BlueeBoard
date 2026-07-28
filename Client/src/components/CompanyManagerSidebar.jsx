@@ -16,6 +16,10 @@ import {
 } from "../redux/slices/authSlice";
 
 import {
+  enterPreviewMode,
+} from "../redux/slices/previewModeSlice";
+
+import {
   clearCart,
 } from "../redux/slices/cartSlice";
 
@@ -26,7 +30,9 @@ import {
 import {
   HiOutlineViewGrid,
   HiOutlineShoppingBag,
+  HiOutlineClipboardList,
   HiOutlineLogout,
+  HiOutlineEye,
 } from "react-icons/hi";
 
 import Logo from "./Logo";
@@ -57,6 +63,11 @@ const CompanyManagerSidebar = () => {
 
     navigate("/");
 
+  };
+
+  const enterPreview = () => {
+    dispatch(enterPreviewMode());
+    navigate("/");
   };
 
   return (
@@ -121,18 +132,42 @@ const CompanyManagerSidebar = () => {
 
           </NavLink>
 
+          <NavLink
+            to="/company-manager/orders"
+            onClick={closeMobile}
+          >
+
+            <HiOutlineClipboardList />
+
+            Orders
+
+          </NavLink>
+
         </nav>
 
-        <button
-          className="sidebar__logout"
-          onClick={logoutHandler}
-        >
+        <div className="sidebar__bottom-actions">
+          <button
+            className="sidebar__preview-btn"
+            onClick={enterPreview}
+          >
 
-          <HiOutlineLogout />
+            <HiOutlineEye />
 
-          Logout
+            View as User
 
-        </button>
+          </button>
+
+          <button
+            className="sidebar__logout"
+            onClick={logoutHandler}
+          >
+
+            <HiOutlineLogout />
+
+            Logout
+
+          </button>
+        </div>
 
       </aside>
 

@@ -4,13 +4,10 @@ const API_URL =
   "/companies";
 
 // GET ALL
-export const getCompanies =
-  async () => {
-    const response =
-      await api.get(API_URL);
-
-    return response.data;
-  };
+export const getCompanies = async (params = {}) => {
+  const response = await api.get(API_URL, { params });
+  return response.data;
+};
 
 // GET BY ID
 export const getCompanyById =

@@ -23,7 +23,7 @@ const createOrder =
   paymentMethod, // ⭐ الجديد
 } = req.body;
 
-      // CHECK STOCK
+      // VERIFY PRODUCTS EXIST
       for (const item of items) {
 
         const product =
@@ -38,20 +38,6 @@ const createOrder =
             .json({
               message:
                 "Product not found",
-            });
-        }
-
-        // OUT OF STOCK
-        if (
-          product.stock <
-          item.quantity
-        ) {
-
-          return res
-            .status(400)
-            .json({
-              message:
-                `${product.name} is out of stock`,
             });
         }
       }
@@ -75,19 +61,6 @@ const createOrder =
           paymentMethod, // 💳 حفظ طريقة الدفع
         });
 
-      // DEDUCT STOCK
-      for (const item of items) {
-
-        const product =
-          await Product.findById(
-            item.product
-          );
-
-        product.stock -=
-          item.quantity;
-
-        await product.save();
-      }
 
       await sendEmail({
         to: process.env.EMAIL_USER,

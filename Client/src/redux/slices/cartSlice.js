@@ -99,20 +99,14 @@ const cartSlice =
                 item._id
             );
 
-          if (
-            existingItem
-          ) {
-
             if (
-              existingItem.quantity <
-              item.stock
+              existingItem
             ) {
 
               existingItem.quantity +=
                 1;
-            }
 
-          } else {
+            } else {
 
             state.cartItems.push({
               ...item,
@@ -139,9 +133,7 @@ const cartSlice =
             );
 
           if (
-            item &&
-            item.quantity <
-              item.stock
+            item
           ) {
 
             item.quantity +=
@@ -179,6 +171,21 @@ const cartSlice =
             state.cartItems
           );
         },
+
+      setQuantity: (state, action) => {
+        const { id, quantity } = action.payload;
+
+        const item = state.cartItems.find(
+          (product) => product._id === id
+        );
+
+        if (item) {
+          const validQuantity = Math.max(1, Math.floor(Number(quantity)) || 1);
+          item.quantity = validQuantity;
+        }
+
+        saveCartToStorage(state.cartItems);
+      },
 
       removeFromCart:
         (
@@ -225,6 +232,7 @@ export const {
   increaseQuantity,
   decreaseQuantity,
   removeFromCart,
+  setQuantity,
   clearCart,
   loadUserCart,
 } = cartSlice.actions;

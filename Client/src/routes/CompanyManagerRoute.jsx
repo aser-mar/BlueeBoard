@@ -10,6 +10,10 @@ const CompanyManagerRoute = ({ children }) => {
     return <Navigate to="/login" replace />;
   }
 
+  if (userInfo.role === "admin") {
+    return <Navigate to="/admin" replace />;
+  }
+
   if (userInfo.role !== "companyManager") {
     return <Navigate to="/" replace />;
   }

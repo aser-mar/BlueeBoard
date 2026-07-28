@@ -34,6 +34,23 @@ const companySchema = new mongoose.Schema(
       default: "",
     },
 
+    governorates: {
+      type: [String],
+      default: [],
+    },
+
+    region: {
+      type: [String],
+      default: [],
+    },
+
+    sectors: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Sector",
+      },
+    ],
+
     isActive: {
       type: Boolean,
       default: true,

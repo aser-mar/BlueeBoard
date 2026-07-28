@@ -110,7 +110,7 @@
 .sidebar__logout {
   position: relative;
   z-index: 1;
-  margin: 20px;
+  margin: 0;
   border: 1px solid rgba(248, 113, 113, 0.2);
   background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(220, 38, 38, 0.24));
   color: #ffe4e6;
@@ -279,4 +279,47 @@
     opacity: 1;
     pointer-events: auto;
   }
-}
+}
+
+.sidebar__bottom-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 20px 20px;
+}
+
+.sidebar__preview-btn {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+  background: rgba(96, 165, 250, 0.12);
+  color: #bfdbfe;
+  padding: 12px 14px;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 0.94rem;
+  font-weight: 700;
+  transition: transform 180ms ease, box-shadow 180ms ease, background 180ms ease;
+}
+
+.sidebar__preview-btn:hover {
+  transform: translateY(-1px);
+  background: rgba(96, 165, 250, 0.2);
+  box-shadow: 0 10px 24px rgba(96, 165, 250, 0.16);
+}
+
+.sidebar.collapsed .sidebar__preview-btn {
+  padding: 12px 0;
+  font-size: 0;
+  gap: 0;
+}
+
+.sidebar.collapsed .sidebar__preview-btn svg {
+  font-size: 1.2rem;
+  margin: 0 auto;
+}

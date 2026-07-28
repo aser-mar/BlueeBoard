@@ -43,8 +43,6 @@ const AdminEditProductPage =
     const [images, setImages] =
       useState(null);
 
-    const [stock, setStock] =
-      useState("");
 
     const [category, setCategory] =
       useState("");
@@ -98,9 +96,6 @@ const AdminEditProductPage =
               data.images?.[0] || null
             );
 
-            setStock(
-              data.stock || ""
-            );
 
             setCategory(
               data.category?._id ||
@@ -193,16 +188,6 @@ const AdminEditProductPage =
           return false;
         }
 
-        if (
-          Number(stock) < 0
-        ) {
-
-          setError(
-            "Stock cannot be negative"
-          );
-
-          return false;
-        }
 
         if (!category) {
 
@@ -250,7 +235,7 @@ const AdminEditProductPage =
               ]
               : [],
 
-            stock: Number(stock),
+
 
             category,
 
@@ -330,10 +315,7 @@ const AdminEditProductPage =
                   <label>Price</label>
                   <input type="number" placeholder="Price" value={price} onChange={(e) => setPrice(e.target.value)} />
                 </div>
-                <div className="form-group">
-                  <label>Stock</label>
-                  <input type="number" placeholder="Stock" value={stock} onChange={(e) => setStock(e.target.value)} />
-                </div>
+
               </div>
             </div>
 

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { getOrders, updateOrderStatus } from "../../services/orderService";
+import {
+  getMyCompanyOrders,
+  updateMyCompanyOrderStatus,
+} from "../../services/companyManagerOrderService";
 import {
   HiOutlineClipboardList,
   HiOutlineSearch,
@@ -9,11 +11,9 @@ import {
   HiOutlineEye,
 } from "react-icons/hi";
 
-import "./AdminOrdersPage.css";
+import "../Admin/AdminOrdersPage.css";
 
-const AdminOrdersPage = () => {
-  const { token } = useSelector((state) => state.auth);
-
+const CompanyManagerOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -28,10 +28,10 @@ const AdminOrdersPage = () => {
   useEffect(() => {
     const loadOrders = async () => {
       try {
-        const data = await getOrders(token);
+        const data = await getMyCompanyOrders();
         setOrders(data || []);
-      } catch (error) {
-        console.log(error);
+      } catch (err) {
+        console.log(err);
         setError("Failed to load orders");
       } finally {
         setLoading(false);
@@ -39,17 +39,21 @@ const AdminOrdersPage = () => {
     };
 
     loadOrders();
-  }, [token]);
+  }, []);
 
-  // UPDATE STATUS (keep existing functionality)
+  // UPDATE STATUS
   const handleStatusChange = async (id, status) => {
     try {
       setUpdatingId(id);
-      const updated = await updateOrderStatus(id, status, token);
-      setOrders((prev) => prev.map((order) => (order._id === id ? updated : order)));
-    } catch (error) {
-      console.log(error);
-      alert("Failed to update order");
+      await updateMyCompanyOrderStatus(id, status);
+      setOrders((prev) =>
+        prev.map((order) =>
+          order._id === id ? { ...order, status } : order
+        )
+      );
+    } catch (err) {
+      console.log(err);
+      alert("Failed to update order status");
     } finally {
       setUpdatingId(null);
     }
@@ -100,8 +104,8 @@ const AdminOrdersPage = () => {
             <HiOutlineClipboardList />
           </div>
           <div>
-            <h1 className="hero-title">Manage Orders</h1>
-            <p className="hero-sub">Track, update and manage customer orders.</p>
+            <h1 className="hero-title">My Company Orders</h1>
+            <p className="hero-sub">Track and update orders containing your company's products.</p>
           </div>
         </div>
       </header>
@@ -174,7 +178,7 @@ const AdminOrdersPage = () => {
               <tr>
                 <th>Order ID</th>
                 <th>Customer</th>
-                <th>Total Price</th>
+                <th>My Subtotal</th>
                 <th>Status</th>
                 <th>Date</th>
                 <th>Actions</th>
@@ -188,11 +192,12 @@ const AdminOrdersPage = () => {
                     <div className="customer-name">{order.customerName}</div>
                     <div className="customer-email">{order.user?.email}</div>
                   </td>
-                  <td>{order.totalPrice} EGP</td>
+                  <td>{order.companySubtotal?.toLocaleString()} EGP</td>
                   <td>
                     <span className={`status-badge ${order.status}`}>{order.status}</span>
                   </td>
-                  <td>{order.createdAt || order.updatedAt ? new Date(order.createdAt || order.updatedAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) : "N/A"}</td><td>
+                  <td>{order.createdAt ? new Date(order.createdAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) : "N/A"}</td>
+                  <td>
                     <div className="actions">
                       <button
                         type="button"
@@ -234,7 +239,7 @@ const AdminOrdersPage = () => {
               <div className={`status-badge ${order.status}`}>{order.status}</div>
             </div>
             <div className="card-row muted">{order.customerName}</div>
-            <div className="card-row">Total: <strong>{order.totalPrice} EGP</strong></div>
+            <div className="card-row">My Subtotal: <strong>{order.companySubtotal?.toLocaleString()} EGP</strong></div>
             <div className="card-actions">
               <button
                 type="button"
@@ -336,7 +341,7 @@ const AdminOrdersPage = () => {
 
               <div className="order-details-row order-details-row--total">
                 <span className="order-details-label">Total Price</span>
-                <span className="order-details-value">{selectedOrder.totalPrice} EGP</span>
+                <span className="order-details-value">{selectedOrder.companySubtotal} EGP</span>
               </div>
             </div>
           </div>
@@ -346,4 +351,4 @@ const AdminOrdersPage = () => {
   );
 };
 
-export default AdminOrdersPage;
+export default CompanyManagerOrdersPage;

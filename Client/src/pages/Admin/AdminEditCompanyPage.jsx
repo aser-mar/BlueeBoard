@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { getCompanyById, updateCompany } from "../../services/companyService";
+import { getSectors } from "../../services/sectorService";
+import EGYPT_REGIONS from "../../constants/egyptRegions";
 import ImageUploader from "../../components/ImageUploader";
 import {
   HiOutlineOfficeBuilding,
@@ -29,6 +31,10 @@ const AdminEditCompanyPage =
     const [logo, setLogo] =
       useState(null);
 
+    const [selectedGovernorates, setSelectedGovernorates] = useState([]);
+    const [sectors, setSectors] = useState([]);
+    const [selectedSectors, setSelectedSectors] = useState([]);
+
     const [error, setError] =
       useState("");
 
@@ -40,6 +46,18 @@ const AdminEditCompanyPage =
     //   useState(false);
 
     // Image upload handled by ImageUploader component
+
+    useEffect(() => {
+      const fetchSectors = async () => {
+        try {
+          const data = await getSectors();
+          setSectors(data || []);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      fetchSectors();
+    }, []);
 
     useEffect(() => {
 
@@ -68,6 +86,9 @@ const AdminEditCompanyPage =
               data.logo || null
             );
 
+            setSelectedGovernorates(data.governorates || []);
+            setSelectedSectors(data.sectors?.map(s => s._id || s) || []);
+
           } catch (error) {
 
             console.log(error);
@@ -93,11 +114,18 @@ const AdminEditCompanyPage =
 
         try {
 
+          const derivedRegions = [...new Set(selectedGovernorates.map((gov) => {
+            return EGYPT_REGIONS.find((r) => r.governorates.includes(gov))?.region;
+          }).filter(Boolean))];
+
           const companyData =
           {
             name,
             description,
             logo,
+            governorates: selectedGovernorates,
+            region: derivedRegions,
+            sectors: selectedSectors,
           };
 
           await updateCompany(
@@ -133,6 +161,16 @@ const AdminEditCompanyPage =
 
       if (!logo) {
         setError("Please upload company logo");
+        return false;
+      }
+
+      if (selectedGovernorates.length === 0) {
+        setError("Please select at least one governorate");
+        return false;
+      }
+
+      if (selectedSectors.length === 0) {
+        setError("Please select at least one sector");
         return false;
       }
 
@@ -187,6 +225,63 @@ const AdminEditCompanyPage =
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
+            </div>
+          </section>
+
+          {/* Governorates & Regions */}
+          <section className="form-section">
+            <div className="form-section-title">
+              <span>📍</span>
+              Governorates &amp; Regions
+            </div>
+            {EGYPT_REGIONS.map((regionObj) => (
+              <div key={regionObj.region}>
+                <div className="company-form-region-heading">{regionObj.region}</div>
+                <div className="admin-categories-companies-list">
+                  {regionObj.governorates.map((gov) => (
+                    <label key={gov} className="admin-categories-company-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedGovernorates.includes(gov)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedGovernorates((prev) => [...prev, gov]);
+                          } else {
+                            setSelectedGovernorates((prev) => prev.filter((g) => g !== gov));
+                          }
+                        }}
+                      />
+                      <span>{gov}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </section>
+
+          {/* Sectors */}
+          <section className="form-section">
+            <div className="form-section-title">
+              <span>🏷️</span>
+              Sectors
+            </div>
+            <div className="admin-categories-companies-list">
+              {sectors.map((sector) => (
+                <label key={sector._id} className="admin-categories-company-checkbox">
+                  <input
+                    type="checkbox"
+                    checked={selectedSectors.includes(sector._id)}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        setSelectedSectors((prev) => [...prev, sector._id]);
+                      } else {
+                        setSelectedSectors((prev) => prev.filter((id) => id !== sector._id));
+                      }
+                    }}
+                  />
+                  <span>{sector.name}</span>
+                </label>
+              ))}
             </div>
           </section>
 
