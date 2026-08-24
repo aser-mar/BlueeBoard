@@ -79,3 +79,13 @@ a {
   background: #92400e;
   color: #fef3c7;
 }
+
+/* ===== RTL Support ===== */
+[dir="rtl"] {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .bb-rtl-flip {
+  transform: scaleX(-1);
+}

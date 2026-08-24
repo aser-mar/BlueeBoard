@@ -82,6 +82,7 @@ export default function Logo({
     <div
       className={`${styles.logoWrap} ${variantClass} ${collapsedClass}`}
       aria-label="BlueeBoard Logo"
+      dir="ltr"
     >
       {logoContent}
     </div>
@@ -93,6 +94,7 @@ return (
     to="/"
     className={`${styles.logoWrap} ${variantClass} ${collapsedClass}`}
     aria-label="BlueeBoard Home"
+    dir="ltr"
   >
     {logoContent}
   </Link>

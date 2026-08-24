@@ -3,13 +3,20 @@ import { useNavigate } from "react-router-dom";
 import { getCompanies } from "../../services/companyService";
 import { createCompanyManager } from "../../services/companyManagerService";
 import {
+  HiOutlineUserGroup,
   HiOutlineUser,
   HiOutlineOfficeBuilding,
+  HiOutlineLockClosed,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
+import PasswordInput from "../../components/PasswordInput";
+import PasswordRequirementsUI from "../../components/PasswordRequirementsUI";
+import { getPasswordRequirements, isPasswordValid } from "../../utils/passwordUtils";
 
 import "./AdminCompanyManagerForm.css";
 
 const AdminAddCompanyManagerPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [name, setName] = useState("");
@@ -21,6 +28,8 @@ const AdminAddCompanyManagerPage = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const passwordRequirements = getPasswordRequirements(password, t);
+
   useEffect(() => {
     const loadCompanies = async () => {
       try {
@@ -28,7 +37,7 @@ const AdminAddCompanyManagerPage = () => {
         setCompanies(data || []);
       } catch (err) {
         console.error(err);
-        setError("Failed to load companies");
+        setError(t("admin.errSomethingWentWrong"));
       }
     };
 
@@ -37,22 +46,27 @@ const AdminAddCompanyManagerPage = () => {
 
   const validateForm = () => {
     if (!name.trim()) {
-      setError("Name is required");
+      setError(t("admin.errManagerName"));
       return false;
     }
 
     if (!email.trim()) {
-      setError("Email is required");
+      setError(t("admin.errManagerEmail"));
       return false;
     }
 
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+    if (!password) {
+      setError(t("register.errPassword"));
+      return false;
+    }
+
+    if (!isPasswordValid(passwordRequirements)) {
+      setError(t("register.errPassword"));
       return false;
     }
 
     if (!company) {
-      setError("Company is required");
+      setError(t("admin.errManagerCompany"));
       return false;
     }
 
@@ -82,7 +96,7 @@ const AdminAddCompanyManagerPage = () => {
       navigate("/admin/company-managers");
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || "Failed to create company manager");
+      setError(err.response?.data?.message || t("admin.errSomethingWentWrong"));
     } finally {
       setLoading(false);
     }
@@ -95,8 +109,8 @@ const AdminAddCompanyManagerPage = () => {
           <HiOutlineUser />
         </div>
         <div className="manager-hero-text">
-          <h1>Add Company Manager</h1>
-          <p>Create a new company manager account and assign it to a company.</p>
+          <h1>{t("admin.addManager")}</h1>
+          <p>{t("admin.addManagerDesc")}</p>
         </div>
       </header>
 
@@ -107,25 +121,25 @@ const AdminAddCompanyManagerPage = () => {
         <section className="form-section">
           <div className="form-section-title">
             <HiOutlineUser />
-            Manager Information
+            {t("admin.managerInfo")}
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="name">Manager Name</label>
+              <label htmlFor="name">{t("admin.managerName")}</label>
               <input
                 id="name"
                 type="text"
-                placeholder="Enter manager name"
+                placeholder={t("admin.managerName")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email Address</label>
+              <label htmlFor="email">{t("admin.emailAddress")}</label>
               <input
                 id="email"
                 type="email"
-                placeholder="Enter email address"
+                placeholder={t("admin.emailAddress")}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
@@ -133,14 +147,22 @@ const AdminAddCompanyManagerPage = () => {
           </div>
           <div className="form-row full">
             <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
+              <PasswordInput
                 id="password"
-                type="password"
-                placeholder="Enter minimum 6 characters password"
+                label={
+                  <span>
+                    <HiOutlineLockClosed style={{ display: "inline", width: 14, height: 14, verticalAlign: "middle", marginInlineEnd: 4 }} />
+                    {t("admin.password")}
+                  </span>
+                }
+                placeholder={t("register.passwordPlaceholder")}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                inputClassName="manager-password-input"
+                buttonClassName="bb-password-toggle-inline"
+                autoComplete="new-password"
               />
+              <PasswordRequirementsUI requirements={passwordRequirements} />
             </div>
           </div>
         </section>
@@ -149,17 +171,17 @@ const AdminAddCompanyManagerPage = () => {
         <section className="form-section">
           <div className="form-section-title">
             <HiOutlineOfficeBuilding />
-            Company Assignment
+            {t("admin.companyAssignment", "Company Assignment")}
           </div>
           <div className="form-row full">
             <div className="form-group">
-              <label htmlFor="company">Company</label>
+              <label htmlFor="company">{t("admin.company")}</label>
               <select
                 id="company"
                 value={company}
                 onChange={(e) => setCompany(e.target.value)}
               >
-                <option value="">Select Company</option>
+                <option value="">{t("admin.selectCompany")}</option>
                 {companies.map((c) => (
                   <option key={c._id} value={c._id}>
                     {c.name}
@@ -177,14 +199,14 @@ const AdminAddCompanyManagerPage = () => {
             className="btn-cancel"
             onClick={() => navigate("/admin/company-managers")}
           >
-            Cancel
+            {t("common.cancel")}
           </button>
           <button
             type="submit"
             disabled={loading}
             className="btn-submit"
           >
-            {loading ? "Creating..." : "Add Company Manager"}
+            {loading ? t("admin.addingManager") : t("admin.addManager")}
           </button>
         </div>
       </form>

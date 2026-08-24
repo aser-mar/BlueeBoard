@@ -452,6 +452,12 @@
   border: 1px solid rgba(37, 99, 235, 0.12);
 }
 
+.badge.badge--sold-out {
+  background: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+  border: 1px solid rgba(220, 38, 38, 0.18);
+}
+
 .product-price.admin-products-price {
   margin-top: auto;
   font-size: 1.06rem;

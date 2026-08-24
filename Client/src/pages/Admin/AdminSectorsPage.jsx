@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import api from "../../services/api";
 import {
   HiOutlineTag,
@@ -11,6 +12,7 @@ import {
 import "./AdminSectorsPage.css";
 
 const AdminSectorsPage = () => {
+  const { t } = useTranslation();
   const [sectors, setSectors] = useState([]);
   const [name, setName] = useState("");
   const [editingId, setEditingId] = useState(null);
@@ -45,7 +47,7 @@ const AdminSectorsPage = () => {
         setSectors(sectorsRes.data || []);
       } catch (error) {
         console.log(error);
-        setError("Failed to load sectors");
+        setError(t("adminSectors.errLoad"));
       } finally {
         setLoading(false);
       }
@@ -58,7 +60,7 @@ const AdminSectorsPage = () => {
     e.preventDefault();
 
     if (!name.trim()) {
-      setError("Please enter sector name");
+      setError(t("adminSectors.errName"));
       return;
     }
 
@@ -75,7 +77,7 @@ const AdminSectorsPage = () => {
       setName("");
     } catch (error) {
       console.log(error);
-      setError("Failed to add sector");
+      setError(t("adminSectors.errAdd"));
     }
   };
 
@@ -86,7 +88,7 @@ const AdminSectorsPage = () => {
 
   const saveEdit = async (id) => {
     if (!editName.trim()) {
-      alert("Please enter sector name");
+      alert(t("adminSectors.errName"));
       return;
     }
 
@@ -102,7 +104,7 @@ const AdminSectorsPage = () => {
       setEditName("");
     } catch (error) {
       console.log(error);
-      alert("Failed to update sector");
+      alert(t("adminSectors.errUpdate"));
     } finally {
       setActionLoadingId(null);
     }
@@ -110,7 +112,7 @@ const AdminSectorsPage = () => {
 
   const deleteSector = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this sector?"
+      t("adminSectors.confirmDelete")
     );
 
     if (!confirmDelete) {
@@ -123,7 +125,7 @@ const AdminSectorsPage = () => {
       setSectors((prev) => prev.filter((sec) => sec._id !== id));
     } catch (error) {
       console.log(error);
-      alert("Failed to delete sector");
+      alert(t("adminSectors.errDelete"));
     } finally {
       setActionLoadingId(null);
     }
@@ -166,10 +168,10 @@ const AdminSectorsPage = () => {
     <div className="admin-sectors-page">
       <div className="admin-sectors-header">
         <div className="admin-sectors-header__details">
-          <p className="admin-sectors-header__eyebrow">Manage Sectors</p>
-          <h1 className="admin-sectors-header__title">Manage Sectors</h1>
+          <p className="admin-sectors-header__eyebrow">{t("adminSectors.title")}</p>
+          <h1 className="admin-sectors-header__title">{t("adminSectors.title")}</h1>
           <p className="admin-sectors-header__subtitle">
-            Organize products and maintain a clean marketplace structure.
+            {t("adminSectors.subtitle")}
           </p>
         </div>
         <div className="admin-sectors-header__icon">
@@ -179,15 +181,15 @@ const AdminSectorsPage = () => {
 
       <div className="admin-sectors-stats-grid">
         <article className="admin-sectors-stat-card">
-          <p className="admin-sectors-stat-card__label">Total Sectors</p>
+          <p className="admin-sectors-stat-card__label">{t("adminSectors.total")}</p>
           <h2 className="admin-sectors-stat-card__value">{totalSectors}</h2>
-          <p className="admin-sectors-stat-card__note">All sectors in the marketplace</p>
+          <p className="admin-sectors-stat-card__note">{t("adminSectors.totalNote")}</p>
         </article>
 
         <article className="admin-sectors-stat-card">
-          <p className="admin-sectors-stat-card__label">Recently Added</p>
+          <p className="admin-sectors-stat-card__label">{t("adminSectors.recent")}</p>
           <h2 className="admin-sectors-stat-card__value">{recentSectorsCount}</h2>
-          <p className="admin-sectors-stat-card__note">Added in the last 7 days</p>
+          <p className="admin-sectors-stat-card__note">{t("adminSectors.recentNote")}</p>
         </article>
       </div>
 
@@ -199,8 +201,8 @@ const AdminSectorsPage = () => {
             type="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search sector name"
-            aria-label="Search sector name"
+            placeholder={t("adminSectors.searchPlaceholder")}
+            aria-label={t("adminSectors.searchPlaceholder")}
           />
         </div>
       </div>
@@ -208,18 +210,18 @@ const AdminSectorsPage = () => {
       <form className="admin-sectors-form-card" onSubmit={addSector}>
         <div className="admin-sectors-form-grid">
           <div className="admin-sectors-form-field">
-            <label htmlFor="sector-name">Sector Name</label>
+            <label htmlFor="sector-name">{t("adminSectors.nameLabel")}</label>
             <input
               id="sector-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Type sector name"
+              placeholder={t("adminSectors.namePlaceholder")}
             />
           </div>
           <button className="admin-sectors-submit-button" type="submit">
             <HiOutlinePlus className="admin-sectors-submit-button__icon" />
-            Create Sector
+            {t("adminSectors.createBtn")}
           </button>
         </div>
       </form>
@@ -229,24 +231,24 @@ const AdminSectorsPage = () => {
       {filteredSectors.length === 0 ? (
         <div className="admin-sectors-empty-state">
           <div className="admin-sectors-empty-state__icon">🏷️</div>
-          <h2>No sectors found</h2>
-          <p>Use the form above to add a new sector and keep the catalog organized.</p>
+          <h2>{t("adminSectors.emptyTitle")}</h2>
+          <p>{t("adminSectors.emptyDesc")}</p>
         </div>
       ) : (
         <>
           <div className="admin-sectors-table-wrap">
             <div className="admin-sectors-table-meta">
               <p>
-                Showing <strong>{filteredSectors.length}</strong> sectors
+                {t("adminSectors.showing", { count: filteredSectors.length })}
               </p>
             </div>
             <div className="admin-sectors-table-scroll">
               <table className="admin-sectors-table">
                 <thead>
                   <tr>
-                    <th>Sector Name</th>
-                    <th>Created Date</th>
-                    <th>Actions</th>
+                    <th>{t("adminSectors.sectorLabel")}</th>
+                    <th>{t("adminSectors.createdDate")}</th>
+                    <th>{t("common.actions")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -277,7 +279,7 @@ const AdminSectorsPage = () => {
                               disabled={actionLoadingId === sec._id}
                             >
                               <HiOutlinePencil />
-                              {actionLoadingId === sec._id ? "Saving..." : "Save"}
+                              {actionLoadingId === sec._id ? t("common.saving") : t("common.save")}
                             </button>
                           ) : (
                             <button
@@ -286,7 +288,7 @@ const AdminSectorsPage = () => {
                               onClick={() => startEdit(sec)}
                             >
                               <HiOutlinePencil />
-                              Edit
+                              {t("common.edit")}
                             </button>
                           )}
                           <button
@@ -296,7 +298,7 @@ const AdminSectorsPage = () => {
                             disabled={actionLoadingId === sec._id}
                           >
                             <HiOutlineTrash />
-                            {actionLoadingId === sec._id ? "Deleting..." : "Delete"}
+                            {actionLoadingId === sec._id ? t("common.deleting") : t("common.delete")}
                           </button>
                         </div>
                       </td>
@@ -312,7 +314,7 @@ const AdminSectorsPage = () => {
               <article key={sec._id} className="admin-sectors-card">
                 <div className="admin-sectors-card__row">
                   <div>
-                    <p className="admin-sectors-card__label">Sector</p>
+                    <p className="admin-sectors-card__label">{t("adminSectors.sectorLabel")}</p>
                     <h3>{sec.name}</h3>
                   </div>
                   <span className="admin-sectors-created-date">
@@ -329,7 +331,7 @@ const AdminSectorsPage = () => {
                         disabled={actionLoadingId === sec._id}
                       >
                         <HiOutlinePencil />
-                        {actionLoadingId === sec._id ? "Saving..." : "Save"}
+                        {actionLoadingId === sec._id ? t("common.saving") : t("common.save")}
                       </button>
                     ) : (
                       <button
@@ -338,7 +340,7 @@ const AdminSectorsPage = () => {
                         onClick={() => startEdit(sec)}
                       >
                         <HiOutlinePencil />
-                        Edit
+                        {t("common.edit")}
                       </button>
                     )}
                     <button
@@ -348,7 +350,7 @@ const AdminSectorsPage = () => {
                       disabled={actionLoadingId === sec._id}
                     >
                       <HiOutlineTrash />
-                      {actionLoadingId === sec._id ? "Deleting..." : "Delete"}
+                      {actionLoadingId === sec._id ? t("common.deleting") : t("common.delete")}
                     </button>
                   </div>
                 </div>

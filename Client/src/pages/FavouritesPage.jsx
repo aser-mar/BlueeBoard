@@ -18,9 +18,12 @@ import {
 import {
   removeFromFavourites,
 } from "../redux/slices/favouritesSlice";
+import { useTranslation } from "react-i18next";
+import { getProductImageUrl, onImageError } from "../utils/imageHelper";
 
 const FavouritesPage =
   () => {
+    const { t } = useTranslation();
 
     const navigate =
       useNavigate();
@@ -55,7 +58,7 @@ const FavouritesPage =
 
     const handleRemove = (productId) => {
       if (isPreviewMode) {
-        alert("This action is disabled in Preview Mode.");
+        alert(t("errors.previewModeDisabled"));
         return;
       }
       dispatch(
@@ -343,11 +346,11 @@ const FavouritesPage =
         <div className="bb-favourites-container">
           <div className="bb-favourites-header">
             <h1 className="bb-favourites-title">
-              My Favourites
+              {t("favourites.title")}
             </h1>
             {favouritesItems.length > 0 && (
               <p className="bb-favourites-count">
-                {favouritesItems.length} item{favouritesItems.length !== 1 ? 's' : ''} saved
+                {favouritesItems.length === 1 ? t("favourites.itemsSavedOne") : t("favourites.itemsSavedOther", { count: favouritesItems.length })}
               </p>
             )}
           </div>
@@ -358,16 +361,16 @@ const FavouritesPage =
                 ♡
               </div>
               <h2 className="bb-favourites-empty-title">
-                No Favourites Yet
+                {t("favourites.emptyTitle")}
               </h2>
               <p className="bb-favourites-empty-text">
-                Start exploring and add products to your wishlist to save them for later.
+                {t("favourites.emptyDesc")}
               </p>
               <Link
                 to="/"
                 className="bb-favourites-empty-button"
               >
-                Explore Products
+                {t("favourites.exploreProducts")}
               </Link>
             </div>
           ) : (
@@ -387,9 +390,10 @@ const FavouritesPage =
                   >
                     <div className="bb-favourite-image-wrap">
                       <img
-                        src={product.images?.[0]?.url}
+                        src={getProductImageUrl(product.images?.[0])}
                         alt={product.name}
                         className="bb-favourite-image"
+                        onError={onImageError}
                       />
                       <button
                         onClick={(e) => {
@@ -397,7 +401,7 @@ const FavouritesPage =
                           handleRemove(product._id);
                         }}
                         className="bb-favourite-remove-btn"
-                        title="Remove from favourites"
+                        title={t("favourites.remove")}
                         type="button"
                       >
                         ×
@@ -416,7 +420,7 @@ const FavouritesPage =
                       )}
 
                       <div className="bb-favourite-price">
-                        {product.price} EGP
+                        {product.price} {t("common.currency")}
                       </div>
                     </div>
                   </Link>

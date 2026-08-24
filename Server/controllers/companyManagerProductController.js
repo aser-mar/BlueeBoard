@@ -50,6 +50,7 @@ const createMyCompanyProduct = async (req, res) => {
       name,
       description,
       price,
+      isSoldOut,
       images,
       category,
     } = req.body;
@@ -80,6 +81,7 @@ const createMyCompanyProduct = async (req, res) => {
       name,
       description,
       price,
+      isSoldOut: isSoldOut || false,
       images,
       category,
       company: req.user.company,
@@ -181,6 +183,9 @@ product.description =
 product.price =
   req.body.price ??
   product.price;
+
+product.isSoldOut =
+  req.body.isSoldOut ?? product.isSoldOut;
 
 product.category =
   req.body.category ||

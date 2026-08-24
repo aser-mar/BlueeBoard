@@ -8,10 +8,12 @@ import {
   HiOutlineTrash,
   HiOutlinePlus,
 } from "react-icons/hi";
+import { useTranslation, Trans } from "react-i18next";
 
 import "./AdminCompaniesPage.css";
 
 const AdminCompaniesPage = () => {
+  const { t } = useTranslation();
   const [companies, setCompanies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteLoadingId, setDeleteLoadingId] = useState(null);
@@ -44,18 +46,18 @@ const AdminCompaniesPage = () => {
         setCompanies(data || []);
       } catch (error) {
         console.log(error);
-        setError("Failed to load companies");
+        setError(t("adminCompanies.errLoad"));
       } finally {
         setLoading(false);
       }
     };
 
     loadCompanies();
-  }, []);
+  }, [t]);
 
   const deleteHandler = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this company?"
+      t("adminCompanies.confirmDelete")
     );
 
     if (!confirmDelete) return;
@@ -68,7 +70,7 @@ const AdminCompaniesPage = () => {
       );
     } catch (error) {
       console.log(error);
-      alert("Failed to delete company");
+      alert(t("adminCompanies.errDelete"));
     } finally {
       setDeleteLoadingId(null);
     }
@@ -111,10 +113,10 @@ const AdminCompaniesPage = () => {
     <div className="admin-companies-page">
       <div className="admin-companies-header">
         <div className="admin-companies-header__details">
-          <p className="admin-companies-header__eyebrow">Manage Companies</p>
-          <h1 className="admin-companies-header__title">Manage Companies</h1>
+          <p className="admin-companies-header__eyebrow">{t("adminCompanies.title")}</p>
+          <h1 className="admin-companies-header__title">{t("adminCompanies.title")}</h1>
           <p className="admin-companies-header__subtitle">
-            View, edit and manage all registered companies.
+            {t("adminCompanies.subtitle")}
           </p>
         </div>
         <div className="admin-companies-header__icon">
@@ -124,21 +126,21 @@ const AdminCompaniesPage = () => {
 
       <div className="admin-companies-stats-grid">
         <article className="admin-companies-stat-card">
-          <p className="admin-companies-stat-card__label">Total Companies</p>
+          <p className="admin-companies-stat-card__label">{t("adminCompanies.totalCompanies")}</p>
           <h2 className="admin-companies-stat-card__value">{totalCompanies}</h2>
-          <p className="admin-companies-stat-card__note">All registered partners</p>
+          <p className="admin-companies-stat-card__note">{t("adminCompanies.totalCompaniesNote")}</p>
         </article>
 
         <article className="admin-companies-stat-card">
-          <p className="admin-companies-stat-card__label">Companies With Logo</p>
+          <p className="admin-companies-stat-card__label">{t("adminCompanies.companiesWithLogo")}</p>
           <h2 className="admin-companies-stat-card__value">{companiesWithLogo}</h2>
-          <p className="admin-companies-stat-card__note">Branded company profiles</p>
+          <p className="admin-companies-stat-card__note">{t("adminCompanies.companiesWithLogoNote")}</p>
         </article>
 
         <article className="admin-companies-stat-card">
-          <p className="admin-companies-stat-card__label">Companies Without Logo</p>
+          <p className="admin-companies-stat-card__label">{t("adminCompanies.companiesWithoutLogo")}</p>
           <h2 className="admin-companies-stat-card__value">{companiesWithoutLogo}</h2>
-          <p className="admin-companies-stat-card__note">Needs logo assets</p>
+          <p className="admin-companies-stat-card__note">{t("adminCompanies.companiesWithoutLogoNote")}</p>
         </article>
       </div>
 
@@ -150,13 +152,13 @@ const AdminCompaniesPage = () => {
             type="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search company name"
-            aria-label="Search company name"
+            placeholder={t("adminCompanies.searchPlaceholder")}
+            aria-label={t("adminCompanies.searchPlaceholder")}
           />
         </div>
         <Link className="admin-companies-add-button" to="/admin/add-company">
           <HiOutlinePlus className="admin-companies-add-button__icon" />
-          Add Company
+          {t("adminCompanies.addCompanyBtn")}
         </Link>
       </div>
 
@@ -165,12 +167,12 @@ const AdminCompaniesPage = () => {
       {filteredCompanies.length === 0 ? (
         <div className="admin-companies-empty-state">
           <div className="admin-companies-empty-state__icon">🏢</div>
-          <h2>No companies match your search</h2>
+          <h2>{t("adminCompanies.emptyTitle")}</h2>
           <p>
-            Add a new company or adjust your search to continue managing the catalog.
+            {t("adminCompanies.emptySubtitle")}
           </p>
           <Link className="admin-companies-empty-state__button" to="/admin/add-company">
-            Add first company
+            {t("adminCompanies.addFirstCompanyBtn")}
           </Link>
         </div>
       ) : (
@@ -178,20 +180,22 @@ const AdminCompaniesPage = () => {
           <div className="admin-companies-table-wrap">
             <div className="admin-companies-table-meta">
               <p>
-                Showing <strong>{filteredCompanies.length}</strong> companies
+                <Trans i18nKey="adminCompanies.showingCount" values={{ count: filteredCompanies.length }}>
+                  Showing <strong>{{ count: filteredCompanies.length }}</strong> companies
+                </Trans>
               </p>
             </div>
             <div className="admin-companies-table-scroll">
               <table className="admin-companies-table">
                 <thead>
                   <tr>
-                    <th>Logo</th>
-                    <th>Company Name</th>
-                    <th>Description</th>
-                    <th>Governorates</th>
-                    <th>Sectors</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>{t("adminCompanies.thLogo")}</th>
+                    <th>{t("adminCompanies.thName")}</th>
+                    <th>{t("adminCompanies.thDesc")}</th>
+                    <th>{t("adminCompanies.thGovernorates")}</th>
+                    <th>{t("adminCompanies.thSectors")}</th>
+                    <th>{t("adminCompanies.thStatus")}</th>
+                    <th>{t("adminCompanies.thActions")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -213,17 +217,17 @@ const AdminCompaniesPage = () => {
                       </td>
                       <td>
                         <div className="admin-companies-table__description">
-                          {company.description || "No description available"}
+                          {company.description || t("adminCompanies.noDesc")}
                         </div>
                       </td>
                       <td>
                         <div className="admin-companies-table__description">
-                          {company.governorates?.length > 0 ? company.governorates.join(", ") : "No governorates"}
+                          {company.governorates?.length > 0 ? company.governorates.join(", ") : t("adminCompanies.noGovs")}
                         </div>
                       </td>
                       <td>
                         <div className="admin-companies-table__description">
-                          {company.sectors?.length > 0 ? company.sectors.map(s => s.name).join(", ") : "No sectors"}
+                          {company.sectors?.length > 0 ? company.sectors.map(s => s.name).join(", ") : t("adminCompanies.noSectors")}
                         </div>
                       </td>
                       <td>
@@ -231,7 +235,7 @@ const AdminCompaniesPage = () => {
                           className={`admin-companies-pill ${company.isActive ? "admin-companies-pill--active" : "admin-companies-pill--inactive"
                             }`}
                         >
-                          {company.isActive ? "Active" : "Inactive"}
+                          {company.isActive ? t("adminCompanies.statusActive") : t("adminCompanies.statusInactive")}
                         </span>
                       </td>
                       <td>
@@ -241,7 +245,7 @@ const AdminCompaniesPage = () => {
                             to={`/admin/companies/${company._id}/edit`}
                           >
                             <HiOutlinePencil />
-                            Edit
+                            {t("adminCompanies.actionEdit")}
                           </Link>
                           <button
                             className="admin-companies-action-button admin-companies-action-button--danger"
@@ -249,7 +253,7 @@ const AdminCompaniesPage = () => {
                             disabled={deleteLoadingId === company._id}
                           >
                             <HiOutlineTrash />
-                            {deleteLoadingId === company._id ? "Deleting..." : "Delete"}
+                            {deleteLoadingId === company._id ? t("adminCompanies.actionDeleting") : t("adminCompanies.actionDelete")}
                           </button>
                         </div>
                       </td>
@@ -276,13 +280,13 @@ const AdminCompaniesPage = () => {
                   <div>
                     <h3>{company.name}</h3>
                     <p className="admin-companies-card__company-description">
-                      {company.description || "No description available"}
+                      {company.description || t("adminCompanies.noDesc")}
                     </p>
                     <p className="admin-companies-card__company-description">
-                      <strong>Governorates:</strong> {company.governorates?.length > 0 ? company.governorates.join(", ") : "None"}
+                      <strong>{t("adminCompanies.thGovernorates")}:</strong> {company.governorates?.length > 0 ? company.governorates.join(", ") : t("adminCompanies.none")}
                     </p>
                     <p className="admin-companies-card__company-description">
-                      <strong>Sectors:</strong> {company.sectors?.length > 0 ? company.sectors.map(s => s.name).join(", ") : "None"}
+                      <strong>{t("adminCompanies.thSectors")}:</strong> {company.sectors?.length > 0 ? company.sectors.map(s => s.name).join(", ") : t("adminCompanies.none")}
                     </p>
                   </div>
                 </div>
@@ -291,7 +295,7 @@ const AdminCompaniesPage = () => {
                     className={`admin-companies-pill ${company.isActive ? "admin-companies-pill--active" : "admin-companies-pill--inactive"
                       }`}
                   >
-                    {company.isActive ? "Active" : "Inactive"}
+                    {company.isActive ? t("adminCompanies.statusActive") : t("adminCompanies.statusInactive")}
                   </span>
                   <div className="admin-companies-actions admin-companies-actions--stacked">
                     <Link
@@ -299,7 +303,7 @@ const AdminCompaniesPage = () => {
                       to={`/admin/companies/${company._id}/edit`}
                     >
                       <HiOutlinePencil />
-                      Edit
+                      {t("adminCompanies.actionEdit")}
                     </Link>
                     <button
                       className="admin-companies-action-button admin-companies-action-button--danger"
@@ -307,7 +311,7 @@ const AdminCompaniesPage = () => {
                       disabled={deleteLoadingId === company._id}
                     >
                       <HiOutlineTrash />
-                      {deleteLoadingId === company._id ? "Deleting..." : "Delete"}
+                      {deleteLoadingId === company._id ? t("adminCompanies.actionDeleting") : t("adminCompanies.actionDelete")}
                     </button>
                   </div>
                 </div>

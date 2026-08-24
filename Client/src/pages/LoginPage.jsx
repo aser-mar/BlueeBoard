@@ -27,15 +27,19 @@ import {
 
 import {
   HiOutlineMail,
-  HiOutlineLockClosed,
   HiOutlineArrowRight,
+  HiOutlineLockClosed,
 } from "react-icons/hi";
 
 import Logo from "../components/Logo";
+import AuthAlert from "../components/AuthAlert";
+import PasswordInput from "../components/PasswordInput";
+import { useTranslation } from "react-i18next";
 
 import "./LoginPage.css";
 
 const LoginPage = () => {
+  const { t } = useTranslation();
 
   const [email, setEmail] =
     useState("");
@@ -112,7 +116,7 @@ const LoginPage = () => {
         setError(
           error.response?.data
             ?.message ||
-          "Login Failed"
+          t("login.errFailed")
         );
 
       } finally {
@@ -135,24 +139,16 @@ const LoginPage = () => {
               <Logo variant="login" />
             </div>
             <p className="bb-login-subtitle">
-              Welcome back to your shopping dashboard
+              {t("login.subtitle")}
             </p>
           </div>
 
-          {
-            error && (
-              <div
-                className="bb-login-alert bb-login-alert--error"
-              >
-                <div className="bb-login-alert__icon">
-                  ⚠
-                </div>
-                <div className="bb-login-alert__content">
-                  {error}
-                </div>
-              </div>
-            )
-          }
+          {error && (
+            <AuthAlert
+              type="error"
+              message={error}
+            />
+          )}
 
           <form
             onSubmit={submitHandler}
@@ -163,7 +159,7 @@ const LoginPage = () => {
                 className="bb-login-label"
                 htmlFor="email"
               >
-                Email Address
+                {t("login.email")}
               </label>
               <div className="bb-login-input-wrapper">
                 <HiOutlineMail
@@ -172,7 +168,7 @@ const LoginPage = () => {
                 <input
                   id="email"
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t("login.emailPlaceholder")}
                   value={email}
                   onChange={(e) =>
                     setEmail(
@@ -185,31 +181,23 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="bb-login-field">
-              <label
-                className="bb-login-label"
-                htmlFor="password"
+            <PasswordInput
+              id="password"
+              label={t("login.password")}
+              placeholder={t("login.passwordPlaceholder")}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+              leftIcon={<HiOutlineLockClosed className="bb-login-input-icon" />}
+            />
+            <div style={{ textAlign: "right", marginTop: "-8px" }}>
+              <Link
+                to="/forgot-password"
+                style={{ fontSize: "13px", color: "#2563eb", fontWeight: 600, textDecoration: "none" }}
               >
-                Password
-              </label>
-              <div className="bb-login-input-wrapper">
-                <HiOutlineLockClosed
-                  className="bb-login-input-icon"
-                />
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) =>
-                    setPassword(
-                      e.target.value
-                    )
-                  }
-                  required
-                  className="bb-login-input"
-                />
-              </div>
+                {t("login.forgotPassword")}
+              </Link>
             </div>
 
             <button
@@ -221,13 +209,13 @@ const LoginPage = () => {
                 loading ? (
                   <>
                     <span className="bb-login-button__spinner"></span>
-                    Logging in...
+                    {t("login.loggingIn")}
                   </>
                 ) : (
                   <>
-                    Sign in
+                    {t("login.signIn")}
                     <HiOutlineArrowRight
-                      className="bb-login-button__icon"
+                      className="bb-login-button__icon bb-rtl-flip"
                     />
                   </>
                 )
@@ -236,15 +224,15 @@ const LoginPage = () => {
           </form>
 
           <div className="bb-login-divider">
-            <span>New to BLUEEBOARD?</span>
+            <span>{t("login.newTo")}</span>
           </div>
 
           <Link
             to="/register"
             className="bb-login-register-link"
           >
-            Create an account
-            <HiOutlineArrowRight />
+            {t("login.createAccount")}
+            <HiOutlineArrowRight className="bb-rtl-flip" />
           </Link>
         </div>
       </div>

@@ -33,13 +33,22 @@ import {
   HiOutlineClipboardList,
   HiOutlineLogout,
   HiOutlineEye,
+  HiOutlineGlobe,
 } from "react-icons/hi";
 
 import Logo from "./Logo";
+import { useTranslation } from "react-i18next";
 
 import "./Sidebar.css";
 
 const CompanyManagerSidebar = () => {
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'ar' : 'en';
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('bb-language', newLang);
+  };
 
   const dispatch = useDispatch();
 
@@ -117,7 +126,7 @@ const CompanyManagerSidebar = () => {
 
             <HiOutlineViewGrid />
 
-            Dashboard
+            {t("nav.dashboard")}
 
           </NavLink>
 
@@ -128,7 +137,7 @@ const CompanyManagerSidebar = () => {
 
             <HiOutlineShoppingBag />
 
-            Products
+            {t("admin.products")}
 
           </NavLink>
 
@@ -139,7 +148,7 @@ const CompanyManagerSidebar = () => {
 
             <HiOutlineClipboardList />
 
-            Orders
+            {t("admin.orders")}
 
           </NavLink>
 
@@ -148,12 +157,23 @@ const CompanyManagerSidebar = () => {
         <div className="sidebar__bottom-actions">
           <button
             className="sidebar__preview-btn"
+            onClick={toggleLanguage}
+          >
+
+            <HiOutlineGlobe />
+
+            {t("nav.languageToggle")}
+
+          </button>
+
+          <button
+            className="sidebar__preview-btn"
             onClick={enterPreview}
           >
 
             <HiOutlineEye />
 
-            View as User
+            {t("admin.viewAsUser")}
 
           </button>
 
@@ -164,7 +184,7 @@ const CompanyManagerSidebar = () => {
 
             <HiOutlineLogout />
 
-            Logout
+            {t("nav.logout")}
 
           </button>
         </div>

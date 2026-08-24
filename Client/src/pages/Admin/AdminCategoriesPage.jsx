@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import api from "../../services/api";
 import { getCompanies } from "../../services/companyService";
 import {
@@ -12,6 +13,7 @@ import {
 import "./AdminCategoriesPage.css";
 
 const AdminCategoriesPage = () => {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [name, setName] = useState("");
@@ -62,7 +64,7 @@ const AdminCategoriesPage = () => {
         setCompanies(companiesData || []);
       } catch (error) {
         console.log(error);
-        setError("Failed to load categories");
+        setError(t("adminCategories.errLoad"));
       } finally {
         setLoading(false);
       }
@@ -75,12 +77,12 @@ const AdminCategoriesPage = () => {
     e.preventDefault();
 
     if (!name.trim()) {
-      setError("Please enter category name");
+      setError(t("adminCategories.errName"));
       return;
     }
 
     if (selectedCompanies.length === 0) {
-      setError("Please select at least one company");
+      setError(t("adminCategories.errCompany"));
       return;
     }
 
@@ -99,7 +101,7 @@ const AdminCategoriesPage = () => {
       setSelectedCompanies([]);
     } catch (error) {
       console.log(error);
-      setError("Failed to add category");
+      setError(t("adminCategories.errAdd"));
     }
   };
 
@@ -116,12 +118,12 @@ const AdminCategoriesPage = () => {
 
   const saveEdit = async (id) => {
     if (!editName.trim()) {
-      alert("Please enter category name");
+      alert(t("adminCategories.errName"));
       return;
     }
 
     if (editCompanies.length === 0) {
-      alert("Please select at least one company");
+      alert(t("adminCategories.errCompany"));
       return;
     }
 
@@ -138,7 +140,7 @@ const AdminCategoriesPage = () => {
       setEditName("");
     } catch (error) {
       console.log(error);
-      alert("Failed to update category");
+      alert(t("adminCategories.errUpdate"));
     } finally {
       setActionLoadingId(null);
     }
@@ -146,7 +148,7 @@ const AdminCategoriesPage = () => {
 
   const deleteCategory = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this category?"
+      t("adminCategories.confirmDelete")
     );
 
     if (!confirmDelete) {
@@ -159,7 +161,7 @@ const AdminCategoriesPage = () => {
       setCategories((prev) => prev.filter((cat) => cat._id !== id));
     } catch (error) {
       console.log(error);
-      alert("Failed to delete category");
+      alert(t("adminCategories.errDelete"));
     } finally {
       setActionLoadingId(null);
     }
@@ -202,10 +204,10 @@ const AdminCategoriesPage = () => {
     <div className="admin-categories-page">
       <div className="admin-categories-header">
         <div className="admin-categories-header__details">
-          <p className="admin-categories-header__eyebrow">Manage Categories</p>
-          <h1 className="admin-categories-header__title">Manage Categories</h1>
+          <p className="admin-categories-header__eyebrow">{t("adminCategories.title")}</p>
+          <h1 className="admin-categories-header__title">{t("adminCategories.title")}</h1>
           <p className="admin-categories-header__subtitle">
-            Organize products and maintain a clean marketplace structure.
+            {t("adminCategories.subtitle")}
           </p>
         </div>
         <div className="admin-categories-header__icon">
@@ -215,21 +217,21 @@ const AdminCategoriesPage = () => {
 
       <div className="admin-categories-stats-grid">
         <article className="admin-categories-stat-card">
-          <p className="admin-categories-stat-card__label">Total Categories</p>
+          <p className="admin-categories-stat-card__label">{t("adminCategories.total")}</p>
           <h2 className="admin-categories-stat-card__value">{totalCategories}</h2>
-          <p className="admin-categories-stat-card__note">All categories in the marketplace</p>
+          <p className="admin-categories-stat-card__note">{t("adminCategories.totalNote")}</p>
         </article>
 
         <article className="admin-categories-stat-card">
-          <p className="admin-categories-stat-card__label">Companies Using Categories</p>
+          <p className="admin-categories-stat-card__label">{t("adminCategories.companiesUsing")}</p>
           <h2 className="admin-categories-stat-card__value">{companiesUsingCategories}</h2>
-          <p className="admin-categories-stat-card__note">Active category owners</p>
+          <p className="admin-categories-stat-card__note">{t("adminCategories.companiesUsingNote")}</p>
         </article>
 
         <article className="admin-categories-stat-card">
-          <p className="admin-categories-stat-card__label">Recently Added</p>
+          <p className="admin-categories-stat-card__label">{t("adminCategories.recent")}</p>
           <h2 className="admin-categories-stat-card__value">{recentCategoriesCount}</h2>
-          <p className="admin-categories-stat-card__note">Added in the last 7 days</p>
+          <p className="admin-categories-stat-card__note">{t("adminCategories.recentNote")}</p>
         </article>
       </div>
 
@@ -241,8 +243,8 @@ const AdminCategoriesPage = () => {
             type="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search category name"
-            aria-label="Search category name"
+            placeholder={t("adminCategories.searchPlaceholder")}
+            aria-label={t("adminCategories.searchPlaceholder")}
           />
         </div>
       </div>
@@ -250,17 +252,17 @@ const AdminCategoriesPage = () => {
       <form className="admin-categories-form-card" onSubmit={addCategory}>
         <div className="admin-categories-form-grid">
           <div className="admin-categories-form-field">
-            <label htmlFor="category-name">Category Name</label>
+            <label htmlFor="category-name">{t("adminCategories.nameLabel")}</label>
             <input
               id="category-name"
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="Type category name"
+              placeholder={t("adminCategories.namePlaceholder")}
             />
           </div>
           <div className="admin-categories-form-field">
-            <label htmlFor="category-company">Company</label>
+            <label htmlFor="category-company">{t("adminCategories.companyLabel")}</label>
             <div className="admin-categories-companies-list">
               {companies.map((comp) => (
                 <label
@@ -290,7 +292,7 @@ const AdminCategoriesPage = () => {
           </div>
           <button className="admin-categories-submit-button" type="submit">
             <HiOutlinePlus className="admin-categories-submit-button__icon" />
-            Create Category
+            {t("adminCategories.createBtn")}
           </button>
         </div>
       </form>
@@ -300,25 +302,25 @@ const AdminCategoriesPage = () => {
       {filteredCategories.length === 0 ? (
         <div className="admin-categories-empty-state">
           <div className="admin-categories-empty-state__icon">🏷️</div>
-          <h2>No categories found</h2>
-          <p>Use the form above to add a new category and keep the catalog organized.</p>
+          <h2>{t("adminCategories.emptyTitle")}</h2>
+          <p>{t("adminCategories.emptyDesc")}</p>
         </div>
       ) : (
         <>
           <div className="admin-categories-table-wrap">
             <div className="admin-categories-table-meta">
               <p>
-                Showing <strong>{filteredCategories.length}</strong> categories
+                {t("adminCategories.showing", { count: filteredCategories.length })}
               </p>
             </div>
             <div className="admin-categories-table-scroll">
               <table className="admin-categories-table">
                 <thead>
                   <tr>
-                    <th>Category Name</th>
-                    <th>Company</th>
-                    <th>Created Date</th>
-                    <th>Actions</th>
+                    <th>{t("adminCategories.categoryLabel")}</th>
+                    <th>{t("adminCategories.companyLabel")}</th>
+                    <th>{t("adminCategories.createdDate")}</th>
+                    <th>{t("common.actions")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -390,7 +392,7 @@ const AdminCategoriesPage = () => {
                               disabled={actionLoadingId === cat._id}
                             >
                               <HiOutlinePencil />
-                              {actionLoadingId === cat._id ? "Saving..." : "Save"}
+                              {actionLoadingId === cat._id ? t("common.saving") : t("common.save")}
                             </button>
                           ) : (
                             <button
@@ -399,7 +401,7 @@ const AdminCategoriesPage = () => {
                               onClick={() => startEdit(cat)}
                             >
                               <HiOutlinePencil />
-                              Edit
+                              {t("common.edit")}
                             </button>
                           )}
                           <button
@@ -409,7 +411,7 @@ const AdminCategoriesPage = () => {
                             disabled={actionLoadingId === cat._id}
                           >
                             <HiOutlineTrash />
-                            {actionLoadingId === cat._id ? "Deleting..." : "Delete"}
+                            {actionLoadingId === cat._id ? t("common.deleting") : t("common.delete")}
                           </button>
                         </div>
                       </td>
@@ -425,7 +427,7 @@ const AdminCategoriesPage = () => {
               <article key={cat._id} className="admin-categories-card">
                 <div className="admin-categories-card__row">
                   <div>
-                    <p className="admin-categories-card__label">Category</p>
+                    <p className="admin-categories-card__label">{t("adminCategories.categoryLabel")}</p>
                     <h3>{cat.name}</h3>
                   </div>
                   <span className="admin-categories-created-date">
@@ -434,7 +436,7 @@ const AdminCategoriesPage = () => {
                 </div>
                 <div className="admin-categories-card__row admin-categories-card__row--gap">
                   <div>
-                    <p className="admin-categories-card__label">Company</p>
+                    <p className="admin-categories-card__label">{t("adminCategories.companyLabel")}</p>
                     <p className="admin-categories-card__company">
                       {cat.companies?.length
                         ? cat.companies
@@ -452,7 +454,7 @@ const AdminCategoriesPage = () => {
                         disabled={actionLoadingId === cat._id}
                       >
                         <HiOutlinePencil />
-                        {actionLoadingId === cat._id ? "Saving..." : "Save"}
+                        {actionLoadingId === cat._id ? t("common.saving") : t("common.save")}
                       </button>
                     ) : (
                       <button
@@ -461,7 +463,7 @@ const AdminCategoriesPage = () => {
                         onClick={() => startEdit(cat)}
                       >
                         <HiOutlinePencil />
-                        Edit
+                        {t("common.edit")}
                       </button>
                     )}
                     <button
@@ -471,7 +473,7 @@ const AdminCategoriesPage = () => {
                       disabled={actionLoadingId === cat._id}
                     >
                       <HiOutlineTrash />
-                      {actionLoadingId === cat._id ? "Deleting..." : "Delete"}
+                      {actionLoadingId === cat._id ? t("common.deleting") : t("common.delete")}
                     </button>
                   </div>
                 </div>

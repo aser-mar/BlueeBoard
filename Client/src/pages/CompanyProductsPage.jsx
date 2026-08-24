@@ -13,10 +13,13 @@ import {
   HiOutlineArrowRight,
   HiOutlineSearch,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
+import { getProductImageUrl, onImageError } from "../utils/imageHelper";
 
 import "./CompanyProductsPage.css";
 
 const CompanyProductsPage = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
 
   const [products, setProducts] = useState([]);
@@ -96,7 +99,7 @@ const CompanyProductsPage = () => {
         {/* ========== BREADCRUMBS ========== */}
         <div className="bb-breadcrumbs">
           <Link to="/" className="bb-breadcrumbs__link">
-            <HiOutlineArrowLeft /> Back to Home
+            <HiOutlineArrowLeft className="bb-rtl-flip" /> {t("common.backToHome")}
           </Link>
         </div>
 
@@ -136,7 +139,7 @@ const CompanyProductsPage = () => {
               )}
 
               <p className="bb-company-desc">
-                {companyInfo?.description || "No description available."}
+                {companyInfo?.description || t("company.noDescription")}
               </p>
             </div>
           </div>
@@ -148,7 +151,7 @@ const CompanyProductsPage = () => {
             <HiOutlineSearch className="bb-search-icon" />
             <input
               type="text"
-              placeholder="Search products..."
+              placeholder={t("products.searchPlaceholder")}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="bb-search-input"
@@ -160,7 +163,7 @@ const CompanyProductsPage = () => {
               className={`bb-category-tab ${category === "" ? "active" : ""}`}
               onClick={() => setCategory("")}
             >
-              All Categories
+              {t("products.allCategories")}
             </button>
             {categories.map((cat) => (
               <button
@@ -200,16 +203,15 @@ const CompanyProductsPage = () => {
                 className="bb-product-card"
               >
                 <div className="bb-product-card__image-wrap">
+                  {product.isSoldOut && (
+                    <span className="bb-product-card__badge bb-product-card__badge--sold-out">
+                      {t("products.soldOut")}
+                    </span>
+                  )}
                   <img
-                    src={
-                      product.images?.[0]?.url ||
-                      "https://dummyimage.com/300x220/cbd5e1/0f172a&text=No+Image"
-                    }
+                    src={getProductImageUrl(product.images?.[0])}
                     alt={product.name}
-                    onError={(e) => {
-                      e.target.src =
-                        "https://dummyimage.com/300x220/cbd5e1/0f172a&text=No+Image";
-                    }}
+                    onError={onImageError}
                     className="bb-product-card__image"
                   />
                 </div>
@@ -223,11 +225,11 @@ const CompanyProductsPage = () => {
                   <div className="bb-product-card__footer">
                     <span className="bb-product-card__price">
                       {product.price?.toLocaleString()}
-                      <span className="bb-product-card__currency"> EGP</span>
+                      <span className="bb-product-card__currency"> {t("common.currency")}</span>
                     </span>
 
                     <span className="bb-product-card__arrow">
-                      <HiOutlineArrowRight />
+                      <HiOutlineArrowRight className="bb-rtl-flip" />
                     </span>
                   </div>
                 </div>
@@ -239,9 +241,9 @@ const CompanyProductsPage = () => {
             <div className="bb-empty-state__icon">
               <HiOutlineSearch />
             </div>
-            <h3 className="bb-empty-state__title">No Products Found</h3>
+            <h3 className="bb-empty-state__title">{t("products.noProductsFound")}</h3>
             <p className="bb-empty-state__desc">
-              We couldn't find any products matching your search criteria. Try modifying your search term or select another category.
+              {t("products.noProductsDesc")}
             </p>
           </div>
         )}

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { getBanners, deleteBanner } from "../../services/bannerService";
 import {
@@ -12,6 +13,7 @@ import {
 import "./AdminBannersPage.css";
 
 const AdminBannersPage = () => {
+  const { t } = useTranslation();
   const [banners, setBanners] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true);
@@ -41,7 +43,7 @@ const AdminBannersPage = () => {
         setBanners(data || []);
       } catch (error) {
         console.log(error);
-        setError("Failed to load banners");
+        setError(t("adminBanners.errLoad"));
       } finally {
         setLoading(false);
       }
@@ -51,7 +53,7 @@ const AdminBannersPage = () => {
   }, []);
 
   const deleteHandler = async (id) => {
-    const confirmDelete = window.confirm("Delete this banner?");
+    const confirmDelete = window.confirm(t("adminBanners.confirmDelete"));
     if (!confirmDelete) return;
 
     try {
@@ -106,10 +108,10 @@ const AdminBannersPage = () => {
     <div className="admin-banners-page">
       <div className="admin-banners-header">
         <div className="admin-banners-header__details">
-          <p className="admin-banners-header__eyebrow">Manage Banners</p>
-          <h1 className="admin-banners-header__title">Manage Banners</h1>
+          <p className="admin-banners-header__eyebrow">{t("adminBanners.title")}</p>
+          <h1 className="admin-banners-header__title">{t("adminBanners.title")}</h1>
           <p className="admin-banners-header__subtitle">
-            Create and manage promotional banners displayed across the platform.
+            {t("adminBanners.subtitle")}
           </p>
         </div>
         <div className="admin-banners-header__icon">
@@ -119,21 +121,21 @@ const AdminBannersPage = () => {
 
       <div className="admin-banners-stats-grid">
         <article className="admin-banners-stat-card">
-          <p className="admin-banners-stat-card__label">Total Banners</p>
+          <p className="admin-banners-stat-card__label">{t("adminBanners.total")}</p>
           <h2 className="admin-banners-stat-card__value">{totalBanners}</h2>
-          <p className="admin-banners-stat-card__note">All active and hidden banners</p>
+          <p className="admin-banners-stat-card__note">{t("adminBanners.totalNote")}</p>
         </article>
 
         <article className="admin-banners-stat-card">
-          <p className="admin-banners-stat-card__label">Active Banners</p>
+          <p className="admin-banners-stat-card__label">{t("adminBanners.active")}</p>
           <h2 className="admin-banners-stat-card__value">{activeBanners}</h2>
-          <p className="admin-banners-stat-card__note">Displayed throughout the platform</p>
+          <p className="admin-banners-stat-card__note">{t("adminBanners.activeNote")}</p>
         </article>
 
         <article className="admin-banners-stat-card">
-          <p className="admin-banners-stat-card__label">Hidden Banners</p>
+          <p className="admin-banners-stat-card__label">{t("adminBanners.hidden")}</p>
           <h2 className="admin-banners-stat-card__value">{hiddenBanners}</h2>
-          <p className="admin-banners-stat-card__note">Currently inactive promotions</p>
+          <p className="admin-banners-stat-card__note">{t("adminBanners.hiddenNote")}</p>
         </article>
       </div>
 
@@ -145,13 +147,13 @@ const AdminBannersPage = () => {
             type="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search banners by title"
-            aria-label="Search banners by title"
+            placeholder={t("adminBanners.searchPlaceholder")}
+            aria-label={t("adminBanners.searchPlaceholder")}
           />
         </div>
         <Link className="admin-banners-add-button" to="/admin/add-banner">
           <HiOutlinePlus className="admin-banners-add-button__icon" />
-          Add Banner
+          {t("adminBanners.addBtn")}
         </Link>
       </div>
 
@@ -160,9 +162,9 @@ const AdminBannersPage = () => {
       {filteredBanners.length === 0 ? (
         <div className="admin-banners-empty-state">
           <div className="admin-banners-empty-state__icon">🖼️</div>
-          <h2>No banners found</h2>
+          <h2>{t("adminBanners.emptyTitle")}</h2>
           <p>
-            Add a new banner or clear the search to manage promotional content across your platform.
+            {t("adminBanners.emptyDesc")}
           </p>
         </div>
       ) : (
@@ -193,11 +195,11 @@ const AdminBannersPage = () => {
                         : "admin-banners-badge--hidden"
                     }`}
                   >
-                    {banner.isActive ? "Active" : "Hidden"}
+                    {banner.isActive ? t("adminBanners.statusActive") : t("adminBanners.statusHidden")}
                   </span>
                 </div>
                 <div className="admin-banners-card__details">
-                  <span className="admin-banners-card__label">Position</span>
+                  <span className="admin-banners-card__label">{t("adminBanners.positionLabel")}</span>
                   <span className="admin-banners-card__value">{banner.position || "N/A"}</span>
                 </div>
               </div>
@@ -207,7 +209,7 @@ const AdminBannersPage = () => {
                   className="admin-banners-action-button admin-banners-action-button--secondary"
                 >
                   <HiOutlinePencil />
-                  Edit
+                  {t("common.edit")}
                 </Link>
                 <button
                   className="admin-banners-action-button admin-banners-action-button--danger"
@@ -216,7 +218,7 @@ const AdminBannersPage = () => {
                   disabled={actionLoadingId === banner._id}
                 >
                   <HiOutlineTrash />
-                  {actionLoadingId === banner._id ? "Deleting..." : "Delete"}
+                  {actionLoadingId === banner._id ? t("common.deleting") : t("common.delete")}
                 </button>
               </div>
             </article>

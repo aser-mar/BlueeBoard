@@ -217,6 +217,28 @@
   letter-spacing: 0.03em;
 }
 
+.bb-stock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.bb-stock-badge svg {
+  width: 14px;
+  height: 14px;
+}
+
+.bb-stock-badge.out-of-stock {
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.15);
+  color: #dc2626;
+}
 
 /* Title */
 .bb-info-title {
@@ -279,6 +301,69 @@
   gap: 14px;
   align-items: center;
   flex-wrap: wrap;
+}
+
+.bb-product-quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1.5px solid rgba(148, 163, 184, 0.2);
+  overflow: hidden;
+}
+
+.bb-product-quantity-control .bb-qty-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #475569;
+  font-weight: 700;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.bb-product-quantity-control .bb-qty-btn:hover {
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.bb-product-quantity-control .bb-qty-input {
+  width: 50px;
+  text-align: center;
+  color: #0f172a;
+  font-weight: 700;
+  font-size: 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(148, 163, 184, 0.3);
+  border-radius: 8px;
+  padding: 6px 4px;
+  outline: none;
+  font-family: inherit;
+  -moz-appearance: textfield;
+  cursor: text;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bb-product-quantity-control .bb-qty-input:hover {
+  border-color: rgba(37, 99, 235, 0.4);
+}
+
+.bb-product-quantity-control .bb-qty-input::-webkit-outer-spin-button,
+.bb-product-quantity-control .bb-qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.bb-product-quantity-control .bb-qty-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .bb-btn {

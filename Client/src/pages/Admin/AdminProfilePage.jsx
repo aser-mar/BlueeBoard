@@ -12,15 +12,11 @@ import {
   updateProfile,
 } from "../../services/userService";
 
-import {
-  HiOutlineUser,
-  HiOutlineMail,
-  HiOutlineLockClosed,
-  HiOutlineSave,
-  HiOutlineCheck,
-  HiOutlineExclamation,
-  HiOutlineCog,
-} from "react-icons/hi";
+import { HiOutlineUser, HiOutlineMail, HiOutlineLockClosed, HiOutlineSave, HiOutlineCheck, HiOutlineExclamation, HiOutlineCog } from "react-icons/hi";
+import PasswordInput from "../../components/PasswordInput";
+import PasswordRequirementsUI from "../../components/PasswordRequirementsUI";
+import { getPasswordRequirements, isPasswordValid } from "../../utils/passwordUtils";
+import { useTranslation } from "react-i18next";
 
 import "./AdminProfilePage.css";
 
@@ -30,6 +26,8 @@ const AdminProfilePage = () => {
     useSelector(
       (state) => state.auth
     );
+
+  const { t } = useTranslation();
 
   const [name, setName] =
     useState("");
@@ -42,6 +40,16 @@ const AdminProfilePage = () => {
     setPassword,
   ] = useState("");
 
+  const [
+    currentPassword,
+    setCurrentPassword,
+  ] = useState("");
+
+  const [
+    confirmPassword,
+    setConfirmPassword,
+  ] = useState("");
+
   const [loading, setLoading] =
     useState(false);
 
@@ -50,6 +58,8 @@ const AdminProfilePage = () => {
 
   const [error, setError] =
     useState("");
+
+  const passwordRequirements = getPasswordRequirements(password, t);
 
   // LOAD PROFILE
   useEffect(() => {
@@ -70,7 +80,7 @@ const AdminProfilePage = () => {
           console.log(err);
 
           setError(
-            "Failed to load profile"
+            t("adminProfile.errLoad")
           );
         }
       };
@@ -79,13 +89,30 @@ const AdminProfilePage = () => {
       fetchProfile();
     }
 
-  }, [token]);
+  }, [token, t]);
 
   // SUBMIT
   const submitHandler =
     async (e) => {
 
       e.preventDefault();
+
+      if (password && !currentPassword) {
+        setError(t("adminProfile.errCurrentReq"));
+        return;
+      }
+
+      if (password && password !== confirmPassword) {
+        setError(t("adminProfile.errMatch"));
+        return;
+      }
+
+      if (password) {
+        if (!isPasswordValid(passwordRequirements)) {
+          setError(t("adminProfile.errPassword"));
+          return;
+        }
+      }
 
       try {
 
@@ -97,16 +124,19 @@ const AdminProfilePage = () => {
           {
             name,
             email,
-            password,
+            currentPassword,
+            newPassword: password,
           },
           token
         );
 
         setMessage(
-          "Profile updated successfully"
+          t("adminProfile.success")
         );
 
         setPassword("");
+        setCurrentPassword("");
+        setConfirmPassword("");
 
       } catch (err) {
 
@@ -114,7 +144,7 @@ const AdminProfilePage = () => {
 
         setError(
           err.response?.data?.message ||
-          "Update failed"
+          t("adminProfile.errUpdate")
         );
 
       } finally {
@@ -142,8 +172,8 @@ const AdminProfilePage = () => {
           <HiOutlineUser />
         </div>
         <div className="adm-profile-hero__text">
-          <h1>My Profile</h1>
-          <p>Manage your admin account information and security settings.</p>
+          <h1>{t("adminProfile.title")}</h1>
+          <p>{t("adminProfile.subtitle")}</p>
         </div>
       </header>
 
@@ -162,7 +192,7 @@ const AdminProfilePage = () => {
               {email || "Loading..."}
             </span>
             <span className="adm-profile-avatar-role">
-              Administrator
+              {t("adminProfile.role")}
             </span>
           </div>
         </div>
@@ -175,7 +205,7 @@ const AdminProfilePage = () => {
               <HiOutlineCog />
             </div>
             <span className="adm-profile-form-card__title">
-              Account Settings
+              {t("adminProfile.accountSettings")}
             </span>
           </div>
 
@@ -206,7 +236,7 @@ const AdminProfilePage = () => {
                 htmlFor="adm-name"
               >
                 <HiOutlineUser />
-                Full Name
+                {t("adminProfile.fullName")}
               </label>
               <input
                 id="adm-name"
@@ -216,7 +246,7 @@ const AdminProfilePage = () => {
                   setName(e.target.value)
                 }
                 className="adm-form-input"
-                placeholder="Enter your full name"
+                placeholder={t("adminProfile.namePlaceholder")}
               />
             </div>
 
@@ -227,7 +257,7 @@ const AdminProfilePage = () => {
                 htmlFor="adm-email"
               >
                 <HiOutlineMail />
-                Email Address
+                {t("adminProfile.emailLabel")}
               </label>
               <input
                 id="adm-email"
@@ -237,32 +267,61 @@ const AdminProfilePage = () => {
                   setEmail(e.target.value)
                 }
                 className="adm-form-input"
-                placeholder="Enter your email"
+                placeholder={t("adminProfile.emailPlaceholder")}
               />
             </div>
 
             <div className="adm-form-divider" />
 
             {/* PASSWORD */}
-            <div className="adm-form-group">
-              <label
-                className="adm-form-label"
-                htmlFor="adm-password"
-              >
-                <HiOutlineLockClosed />
-                New Password
-              </label>
-              <input
-                id="adm-password"
-                type="password"
-                placeholder="Leave empty to keep current password"
-                value={password}
-                onChange={(e) =>
-                  setPassword(e.target.value)
-                }
-                className="adm-form-input"
-              />
-            </div>
+            <PasswordInput
+              id="adm-current-password"
+              label={(
+                <span>
+                  <HiOutlineLockClosed />
+                  {t("adminProfile.currentPassword")}
+                </span>
+              )}
+              placeholder={t("adminProfile.currentPasswordPlaceholder")}
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
+              inputClassName="adm-form-input"
+              buttonClassName="bb-password-toggle-inline"
+              autoComplete="current-password"
+            />
+
+            <PasswordInput
+              id="adm-password"
+              label={(
+                <span>
+                  <HiOutlineLockClosed />
+                  {t("adminProfile.newPassword")}
+                </span>
+              )}
+              placeholder={t("adminProfile.newPasswordPlaceholder")}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              inputClassName="adm-form-input"
+              buttonClassName="bb-password-toggle-inline"
+              autoComplete="new-password"
+            />
+            <PasswordRequirementsUI requirements={passwordRequirements} />
+
+            <PasswordInput
+              id="adm-confirm-password"
+              label={(
+                <span>
+                  <HiOutlineLockClosed />
+                  {t("adminProfile.confirmPassword")}
+                </span>
+              )}
+              placeholder={t("adminProfile.confirmPasswordPlaceholder")}
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              inputClassName="adm-form-input"
+              buttonClassName="bb-password-toggle-inline"
+              autoComplete="new-password"
+            />
 
             {/* SUBMIT */}
             <div className="adm-form-actions">
@@ -274,12 +333,12 @@ const AdminProfilePage = () => {
                 {loading ? (
                   <>
                     <span className="adm-spinner" />
-                    Saving...
+                    {t("adminProfile.saving")}
                   </>
                 ) : (
                   <>
                     <HiOutlineSave />
-                    Save Changes
+                    {t("adminProfile.saveChanges")}
                   </>
                 )}
               </button>

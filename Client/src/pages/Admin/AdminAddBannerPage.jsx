@@ -5,13 +5,16 @@ import { createBanner } from "../../services/bannerService";
 import { uploadImage } from "../../services/uploadService";
 import { getProducts } from "../../services/productService";
 import {
-  HiOutlineSparkles,
   HiOutlinePhotograph,
+  HiOutlineSparkles,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import "./AdminBannerForm.css";
 
-const AdminAddBannerPage = () => {
+const AdminAddBannerPage =
+  () => {
+    const { t } = useTranslation();
 
   const navigate =
     useNavigate();
@@ -88,22 +91,22 @@ const AdminAddBannerPage = () => {
 
   const validateForm = () => {
     if (!title.trim()) {
-      setError("Please enter banner title");
+      setError(t("admin.errBannerTitle"));
       return false;
     }
 
     if (!image) {
-      setError("Please upload banner image");
+      setError(t("admin.errBannerImage"));
       return false;
     }
 
     if (!product) {
-      setError("Please select banner product");
+      setError(t("admin.errBannerProduct"));
       return false;
     }
 
     if (!position || Number(position) <= 0) {
-      setError("Please enter a valid position greater than 0");
+      setError(t("admin.errBannerPosition"));
       return false;
     }
 
@@ -143,11 +146,11 @@ const AdminAddBannerPage = () => {
       } catch (error) {
   console.log(error);
 
-  setError(
-    error.response?.data?.message ||
-    error.response?.data?.error ||
-    "Something went wrong"
-  );
+    setError(
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      t("admin.errSomethingWentWrong")
+    );
 }
     };
 
@@ -158,8 +161,8 @@ const AdminAddBannerPage = () => {
           <HiOutlineSparkles />
         </div>
         <div className="banner-hero-text">
-          <h1>Add Banner</h1>
-          <p>Create promotional banners and highlight important products.</p>
+          <h1>{t("admin.addBanner")}</h1>
+          <p>{t("admin.addBannerDesc")}</p>
         </div>
       </header>
 
@@ -170,15 +173,15 @@ const AdminAddBannerPage = () => {
         <section className="form-section">
           <div className="form-section-title">
             <span>📋</span>
-            Banner Information
+            {t("admin.bannerInfo")}
           </div>
           <div className="form-row full">
             <div className="form-group">
-              <label htmlFor="title">Banner Title</label>
+              <label htmlFor="title">{t("admin.bannerTitle")}</label>
               <input
                 id="title"
                 type="text"
-                placeholder="Enter banner title"
+                placeholder={t("admin.bannerTitle")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -186,7 +189,7 @@ const AdminAddBannerPage = () => {
           </div>
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="link">Link (Optional)</label>
+              <label htmlFor="link">{t("admin.linkOptional")}</label>
               <input
                 id="link"
                 type="text"
@@ -196,7 +199,7 @@ const AdminAddBannerPage = () => {
               />
             </div>
             <div className="form-group">
-              <label htmlFor="position">Display Position</label>
+              <label htmlFor="position">{t("admin.displayPosition")}</label>
               <input
                 id="position"
                 type="number"
@@ -208,13 +211,13 @@ const AdminAddBannerPage = () => {
           </div>
           <div className="form-row full">
             <div className="form-group">
-              <label htmlFor="product">Product</label>
+              <label htmlFor="product">{t("admin.product")}</label>
               <select
                 id="product"
                 value={product}
                 onChange={(e) => setProduct(e.target.value)}
               >
-                <option value="">Select Product</option>
+                <option value="">{t("admin.selectProduct")}</option>
                 {products.map((prod) => (
                   <option key={prod._id} value={prod._id}>
                     {prod.name}
@@ -229,7 +232,7 @@ const AdminAddBannerPage = () => {
         <section className="form-section">
           <div className="form-section-title">
             <HiOutlinePhotograph />
-            Banner Image
+            {t("admin.bannerImage")}
           </div>
           <div className="image-section">
             <label className="upload-zone">
@@ -250,7 +253,7 @@ const AdminAddBannerPage = () => {
         {/* Actions */}
         <div className="form-actions">
           <button type="submit" className="btn-submit">
-            Add Banner
+            {uploading ? t("admin.addingBanner") : t("admin.addBanner")}
           </button>
         </div>
       </form>

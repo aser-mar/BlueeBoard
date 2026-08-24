@@ -114,6 +114,7 @@ const createProduct =
         name,
         description,
         price,
+        isSoldOut,
         images,
         category,
         company,
@@ -125,6 +126,7 @@ const createProduct =
           name,
           description,
           price,
+          isSoldOut: isSoldOut || false,
           images,
           category,
           company,
@@ -198,6 +200,9 @@ const updateProduct = async (req, res) => {
     product.price =
       req.body.price ??
       product.price;
+
+    product.isSoldOut =
+      req.body.isSoldOut ?? product.isSoldOut;
 
     product.category =
       req.body.category ||

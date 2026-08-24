@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { getCompanyManagers, deleteCompanyManager } from "../../services/companyManagerService";
 import { Link } from "react-router-dom";
 import {
@@ -10,6 +11,7 @@ import {
 import "./AdminCompanyManagersPage.css";
 
 const AdminCompanyManagersPage = () => {
+  const { t } = useTranslation();
   const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [deleteLoadingId, setDeleteLoadingId] = useState(null);
@@ -64,7 +66,7 @@ const AdminCompanyManagersPage = () => {
         setManagers(data || []);
       } catch (err) {
         console.error(err);
-        setError("Failed to load company managers");
+        setError(t("adminManagers.errLoad"));
       } finally {
         setLoading(false);
       }
@@ -75,7 +77,7 @@ const AdminCompanyManagersPage = () => {
 
   const deleteHandler = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this company manager?"
+      t("adminManagers.confirmDelete")
     );
 
     if (!confirmDelete) return;
@@ -89,7 +91,7 @@ const AdminCompanyManagersPage = () => {
       );
     } catch (err) {
       console.error(err);
-      alert("Failed to delete company manager");
+      alert(t("adminManagers.errDelete"));
     } finally {
       setDeleteLoadingId(null);
     }
@@ -132,10 +134,10 @@ const AdminCompanyManagersPage = () => {
     <div className="admin-company-managers-page">
       <div className="admin-company-managers-header">
         <div className="admin-company-managers-header__details">
-          <p className="admin-company-managers-header__eyebrow">Company Managers</p>
-          <h1 className="admin-company-managers-header__title">Company Managers</h1>
+          <p className="admin-company-managers-header__eyebrow">{t("adminManagers.title")}</p>
+          <h1 className="admin-company-managers-header__title">{t("adminManagers.title")}</h1>
           <p className="admin-company-managers-header__subtitle">
-            Manage company manager accounts across all companies.
+            {t("adminManagers.subtitle")}
           </p>
         </div>
         <div className="admin-company-managers-header__icon">
@@ -145,21 +147,21 @@ const AdminCompanyManagersPage = () => {
 
       <div className="admin-company-managers-stats-grid">
         <article className="admin-company-managers-stat-card">
-          <p className="admin-company-managers-stat-card__label">Total Managers</p>
+          <p className="admin-company-managers-stat-card__label">{t("adminManagers.total")}</p>
           <h2 className="admin-company-managers-stat-card__value">{totalManagers}</h2>
-          <p className="admin-company-managers-stat-card__note">Registered managers</p>
+          <p className="admin-company-managers-stat-card__note">{t("adminManagers.totalNote")}</p>
         </article>
 
         <article className="admin-company-managers-stat-card">
-          <p className="admin-company-managers-stat-card__label">Total Companies Assigned</p>
+          <p className="admin-company-managers-stat-card__label">{t("adminManagers.assigned")}</p>
           <h2 className="admin-company-managers-stat-card__value">{totalCompaniesAssigned}</h2>
-          <p className="admin-company-managers-stat-card__note">Assigned organizations</p>
+          <p className="admin-company-managers-stat-card__note">{t("adminManagers.assignedNote")}</p>
         </article>
 
         <article className="admin-company-managers-stat-card">
-          <p className="admin-company-managers-stat-card__label">Active Manager Accounts</p>
+          <p className="admin-company-managers-stat-card__label">{t("adminManagers.active")}</p>
           <h2 className="admin-company-managers-stat-card__value">{activeManagersCount}</h2>
-          <p className="admin-company-managers-stat-card__note">Active sessions</p>
+          <p className="admin-company-managers-stat-card__note">{t("adminManagers.activeNote")}</p>
         </article>
       </div>
 
@@ -171,12 +173,12 @@ const AdminCompanyManagersPage = () => {
             type="search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Search by manager name, email or company name"
+            placeholder={t("adminManagers.searchPlaceholder")}
             aria-label="Search managers"
           />
         </div>
         <Link className="admin-company-managers-add-button" to="/admin/company-managers/add">
-          Add Company Manager
+          {t("adminManagers.addBtn")}
         </Link>
       </div>
 
@@ -185,12 +187,12 @@ const AdminCompanyManagersPage = () => {
       {filteredManagers.length === 0 ? (
         <div className="admin-company-managers-empty-state">
           <div className="admin-company-managers-empty-state__icon">👥</div>
-          <h2>No company managers match your search</h2>
+          <h2>{t("adminManagers.emptyTitle")}</h2>
           <p>
-            Add new managers or clear your search to continue managing company manager accounts.
+            {t("adminManagers.emptyDesc")}
           </p>
           <Link className="admin-company-managers-empty-state__button" to="/admin/company-managers/add">
-            Add first manager
+            {t("adminManagers.addBtn")}
           </Link>
         </div>
       ) : (
@@ -198,7 +200,7 @@ const AdminCompanyManagersPage = () => {
           <div className="admin-company-managers-table-wrap">
             <div className="admin-company-managers-table-meta">
               <p>
-                Showing <strong>{filteredManagers.length}</strong> managers
+                {t("adminManagers.showing", { count: filteredManagers.length })}
               </p>
             </div>
 
@@ -206,11 +208,11 @@ const AdminCompanyManagersPage = () => {
               <table className="admin-company-managers-table">
                 <thead>
                   <tr>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Company</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
+                    <th>{t("adminManagers.thName")}</th>
+                    <th>{t("adminManagers.thEmail")}</th>
+                    <th>{t("adminManagers.thCompany")}</th>
+                    <th>{t("adminManagers.createdDate")}</th>
+                    <th>{t("adminManagers.thActions")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -237,14 +239,14 @@ const AdminCompanyManagersPage = () => {
                             className="admin-company-managers-action-button"
                           >
                             <HiOutlinePencil className="admin-company-managers-action-button__icon" style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }} />
-                            Edit
+                            {t("common.edit")}
                           </Link>
                           <button
                             className="admin-company-managers-action-button admin-company-managers-action-button--danger"
                             onClick={() => deleteHandler(manager._id)}
                             disabled={deleteLoadingId === manager._id}
                           >
-                            {deleteLoadingId === manager._id ? "Deleting..." : "Delete"}
+                            {deleteLoadingId === manager._id ? t("common.deleting") : t("common.delete")}
                           </button>
                         </div>
                       </td>
@@ -276,10 +278,10 @@ const AdminCompanyManagersPage = () => {
                       Email: {manager.email}
                     </p>
                     <p className="admin-company-managers-card__company">
-                      Company: {typeof manager.company === "string" ? manager.company : manager.company?.name || "—"}
+                      {t("adminManagers.thCompany")}: {typeof manager.company === "string" ? manager.company : manager.company?.name || "—"}
                     </p>
                     <p className="admin-company-managers-card__placement">
-                      Created: {manager.createdAt ? new Date(manager.createdAt).toLocaleDateString() : "—"}
+                      {t("adminManagers.createdDate")}: {manager.createdAt ? new Date(manager.createdAt).toLocaleDateString() : "—"}
                     </p>
                   </div>
                   <div className="admin-company-managers-card__footer">
@@ -289,14 +291,14 @@ const AdminCompanyManagersPage = () => {
                         className="admin-company-managers-action-button"
                       >
                         <HiOutlinePencil className="admin-company-managers-action-button__icon" style={{ marginRight: '4px', display: 'inline-block', verticalAlign: 'middle' }} />
-                        Edit
+                        {t("common.edit")}
                       </Link>
                       <button
                         className="admin-company-managers-action-button admin-company-managers-action-button--danger"
                         onClick={() => deleteHandler(manager._id)}
                         disabled={deleteLoadingId === manager._id}
                       >
-                        {deleteLoadingId === manager._id ? "Deleting..." : "Delete"}
+                        {deleteLoadingId === manager._id ? t("common.deleting") : t("common.delete")}
                       </button>
                     </div>
                   </div>

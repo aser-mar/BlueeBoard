@@ -28,10 +28,13 @@ import {
 } from "react-icons/hi";
 
 import { RiBusLine } from "react-icons/ri";
+import { useTranslation } from "react-i18next";
+import { getProductImageUrl, onImageError } from "../utils/imageHelper";
 
 import "./HomePage.css";
 
 const HomePage = () => {
+  const { t } = useTranslation();
 
   const [companies, setCompanies] =
     useState([]);
@@ -52,6 +55,30 @@ const HomePage = () => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, scrollLeft: 0 });
   const [dragMoved, setDragMoved] = useState(false);
+  const [showCarouselArrows, setShowCarouselArrows] = useState(false);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkCarouselOverflow = () => {
+    const track = companiesTrackRef.current;
+    if (!track) return;
+
+    const hasOverflow = track.scrollWidth > track.clientWidth + 1;
+    setShowCarouselArrows(hasOverflow);
+
+    if (!hasOverflow) {
+      setCanScrollLeft(false);
+      setCanScrollRight(false);
+      return;
+    }
+
+    const tolerance = 5;
+    const atStart = track.scrollLeft <= tolerance;
+    const atEnd = track.scrollLeft + track.clientWidth >= track.scrollWidth - tolerance;
+
+    setCanScrollLeft(!atStart);
+    setCanScrollRight(!atEnd);
+  };
 
   const scrollCompanies = (direction) => {
     const track = companiesTrackRef.current;
@@ -110,6 +137,37 @@ const HomePage = () => {
 
   }, [filters]);
 
+  useEffect(() => {
+    checkCarouselOverflow();
+  }, [companies]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      checkCarouselOverflow();
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [companies]);
+
+  useEffect(() => {
+    const track = companiesTrackRef.current;
+    if (!track) return;
+
+    const handleScroll = () => {
+      checkCarouselOverflow();
+    };
+
+    track.addEventListener("scroll", handleScroll);
+
+    return () => {
+      track.removeEventListener("scroll", handleScroll);
+    };
+  }, [companies]);
+
   // FETCH FEATURED PRODUCTS
   useEffect(() => {
 
@@ -148,16 +206,15 @@ const HomePage = () => {
         <div className="bb-hero__content">
           <div className="bb-hero__badge">
             <RiBusLine />
-            Welcome to BLUEEBOARD
+            {t("home.welcome")}
           </div>
 
           <h1 className="bb-hero__title">
-            Discover Premium Products
+            {t("home.heroTitle")}
           </h1>
 
           <p className="bb-hero__subtitle">
-            Explore top brands and find the best deals across
-            our curated collection of quality products.
+            {t("home.heroSubtitle")}
           </p>
         </div>
       </section>
@@ -176,10 +233,10 @@ const HomePage = () => {
           </div>
           <div className="bb-section-header__text">
             <h2 className="bb-section-header__title">
-              Companies
+              {t("home.companiesTitle")}
             </h2>
             <span className="bb-section-header__subtitle">
-              Browse products by brand
+              {t("home.companiesSubtitle")}
             </span>
           </div>
         </div>
@@ -187,14 +244,17 @@ const HomePage = () => {
         <CompanyFilters onFilterChange={setFilters} companies={companies} />
 
         <div className="bb-companies-carousel-wrap">
-          <button
-            type="button"
-            className="bb-companies-carousel-arrow bb-companies-carousel-arrow--left"
-            onClick={() => scrollCompanies("left")}
-            aria-label="Scroll left"
-          >
-            <HiOutlineArrowLeft />
-          </button>
+          {showCarouselArrows && (
+            <button
+              type="button"
+              className={`bb-companies-carousel-arrow bb-companies-carousel-arrow--left ${!canScrollLeft ? "bb-companies-carousel-arrow--disabled" : ""}`}
+              onClick={() => scrollCompanies("left")}
+              aria-label="Scroll left"
+              disabled={!canScrollLeft}
+            >
+              <HiOutlineArrowLeft />
+            </button>
+          )}
 
           <div 
             className="bb-companies-carousel-track" 
@@ -203,6 +263,7 @@ const HomePage = () => {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
             onMouseLeave={handleMouseUp}
+            onScroll={checkCarouselOverflow}
           >
 
           {
@@ -270,14 +331,17 @@ const HomePage = () => {
 
           </div>
 
-          <button
-            type="button"
-            className="bb-companies-carousel-arrow bb-companies-carousel-arrow--right"
-            onClick={() => scrollCompanies("right")}
-            aria-label="Scroll right"
-          >
-            <HiOutlineArrowRight />
-          </button>
+          {showCarouselArrows && (
+            <button
+              type="button"
+              className={`bb-companies-carousel-arrow bb-companies-carousel-arrow--right ${!canScrollRight ? "bb-companies-carousel-arrow--disabled" : ""}`}
+              onClick={() => scrollCompanies("right")}
+              aria-label="Scroll right"
+              disabled={!canScrollRight}
+            >
+              <HiOutlineArrowRight />
+            </button>
+          )}
         </div>
 
       </div>
@@ -319,21 +383,14 @@ const HomePage = () => {
                         
                         <img
                           src={
-                            product.images?.[0]?.url ||
-                            "https://dummyimage.com/300x200/cccccc/000000&text=No+Image"
+                            getProductImageUrl(product.images?.[0])
                           }
 
                           alt={
                             product.name
                           }
 
-                          onError={(
-                            e
-                          ) => {
-
-                            e.target.src =
-                              "https://dummyimage.com/300x200/cccccc/000000&text=No+Image";
-                          }}
+                          onError={onImageError}
 
                           className="bb-product-card__image"
                         />
@@ -361,7 +418,7 @@ const HomePage = () => {
                               product.price
                             }
                             <span className="bb-product-card__currency">
-                              {" "}EGP
+                              {" "}{t("common.currency")}
                             </span>
                           </span>
 

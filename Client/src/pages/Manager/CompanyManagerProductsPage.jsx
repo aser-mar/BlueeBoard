@@ -3,6 +3,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useTranslation } from "react-i18next";
 
 import { useSelector } from "react-redux";
 
@@ -19,10 +20,12 @@ import {
   HiOutlinePencil,
   HiOutlineTrash,
 } from "react-icons/hi";
+import { getProductImageUrl, onImageError } from "../../utils/imageHelper";
 import "../Admin/AdminProductsPage.css";
 
 const CompanyManagerProductsPage =
   () => {
+    const { t } = useTranslation();
 
     const [
       products,
@@ -86,7 +89,7 @@ const CompanyManagerProductsPage =
             );
 
             setError(
-              "Failed to load products"
+              t("managerProducts.errLoad")
             );
 
           } finally {
@@ -97,7 +100,7 @@ const CompanyManagerProductsPage =
 
       loadProducts();
 
-    }, [token]);
+    }, [token, t]);
 
     // DELETE PRODUCT
     const deleteHandler =
@@ -105,7 +108,7 @@ const CompanyManagerProductsPage =
 
         const confirmDelete =
           window.confirm(
-            "Are you sure you want to delete this product?"
+            t("managerProducts.confirmDelete")
           );
 
         if (
@@ -142,7 +145,7 @@ const CompanyManagerProductsPage =
           );
 
           alert(
-            "Failed to delete product"
+            t("managerProducts.errDelete")
           );
 
         } finally {
@@ -177,12 +180,9 @@ const CompanyManagerProductsPage =
       <div className="admin-products-page">
         <div className="admin-products-header">
           <div className="page-title-group">
-            <h1 className="page-title">Company Products</h1>
-            <p className="page-subtitle">Manage your company's catalog and inventory</p>
+            <h1 className="page-title">{t("managerProducts.title")}</h1>
+            <p className="page-subtitle">{t("managerProducts.subtitle")}</p>
           </div>
-          <Link to="/company-manager/products/add" className="admin-products-add-button">
-            Add Product
-          </Link>
         </div>
 
         <div className="admin-products-search-card">
@@ -193,12 +193,12 @@ const CompanyManagerProductsPage =
               type="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search products, categories, or price"
+              placeholder={t("managerProducts.searchPlaceholder")}
               aria-label="Search products"
             />
           </div>
           <Link to="/company-manager/products/add" className="admin-products-add-button">
-            Add Product
+            {t("managerProducts.addBtn")}
           </Link>
         </div>
 
@@ -209,9 +209,9 @@ const CompanyManagerProductsPage =
             <div className="admin-products-empty-state__icon">
               <HiOutlineSearch />
             </div>
-            <h2>No matching products found.</h2>
-            <p>Try another keyword or clear the search to view all products.</p>
-            <Link to="/company-manager/products/add" className="admin-products-empty-state__button">Add Product</Link>
+            <h2>{t("managerProducts.emptyTitle")}</h2>
+            <p>{t("managerProducts.emptyDesc")}</p>
+            <Link to="/company-manager/products/add" className="admin-products-empty-state__button">{t("managerProducts.addBtn")}</Link>
           </div>
         ) : (
           <div className="admin-products-grid">
@@ -220,15 +220,19 @@ const CompanyManagerProductsPage =
                 <div className="product-main">
                   <div className="product-media">
                     <img
-                      src={product.images?.[0]?.url || product.images?.[0] || "/no-image.png"}
+                      src={getProductImageUrl(product.images?.[0])}
                       alt={product.name}
                       className="product-image admin-products-image"
+                      onError={onImageError}
                     />
                   </div>
                   <div className="product-info">
                     <h3 className="product-name admin-products-name">{product.name}</h3>
                     <div className="product-meta admin-products-meta">
-                      <span className="badge muted">{product.category?.name || "No Category"}</span>
+                      <span className="badge muted">{product.category?.name || t("managerProducts.noCategory")}</span>
+                      {product.isSoldOut && (
+                        <span className="badge badge--sold-out">{t("managerProducts.soldOut")}</span>
+                      )}
                     </div>
                     <div className="product-price admin-products-price">{product.price} EGP</div>
                   </div>
@@ -236,7 +240,7 @@ const CompanyManagerProductsPage =
                 <div className="admin-products-actions">
                   <Link to={`/company-manager/products/${product._id}/edit`} className="admin-products-action-button">
                     <HiOutlinePencil className="admin-products-action-button__icon" />
-                    Edit
+                    {t("common.edit")}
                   </Link>
                   <button
                     onClick={() => deleteHandler(product._id)}
@@ -245,11 +249,11 @@ const CompanyManagerProductsPage =
                     aria-disabled={deleteLoadingId === product._id}
                   >
                     {deleteLoadingId === product._id ? (
-                      "Deleting..."
+                      t("common.deleting")
                     ) : (
                       <>
                         <HiOutlineTrash className="admin-products-action-button__icon" />
-                        Delete
+                        {t("common.delete")}
                       </>
                     )}
                   </button>

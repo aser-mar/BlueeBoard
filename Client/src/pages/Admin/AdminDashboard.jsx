@@ -30,6 +30,7 @@ import { getCompanyManagers } from "../../services/companyManagerService";
 import { getSectors } from "../../services/sectorService";
 
 import { useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 import "./AdminDashboard.css";
 
@@ -78,6 +79,7 @@ import "./AdminDashboard.css";
 };
 
 const AdminDashboard = () => {
+  const { t, i18n } = useTranslation();
   const { token } = useSelector((state) => state.auth);
 
   const [stats, setStats] = useState({
@@ -139,10 +141,10 @@ const AdminDashboard = () => {
     <div className="admin-dashboard">
       <div className="admin-dashboard__hero">
         <div>
-          <p className="admin-dashboard__eyebrow">Admin Console</p>
-          <h1 className="admin-dashboard__title">Admin Dashboard</h1>
+          <p className="admin-dashboard__eyebrow">{t("adminDashboard.eyebrow")}</p>
+          <h1 className="admin-dashboard__title">{t("adminDashboard.title")}</h1>
           <p className="admin-dashboard__subtitle">
-            Manage products, companies, banners, categories and orders.
+            {t("adminDashboard.subtitle")}
           </p>
         </div>
         <div className="admin-dashboard__hero-icon">
@@ -156,11 +158,11 @@ const AdminDashboard = () => {
             <HiOutlineShoppingBag />
           </div>
           <div>
-            <p className="admin-card__label">Products</p>
+            <p className="admin-card__label">{t("adminDashboard.statsProducts")}</p>
             <h2 className="admin-card__value">
             {stats.products}
             </h2>
-            <p className="admin-card__note">Active catalog items</p>
+            <p className="admin-card__note">{t("adminDashboard.statsProductsNote")}</p>
           </div>
         </article>
 
@@ -169,11 +171,11 @@ const AdminDashboard = () => {
             <HiOutlineOfficeBuilding />
           </div>
           <div>
-            <p className="admin-card__label">Companies</p>
+            <p className="admin-card__label">{t("adminDashboard.statsCompanies")}</p>
             <h2 className="admin-card__value">
             {stats.companies}
             </h2>
-            <p className="admin-card__note">Verified partners</p>
+            <p className="admin-card__note">{t("adminDashboard.statsCompaniesNote")}</p>
           </div>
         </article>
 
@@ -182,11 +184,11 @@ const AdminDashboard = () => {
             <HiOutlineCollection />
           </div>
           <div>
-            <p className="admin-card__label">Categories</p>
+            <p className="admin-card__label">{t("adminDashboard.statsCategories")}</p>
             <h2 className="admin-card__value">
             {stats.categories}
             </h2>
-            <p className="admin-card__note">Organized sections</p>
+            <p className="admin-card__note">{t("adminDashboard.statsCategoriesNote")}</p>
           </div>
         </article>
 
@@ -195,11 +197,11 @@ const AdminDashboard = () => {
             <HiOutlineTag />
           </div>
           <div>
-            <p className="admin-card__label">Sectors</p>
+            <p className="admin-card__label">{t("adminDashboard.statsSectors")}</p>
             <h2 className="admin-card__value">
             {stats.sectors}
             </h2>
-            <p className="admin-card__note">Business classification sectors</p>
+            <p className="admin-card__note">{t("adminDashboard.statsSectorsNote")}</p>
           </div>
         </article>
 
@@ -208,11 +210,11 @@ const AdminDashboard = () => {
             <HiOutlinePhotograph />
           </div>
           <div>
-            <p className="admin-card__label">Banners</p>
+            <p className="admin-card__label">{t("adminDashboard.statsBanners")}</p>
             <h2 className="admin-card__value">
             {stats.banners}
             </h2>
-            <p className="admin-card__note">Live campaign banners</p>
+            <p className="admin-card__note">{t("adminDashboard.statsBannersNote")}</p>
           </div>
         </article>
 
@@ -221,11 +223,11 @@ const AdminDashboard = () => {
             <HiOutlineCube />
           </div>
           <div>
-            <p className="admin-card__label">Orders</p>
+            <p className="admin-card__label">{t("adminDashboard.statsOrders")}</p>
             <h2 className="admin-card__value">
             {stats.orders}
             </h2>
-            <p className="admin-card__note">Pending and delivered</p>
+            <p className="admin-card__note">{t("adminDashboard.statsOrdersNote")}</p>
           </div>
         </article>
 
@@ -234,11 +236,11 @@ const AdminDashboard = () => {
             <HiOutlineOfficeBuilding />
           </div>
           <div>
-            <p className="admin-card__label">Company Managers</p>
+            <p className="admin-card__label">{t("adminDashboard.statsManagers")}</p>
             <h2 className="admin-card__value">
             {stats.managers}
             </h2>
-            <p className="admin-card__note">Partner accounts</p>
+            <p className="admin-card__note">{t("adminDashboard.statsManagersNote")}</p>
           </div>
         </article>
       </section>
@@ -246,9 +248,9 @@ const AdminDashboard = () => {
       <section className="admin-dashboard__analytics">
         <div className="admin-dashboard__section-header">
           <div>
-            <h2 className="admin-dashboard__section-title">Sales Insights</h2>
+            <h2 className="admin-dashboard__section-title">{t("adminDashboard.analyticsTitle")}</h2>
             <p className="admin-dashboard__section-subtitle">
-              A quick view of recent order momentum and revenue activity.
+              {t("adminDashboard.analyticsSubtitle")}
             </p>
           </div>
         </div>
@@ -269,10 +271,10 @@ const AdminDashboard = () => {
             <article className="admin-card admin-analytics-card">
               <div className="admin-analytics-card__header">
                 <div>
-                  <p className="admin-card__label">Order Trend</p>
-                  <h3 className="admin-analytics-card__title">Daily orders</h3>
+                  <p className="admin-card__label">{t("adminDashboard.orderTrend")}</p>
+                  <h3 className="admin-analytics-card__title">{t("adminDashboard.dailyOrders")}</h3>
                 </div>
-                <span className="admin-analytics-card__badge">Last 7 days</span>
+                <span className="admin-analytics-card__badge">{t("adminDashboard.last7Days")}</span>
               </div>
               <div className="admin-analytics-card__chart">
                 <ResponsiveContainer width="100%" height="100%">
@@ -284,8 +286,8 @@ const AdminDashboard = () => {
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="rgba(148, 163, 184, 0.22)" vertical={false} />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} reversed={i18n.dir() === "rtl"} />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} orientation={i18n.dir() === "rtl" ? "right" : "left"} />
                     <Tooltip />
                     <Area type="monotone" dataKey="orders" stroke="#2563eb" fill="url(#ordersFill)" strokeWidth={3} />
                   </AreaChart>
@@ -296,8 +298,8 @@ const AdminDashboard = () => {
             <article className="admin-card admin-analytics-card">
               <div className="admin-analytics-card__header">
                 <div>
-                  <p className="admin-card__label">Revenue Trend</p>
-                  <h3 className="admin-analytics-card__title">Daily revenue</h3>
+                  <p className="admin-card__label">{t("adminDashboard.revenueTrend")}</p>
+                  <h3 className="admin-analytics-card__title">{t("adminDashboard.dailyRevenue")}</h3>
                 </div>
                 <span className="admin-analytics-card__badge">${analytics.totalRevenue.toFixed(2)}</span>
               </div>
@@ -311,8 +313,8 @@ const AdminDashboard = () => {
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="rgba(148, 163, 184, 0.22)" vertical={false} />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} reversed={i18n.dir() === "rtl"} />
+                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} orientation={i18n.dir() === "rtl" ? "right" : "left"} />
                     <Tooltip formatter={(value) => [`$${value}`, "Revenue"]} />
                     <Area type="monotone" dataKey="revenue" stroke="#06b6d4" fill="url(#revenueFill)" strokeWidth={3} />
                   </AreaChart>
@@ -322,10 +324,10 @@ const AdminDashboard = () => {
           </div>
         ) : (
           <article className="admin-card admin-analytics-card admin-analytics-card--empty">
-            <p className="admin-card__label">Analytics</p>
-            <h3 className="admin-analytics-card__title">No order activity yet</h3>
+            <p className="admin-card__label">{t("adminDashboard.analyticsLabel")}</p>
+            <h3 className="admin-analytics-card__title">{t("adminDashboard.noOrderActivity")}</h3>
             <p className="admin-dashboard__section-subtitle">
-              Orders will appear here as soon as customers begin purchasing from the store.
+              {t("adminDashboard.noOrderActivityNote")}
             </p>
           </article>
         )}
@@ -334,9 +336,9 @@ const AdminDashboard = () => {
       <section className="admin-dashboard__quick-actions">
         <div className="admin-dashboard__section-header">
           <div>
-            <h2 className="admin-dashboard__section-title">Quick Actions</h2>
+            <h2 className="admin-dashboard__section-title">{t("adminDashboard.quickActions")}</h2>
             <p className="admin-dashboard__section-subtitle">
-              Fast access to the most important creation flows.
+              {t("adminDashboard.quickActionsNote")}
             </p>
           </div>
         </div>
@@ -349,9 +351,9 @@ const AdminDashboard = () => {
               <HiOutlinePlus />
             </div>
             <div>
-              <p className="admin-action-card__title">Add Product</p>
+              <p className="admin-action-card__title">{t("adminDashboard.actionAddProduct")}</p>
               <p className="admin-action-card__text">
-                Launch a new product listing in the marketplace.
+                {t("adminDashboard.actionAddProductNote")}
               </p>
             </div>
           </Link>
@@ -361,9 +363,9 @@ const AdminDashboard = () => {
               <HiOutlinePlus />
             </div>
             <div>
-              <p className="admin-action-card__title">Add Company</p>
+              <p className="admin-action-card__title">{t("adminDashboard.actionAddCompany")}</p>
               <p className="admin-action-card__text">
-                Register a new vendor or partner profile.
+                {t("adminDashboard.actionAddCompanyNote")}
               </p>
             </div>
           </Link>
@@ -373,9 +375,9 @@ const AdminDashboard = () => {
               <HiOutlinePlus />
             </div>
             <div>
-              <p className="admin-action-card__title">Add Banner</p>
+              <p className="admin-action-card__title">{t("adminDashboard.actionAddBanner")}</p>
               <p className="admin-action-card__text">
-                Create a new promotional banner for the homepage.
+                {t("adminDashboard.actionAddBannerNote")}
               </p>
             </div>
           </Link>
@@ -389,18 +391,18 @@ const AdminDashboard = () => {
               <HiOutlineShoppingBag />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Products</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsProducts")}</h3>
               <p className="admin-section-card__copy">
-                Manage current products or add new items to the catalog.
+                {t("adminDashboard.mgtProductsDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/products">
-              Manage Products
+              {t("adminDashboard.mgtProductsBtn")}
             </Link>
             <Link className="admin-button admin-button--secondary" to="/admin/products/add">
-              Add Product
+              {t("adminDashboard.mgtAddProductBtn")}
             </Link>
           </div>
         </article>
@@ -411,18 +413,18 @@ const AdminDashboard = () => {
               <HiOutlineOfficeBuilding />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Companies</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsCompanies")}</h3>
               <p className="admin-section-card__copy">
-                Oversee company profiles and onboard new vendors.
+                {t("adminDashboard.mgtCompaniesDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/companies">
-              Manage Companies
+              {t("adminDashboard.mgtCompaniesBtn")}
             </Link>
             <Link className="admin-button admin-button--secondary" to="/admin/add-company">
-              Add Company
+              {t("adminDashboard.mgtAddCompanyBtn")}
             </Link>
           </div>
         </article>
@@ -433,18 +435,18 @@ const AdminDashboard = () => {
               <HiOutlineOfficeBuilding />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Company Managers</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsManagers")}</h3>
               <p className="admin-section-card__copy">
-                Oversee company manager accounts and assign companies.
+                {t("adminDashboard.mgtManagersDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/company-managers">
-              Manage Managers
+              {t("adminDashboard.mgtManagersBtn")}
             </Link>
             <Link className="admin-button admin-button--secondary" to="/admin/company-managers/add">
-              Add Manager
+              {t("adminDashboard.mgtAddManagerBtn")}
             </Link>
           </div>
         </article>
@@ -455,15 +457,15 @@ const AdminDashboard = () => {
               <HiOutlineCollection />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Categories</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsCategories")}</h3>
               <p className="admin-section-card__copy">
-                Organize product categories and keep the storefront tidy.
+                {t("adminDashboard.mgtCategoriesDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/categories">
-              Manage Categories
+              {t("adminDashboard.mgtCategoriesBtn")}
             </Link>
           </div>
         </article>
@@ -474,15 +476,15 @@ const AdminDashboard = () => {
               <HiOutlineTag />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Sectors</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsSectors")}</h3>
               <p className="admin-section-card__copy">
-                Manage business sectors used to classify and filter companies.
+                {t("adminDashboard.mgtSectorsDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/sectors">
-              Manage Sectors
+              {t("adminDashboard.mgtSectorsBtn")}
             </Link>
           </div>
         </article>
@@ -493,18 +495,18 @@ const AdminDashboard = () => {
               <HiOutlinePhotograph />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Banners</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsBanners")}</h3>
               <p className="admin-section-card__copy">
-                Update homepage visuals and schedule new campaigns.
+                {t("adminDashboard.mgtBannersDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/banners">
-              Manage Banners
+              {t("adminDashboard.mgtBannersBtn")}
             </Link>
             <Link className="admin-button admin-button--secondary" to="/admin/add-banner">
-              Add Banner
+              {t("adminDashboard.mgtAddBannerBtn")}
             </Link>
           </div>
         </article>
@@ -515,15 +517,15 @@ const AdminDashboard = () => {
               <HiOutlineChartBar />
             </div>
             <div>
-              <h3 className="admin-section-card__heading">Orders</h3>
+              <h3 className="admin-section-card__heading">{t("adminDashboard.statsOrders")}</h3>
               <p className="admin-section-card__copy">
-                Review order flow and track fulfillment status.
+                {t("adminDashboard.mgtOrdersDesc")}
               </p>
             </div>
           </div>
           <div className="admin-section-card__actions">
             <Link className="admin-button" to="/admin/orders">
-              Manage Orders
+              {t("adminDashboard.mgtOrdersBtn")}
             </Link>
           </div>
         </article>

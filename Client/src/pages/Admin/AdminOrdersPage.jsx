@@ -8,10 +8,12 @@ import {
   HiOutlineTruck,
   HiOutlineEye,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import "./AdminOrdersPage.css";
 
 const AdminOrdersPage = () => {
+  const { t } = useTranslation();
   const { token } = useSelector((state) => state.auth);
 
   const [orders, setOrders] = useState([]);
@@ -32,14 +34,14 @@ const AdminOrdersPage = () => {
         setOrders(data || []);
       } catch (error) {
         console.log(error);
-        setError("Failed to load orders");
+        setError(t("adminOrders.errLoad"));
       } finally {
         setLoading(false);
       }
     };
 
     loadOrders();
-  }, [token]);
+  }, [token, t]);
 
   // UPDATE STATUS (keep existing functionality)
   const handleStatusChange = async (id, status) => {
@@ -49,7 +51,7 @@ const AdminOrdersPage = () => {
       setOrders((prev) => prev.map((order) => (order._id === id ? updated : order)));
     } catch (error) {
       console.log(error);
-      alert("Failed to update order");
+      alert(t("adminOrders.errUpdate"));
     } finally {
       setUpdatingId(null);
     }
@@ -100,8 +102,8 @@ const AdminOrdersPage = () => {
             <HiOutlineClipboardList />
           </div>
           <div>
-            <h1 className="hero-title">Manage Orders</h1>
-            <p className="hero-sub">Track, update and manage customer orders.</p>
+            <h1 className="hero-title">{t("adminOrders.title")}</h1>
+            <p className="hero-sub">{t("adminOrders.subtitle")}</p>
           </div>
         </div>
       </header>
@@ -111,19 +113,19 @@ const AdminOrdersPage = () => {
       <section className="stats-grid" aria-label="order statistics">
         <div className="stat-card">
           <div className="stat-value">{totalOrders}</div>
-          <div className="stat-label">Total Orders</div>
+          <div className="stat-label">{t("adminOrders.totalOrders")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{pendingOrders}</div>
-          <div className="stat-label">Pending Orders</div>
+          <div className="stat-label">{t("adminOrders.pendingOrders")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{deliveredOrders}</div>
-          <div className="stat-label">Delivered Orders</div>
+          <div className="stat-label">{t("adminOrders.deliveredOrders")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{cancelledOrders}</div>
-          <div className="stat-label">Cancelled Orders</div>
+          <div className="stat-label">{t("adminOrders.cancelledOrders")}</div>
         </div>
       </section>
 
@@ -132,7 +134,7 @@ const AdminOrdersPage = () => {
           <HiOutlineSearch className="search-icon" />
           <input
             aria-label="Search orders"
-            placeholder="Search by Order ID or Customer name"
+            placeholder={t("adminOrders.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -141,12 +143,12 @@ const AdminOrdersPage = () => {
         <div className="filters">
           <HiOutlineFilter className="filter-icon" />
           {[
-            { key: "all", label: "All" },
-            { key: "pending", label: "Pending" },
-            { key: "confirmed", label: "Confirmed" },
-            { key: "shipped", label: "Shipped" },
-            { key: "delivered", label: "Delivered" },
-            { key: "cancelled", label: "Cancelled" },
+            { key: "all", label: t("adminOrders.filterAll") },
+            { key: "pending", label: t("adminOrders.filterPending") },
+            { key: "confirmed", label: t("adminOrders.filterConfirmed") },
+            { key: "shipped", label: t("adminOrders.filterShipped") },
+            { key: "delivered", label: t("adminOrders.filterDelivered") },
+            { key: "cancelled", label: t("adminOrders.filterCancelled") },
           ].map((s) => (
             <button
               key={s.key}
@@ -165,19 +167,19 @@ const AdminOrdersPage = () => {
         {filteredOrders.length === 0 ? (
           <div className="empty-state">
             <HiOutlineTruck className="empty-icon" />
-            <h3>No orders found</h3>
-            <p>There are no orders matching your criteria.</p>
+            <h3>{t("adminOrders.emptyTitle")}</h3>
+            <p>{t("adminOrders.emptySubtitle")}</p>
           </div>
         ) : (
           <table className="orders-table">
             <thead>
               <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Total Price</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
+                <th>{t("adminOrders.thId")}</th>
+                <th>{t("adminOrders.thCustomer")}</th>
+                <th>{t("adminOrders.thTotal")}</th>
+                <th>{t("adminOrders.thStatus")}</th>
+                <th>{t("adminOrders.thDate")}</th>
+                <th>{t("adminOrders.thActions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -188,11 +190,11 @@ const AdminOrdersPage = () => {
                     <div className="customer-name">{order.customerName}</div>
                     <div className="customer-email">{order.user?.email}</div>
                   </td>
-                  <td>{order.totalPrice} EGP</td>
+                  <td>{order.totalPrice}{t("adminOrders.currency")}</td>
                   <td>
-                    <span className={`status-badge ${order.status}`}>{order.status}</span>
+                    <span className={`status-badge ${order.status}`}>{t(`adminOrders.filter${order.status.charAt(0).toUpperCase() + order.status.slice(1)}`)}</span>
                   </td>
-                  <td>{order.createdAt || order.updatedAt ? new Date(order.createdAt || order.updatedAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) : "N/A"}</td><td>
+                  <td>{order.createdAt || order.updatedAt ? new Date(order.createdAt || order.updatedAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) : t("adminOrders.na")}</td><td>
                     <div className="actions">
                       <button
                         type="button"
@@ -209,13 +211,13 @@ const AdminOrdersPage = () => {
                         aria-label={`Change status for order ${order._id}`}
                         className="status-select"
                       >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="pending">{t("adminOrders.filterPending")}</option>
+                        <option value="confirmed">{t("adminOrders.filterConfirmed")}</option>
+                        <option value="shipped">{t("adminOrders.filterShipped")}</option>
+                        <option value="delivered">{t("adminOrders.filterDelivered")}</option>
+                        <option value="cancelled">{t("adminOrders.filterCancelled")}</option>
                       </select>
-                      {updatingId === order._id && <span className="updating">Updating...</span>}
+                      {updatingId === order._id && <span className="updating">{t("adminOrders.updating")}</span>}
                     </div>
                   </td>
                 </tr>
@@ -231,10 +233,10 @@ const AdminOrdersPage = () => {
           <article key={order._id} className="order-card">
             <div className="card-row">
               <div className="card-id">{order._id}</div>
-              <div className={`status-badge ${order.status}`}>{order.status}</div>
+              <div className={`status-badge ${order.status}`}>{t(`adminOrders.filter${order.status.charAt(0).toUpperCase() + order.status.slice(1)}`)}</div>
             </div>
             <div className="card-row muted">{order.customerName}</div>
-            <div className="card-row">Total: <strong>{order.totalPrice} EGP</strong></div>
+            <div className="card-row">{t("adminOrders.totalLabel")}<strong>{order.totalPrice}{t("adminOrders.currency")}</strong></div>
             <div className="card-actions">
               <button
                 type="button"
@@ -250,13 +252,13 @@ const AdminOrdersPage = () => {
                 onChange={(e) => handleStatusChange(order._id, e.target.value)}
                 className="status-select"
               >
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="pending">{t("adminOrders.filterPending")}</option>
+                <option value="confirmed">{t("adminOrders.filterConfirmed")}</option>
+                <option value="shipped">{t("adminOrders.filterShipped")}</option>
+                <option value="delivered">{t("adminOrders.filterDelivered")}</option>
+                <option value="cancelled">{t("adminOrders.filterCancelled")}</option>
               </select>
-              {updatingId === order._id && <span className="updating">Updating...</span>}
+              {updatingId === order._id && <span className="updating">{t("adminOrders.updating")}</span>}
             </div>
           </article>
         ))}
@@ -266,7 +268,7 @@ const AdminOrdersPage = () => {
         <div className="order-details-overlay" onClick={() => setSelectedOrder(null)}>
           <div className="order-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="order-details-modal__header">
-              <h2>Order Details</h2>
+              <h2>{t("adminOrders.modalTitle")}</h2>
               <button
                 type="button"
                 className="order-details-modal__close"
@@ -279,39 +281,39 @@ const AdminOrdersPage = () => {
 
             <div className="order-details-modal__body">
               <div className="order-details-row">
-                <span className="order-details-label">Order ID</span>
+                <span className="order-details-label">{t("adminOrders.thId")}</span>
                 <span className="order-details-value mono">{selectedOrder._id}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Customer Name</span>
+                <span className="order-details-label">{t("adminOrders.thCustomer")}</span>
                 <span className="order-details-value">{selectedOrder.customerName}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Phone</span>
+                <span className="order-details-label">{t("adminOrders.modalPhone")}</span>
                 <span className="order-details-value">{selectedOrder.phone}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Address</span>
+                <span className="order-details-label">{t("adminOrders.modalAddress")}</span>
                 <span className="order-details-value">{selectedOrder.address}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Payment Method</span>
+                <span className="order-details-label">{t("adminOrders.modalPayment")}</span>
                 <span className="order-details-value" style={{ textTransform: "capitalize" }}>
                   {selectedOrder.paymentMethod}
                 </span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Status</span>
-                <span className={`status-badge ${selectedOrder.status}`}>{selectedOrder.status}</span>
+                <span className="order-details-label">{t("adminOrders.thStatus")}</span>
+                <span className={`status-badge ${selectedOrder.status}`}>{t(`adminOrders.filter${selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}`)}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Date</span>
+                <span className="order-details-label">{t("adminOrders.thDate")}</span>
                 <span className="order-details-value">
                   {new Date(selectedOrder.createdAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true })}
                 </span>
@@ -319,14 +321,14 @@ const AdminOrdersPage = () => {
 
               <div className="order-details-divider" />
 
-              <h3 className="order-details-items-title">Items Ordered</h3>
+              <h3 className="order-details-items-title">{t("adminOrders.modalItems")}</h3>
               <div className="order-details-items-list">
                 {selectedOrder.items.map((item, index) => (
                   <div key={index} className="order-details-item-row">
-                    <span>{item.product?.name || "Unknown product"}</span>
-                    <span>Qty: {item.quantity}</span>
+                    <span>{item.product?.name || t("adminOrders.unknownProduct")}</span>
+                    <span>{t("adminOrders.modalQty")}{item.quantity}</span>
                     {item.product?.price && (
-                      <span>{item.product.price * item.quantity} EGP</span>
+                      <span>{item.product.price * item.quantity}{t("adminOrders.currency")}</span>
                     )}
                   </div>
                 ))}
@@ -335,8 +337,8 @@ const AdminOrdersPage = () => {
               <div className="order-details-divider" />
 
               <div className="order-details-row order-details-row--total">
-                <span className="order-details-label">Total Price</span>
-                <span className="order-details-value">{selectedOrder.totalPrice} EGP</span>
+                <span className="order-details-label">{t("adminOrders.thTotal")}</span>
+                <span className="order-details-value">{selectedOrder.totalPrice}{t("adminOrders.currency")}</span>
               </div>
             </div>
           </div>

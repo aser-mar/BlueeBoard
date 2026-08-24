@@ -613,6 +613,23 @@
   height: 16px;
 }
 
+/* ---------- Language Switcher ---------- */
+.bb-lang-switcher {
+  background: transparent;
+  border: 1px solid var(--nav-divider);
+  cursor: pointer;
+  justify-content: center;
+}
+
+.bb-lang-switcher:hover {
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.bb-lang-switcher__text {
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
 /* ---------- Responsive Breakpoints ---------- */
 @media (max-width: 900px) {
   .bb-nav {

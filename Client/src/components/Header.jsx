@@ -36,10 +36,13 @@ import {
 } from "react-icons/hi";
 
 import Logo from "./Logo";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
 import "./Header.css";
 
 const Header = () => {
+  const { t } = useTranslation();
 
   const navigate =
     useNavigate();
@@ -127,7 +130,7 @@ const Header = () => {
               }`}
             >
               <HiOutlineHome />
-              Home
+              {t("nav.home")}
             </Link>
           ) : null}
 
@@ -139,7 +142,7 @@ const Header = () => {
               }
             >
               <HiOutlineShoppingCart />
-              Cart
+              {t("nav.cart")}
             </Link>
           )}
 
@@ -151,7 +154,7 @@ const Header = () => {
               }
             >
               <HiOutlineHeart />
-              Favourites
+              {t("nav.favourites")}
             </Link>
           )}
 
@@ -163,7 +166,7 @@ const Header = () => {
               }
             >
               <HiOutlineClipboardList />
-              My Orders
+              {t("nav.myOrders")}
             </Link>
           )}
 
@@ -175,7 +178,7 @@ const Header = () => {
               }
             >
               <HiOutlineUserCircle />
-              Profile
+              {t("nav.profile")}
             </Link>
           )}
 
@@ -187,7 +190,7 @@ const Header = () => {
               }
             >
               <HiOutlineShieldCheck />
-              Dashboard
+              {t("nav.dashboard")}
             </Link>
           )}
 
@@ -199,12 +202,15 @@ const Header = () => {
               }
             >
               <HiOutlineShieldCheck />
-              Admin
+              {t("nav.admin")}
             </Link>
           )}
 
           {/* DIVIDER */}
           <span className="bb-nav__divider" />
+
+          {/* LANGUAGE SWITCHER */}
+          <LanguageSwitcher isMobile={false} />
 
           {/* USER NAME */}
 
@@ -214,8 +220,7 @@ const Header = () => {
               <span className="bb-nav__greeting-avatar">
                 {userInitial}
               </span>
-              Hello,{" "}
-              {userInfo.name}
+              {t("nav.hello")} {userInfo.name}
             </span>
           )}
 
@@ -230,7 +235,7 @@ const Header = () => {
                 className="bb-nav__auth-link"
               >
                 <HiOutlineLogin />
-                Login
+                {t("nav.login")}
               </Link>
 
               <Link
@@ -238,7 +243,7 @@ const Header = () => {
                 className="bb-nav__auth-link bb-nav__auth-link--register"
               >
                 <HiOutlineUserAdd />
-                Register
+                {t("nav.register")}
               </Link>
 
             </>
@@ -252,7 +257,7 @@ const Header = () => {
               className="bb-nav__logout"
             >
               <HiOutlineLogout />
-              Logout
+              {t("nav.logout")}
             </button>
           )}
 
@@ -302,7 +307,7 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineHome />
-            Home
+            {t("nav.home")}
           </Link>
         )}
 
@@ -315,7 +320,7 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineShoppingCart />
-            Cart
+            {t("nav.cart")}
           </Link>
         )}
 
@@ -328,7 +333,7 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineHeart />
-            Favourites
+            {t("nav.favourites")}
           </Link>
         )}
 
@@ -341,7 +346,7 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineClipboardList />
-            My Orders
+            {t("nav.myOrders")}
           </Link>
         )}
 
@@ -354,7 +359,7 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineUserCircle />
-            Profile
+            {t("nav.profile")}
           </Link>
         )}
 
@@ -367,7 +372,7 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineShieldCheck />
-            Dashboard
+            {t("nav.dashboard")}
           </Link>
         )}
 
@@ -380,11 +385,14 @@ const Header = () => {
             onClick={closeMobile}
           >
             <HiOutlineShieldCheck />
-            Admin
+            {t("nav.admin")}
           </Link>
         )}
 
         <div className="bb-mobile-nav__divider" />
+
+        {/* LANGUAGE SWITCHER */}
+        <LanguageSwitcher isMobile={true} />
 
         {/* USER NAME */}
 
@@ -393,8 +401,7 @@ const Header = () => {
             <span className="bb-nav__greeting-avatar">
               {userInitial}
             </span>
-            Hello,{" "}
-            {userInfo.name}
+            {t("nav.hello")} {userInfo.name}
           </div>
         )}
 
@@ -410,7 +417,7 @@ const Header = () => {
               onClick={closeMobile}
             >
               <HiOutlineLogin />
-              Login
+              {t("nav.login")}
             </Link>
 
             <Link
@@ -419,7 +426,7 @@ const Header = () => {
               onClick={closeMobile}
             >
               <HiOutlineUserAdd />
-              Register
+              {t("nav.register")}
             </Link>
 
           </>
@@ -433,7 +440,7 @@ const Header = () => {
             className="bb-mobile-nav__logout"
           >
             <HiOutlineLogout />
-            Logout
+            {t("nav.logout")}
           </button>
         )}
 

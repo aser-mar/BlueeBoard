@@ -26,12 +26,12 @@ import {
   HiOutlineArrowLeft,
   HiOutlineArrowRight,
   HiOutlineShoppingCart,
-  HiOutlineCheckCircle,
   HiOutlineXCircle,
 } from "react-icons/hi";
 
 import {
   addToCart,
+  setQuantity,
 } from "../redux/slices/cartSlice";
 
 import {
@@ -42,16 +42,22 @@ import {
 import {
   getProductById,
 } from "../services/productService";
+import { useTranslation } from "react-i18next";
+import { getProductImageUrl, onImageError } from "../utils/imageHelper";
 
 import "./ProductDetailsPage.css";
 
 const ProductDetailsPage = () => {
+  const { t } = useTranslation();
 
   const [product, setProduct] =
     useState(null);
 
   const [activeImageIndex, setActiveImageIndex] =
     useState(0);
+
+  const [selectedQuantity, setSelectedQuantity] =
+    useState(1);
 
   const { id } =
     useParams();
@@ -64,6 +70,14 @@ const ProductDetailsPage = () => {
   } = useSelector(
     (state) => state.favourites
   );
+
+  const cartItems = useSelector(
+    (state) => state.cart.cartItems
+  );
+
+  const cartItem = product
+    ? cartItems.find((item) => item._id === product._id)
+    : null;
 
   const {
     userInfo,
@@ -91,6 +105,7 @@ const ProductDetailsPage = () => {
 
           setProduct(data);
           setActiveImageIndex(0);
+          setSelectedQuantity(1);
 
         } catch (error) {
 
@@ -102,11 +117,27 @@ const ProductDetailsPage = () => {
 
   }, [id]);
 
+  const normalizeQuantity = (value) => {
+    if (value === "" || value === null || value === undefined) return 1;
+
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed < 1) return 1;
+
+    return Math.floor(parsed);
+  };
+
+  const quantityValue = cartItem ? cartItem.quantity : selectedQuantity;
+
   const addProductToCart =
     () => {
 
       if (isPreviewMode) {
-        alert("This action is disabled in Preview Mode.");
+        alert(t("errors.previewModeDisabled"));
+        return;
+      }
+
+      if (product.isSoldOut) {
+        alert(t("errors.soldOutAlert"));
         return;
       }
 
@@ -115,10 +146,63 @@ const ProductDetailsPage = () => {
         return;
       }
 
+      const normalizedQuantity = normalizeQuantity(selectedQuantity);
+
       dispatch(
         addToCart(product)
       );
+
+      dispatch(
+        setQuantity({
+          id: product._id,
+          quantity: normalizedQuantity,
+        })
+      );
     };
+
+  const handleQuantityChange = (value) => {
+    const nextQuantity = normalizeQuantity(value);
+
+    if (cartItem) {
+      dispatch(
+        setQuantity({
+          id: product._id,
+          quantity: nextQuantity,
+        })
+      );
+      return;
+    }
+
+    setSelectedQuantity(nextQuantity);
+  };
+
+  const handleDecrease = () => {
+    if (cartItem) {
+      dispatch(
+        setQuantity({
+          id: product._id,
+          quantity: Math.max(1, cartItem.quantity - 1),
+        })
+      );
+      return;
+    }
+
+    setSelectedQuantity((prev) => Math.max(1, prev - 1));
+  };
+
+  const handleIncrease = () => {
+    if (cartItem) {
+      dispatch(
+        setQuantity({
+          id: product._id,
+          quantity: cartItem.quantity + 1,
+        })
+      );
+      return;
+    }
+
+    setSelectedQuantity((prev) => prev + 1);
+  };
 
   const isFavourite =
     favouritesItems.some(
@@ -131,7 +215,7 @@ const ProductDetailsPage = () => {
     () => {
 
       if (isPreviewMode) {
-        alert("This action is disabled in Preview Mode.");
+        alert(t("errors.previewModeDisabled"));
         return;
       }
 
@@ -204,7 +288,7 @@ const ProductDetailsPage = () => {
         {/* ========== BREADCRUMBS ========== */}
         <div className="bb-breadcrumbs">
           <Link to="/" className="bb-breadcrumbs__link">
-            <HiOutlineArrowLeft /> Back to Home
+            <HiOutlineArrowLeft className="bb-rtl-flip" /> {t("common.backToHome")}
           </Link>
         </div>
 
@@ -216,16 +300,10 @@ const ProductDetailsPage = () => {
             <div className="bb-gallery-container">
               <div className="bb-main-image-wrap">
                 <img
-                  src={
-                    product.images?.[activeImageIndex]?.url ||
-                    "https://dummyimage.com/600x450/cbd5e1/0f172a&text=No+Image"
-                  }
+                  src={getProductImageUrl(product.images?.[activeImageIndex])}
                   alt={product.name}
                   className="bb-main-image"
-                  onError={(e) => {
-                    e.target.src =
-                      "https://dummyimage.com/600x450/cbd5e1/0f172a&text=No+Image";
-                  }}
+                  onError={onImageError}
                 />
               </div>
 
@@ -241,12 +319,9 @@ const ProductDetailsPage = () => {
                       aria-label={`View image ${index + 1}`}
                     >
                       <img
-                        src={imgUrl?.url}
+                        src={getProductImageUrl(imgUrl)}
                         alt={`${product.name} thumbnail ${index + 1}`}
-                        onError={(e) => {
-                          e.target.src =
-                            "https://dummyimage.com/80x80/cbd5e1/0f172a&text=No+Image";
-                        }}
+                        onError={onImageError}
                       />
                     </button>
                   ))}
@@ -264,6 +339,11 @@ const ProductDetailsPage = () => {
                 <span className="bb-category-badge">
                   {product.category?.name || "Product"}
                 </span>
+                {product.isSoldOut && (
+                  <span className="bb-stock-badge out-of-stock">
+                    <HiOutlineXCircle /> {t("products.soldOut")}
+                  </span>
+                )}
               </div>
 
               {/* Product Title */}
@@ -274,27 +354,65 @@ const ProductDetailsPage = () => {
                 <span className="bb-price-val">
                   {product.price?.toLocaleString()}
                 </span>
-                <span className="bb-price-cur">EGP</span>
+                <span className="bb-price-cur">{t("common.currency")}</span>
               </div>
 
               <hr className="bb-info-divider" />
 
               {/* Description */}
               <div className="bb-info-description">
-                <h3 className="bb-info-subtitle">Description</h3>
+                <h3 className="bb-info-subtitle">{t("product.descriptionTitle")}</h3>
                 <p className="bb-description-text">
-                  {product.description || "No description available for this product."}
+                  {product.description || t("product.noDescription")}
                 </p>
               </div>
 
               {/* Action buttons */}
               <div className="bb-info-actions">
-                <button
-                  onClick={addProductToCart}
-                  className="bb-btn bb-btn--primary"
-                >
-                  <HiOutlineShoppingCart /> Add To Cart
-                </button>
+                <div className="bb-product-quantity-control">
+                  <button
+                    type="button"
+                    onClick={handleDecrease}
+                    className="bb-qty-btn"
+                    aria-label="Decrease quantity"
+                  >
+                    −
+                  </button>
+                  <input
+                    type="number"
+                    min="1"
+                    className="bb-qty-input"
+                    value={quantityValue}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      if (value === "") return;
+                      handleQuantityChange(value);
+                    }}
+                    onBlur={(e) => {
+                      if (e.target.value === "" || Number(e.target.value) < 1) {
+                        handleQuantityChange(1);
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={handleIncrease}
+                    className="bb-qty-btn"
+                    aria-label="Increase quantity"
+                  >
+                    +
+                  </button>
+                </div>
+
+                {!cartItem && (
+                  <button
+                    onClick={addProductToCart}
+                    disabled={product.isSoldOut}
+                    className="bb-btn bb-btn--primary"
+                  >
+                    <HiOutlineShoppingCart /> {t("product.addToCart")}
+                  </button>
+                )}
 
                 <button
                   onClick={handleFavourite}
@@ -312,13 +430,13 @@ const ProductDetailsPage = () => {
                   <button
                     type="button"
                     className="bb-btn bb-btn--secondary"
-                    onClick={() => alert("This action is disabled in Preview Mode.")}
+                    onClick={() => alert(t("errors.previewModeDisabled"))}
                   >
-                    Go To Cart
+                    {t("product.goToCart")}
                   </button>
                 ) : (
                   <Link to={userInfo ? "/cart" : "/login"} className="bb-btn bb-btn--secondary">
-                    Go To Cart
+                    {t("product.goToCart")}
                   </Link>
                 )}
               </div>
@@ -328,7 +446,7 @@ const ProductDetailsPage = () => {
                 <>
                   <hr className="bb-info-divider" />
                   <div className="bb-company-section">
-                    <h3 className="bb-info-subtitle">Seller Information</h3>
+                    <h3 className="bb-info-subtitle">{t("product.sellerInfo")}</h3>
                     
                     <div className="bb-company-card-mini">
                       {product.company.logo ? (
@@ -361,7 +479,7 @@ const ProductDetailsPage = () => {
                           to={`/company/${product.company._id}`}
                           className="bb-company-link-mini"
                         >
-                          Visit Store <HiOutlineArrowRight />
+                          {t("product.visitStore")} <HiOutlineArrowRight className="bb-rtl-flip" />
                         </Link>
                       </div>
                     </div>

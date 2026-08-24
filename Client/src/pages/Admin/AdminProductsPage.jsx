@@ -15,10 +15,12 @@ import {
 import {
   Link,
 } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { getProductImageUrl, onImageError } from "../../utils/imageHelper";
 
 const AdminProductsPage =
   () => {
-
+    const { t } = useTranslation();
     const [
       products,
       setProducts,
@@ -84,7 +86,7 @@ const AdminProductsPage =
             );
 
             setError(
-              "Failed to load products"
+              t("adminProducts.errLoad")
             );
 
           } finally {
@@ -95,7 +97,7 @@ const AdminProductsPage =
 
       loadProducts();
 
-    }, []);
+    }, [t]);
 
     // DELETE PRODUCT
     const deleteHandler =
@@ -103,7 +105,7 @@ const AdminProductsPage =
 
         const confirmDelete =
           window.confirm(
-            "Are you sure you want to delete this product?"
+            t("adminProducts.confirmDelete")
           );
 
         if (
@@ -140,7 +142,7 @@ const AdminProductsPage =
           );
 
           alert(
-            "Failed to delete product"
+            t("adminProducts.errDelete")
           );
 
         } finally {
@@ -179,13 +181,9 @@ const AdminProductsPage =
         <div className="admin-products-header">
 
           <div className="page-title-group">
-            <h1 className="page-title">Admin Products</h1>
-            <p className="page-subtitle">Manage catalog, pricing and inventory</p>
+            <h1 className="page-title">{t("adminProducts.title")}</h1>
+            <p className="page-subtitle">{t("adminProducts.subtitle")}</p>
           </div>
-
-          <Link to="/admin/products/add" className="admin-products-add-button">
-            Add Product
-          </Link>
 
         </div>
 
@@ -197,12 +195,12 @@ const AdminProductsPage =
               type="search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search products, categories, companies, or price"
+              placeholder={t("adminProducts.searchPlaceholder")}
               aria-label="Search products"
             />
           </div>
           <Link to="/admin/products/add" className="admin-products-add-button">
-            Add Product
+            {t("adminProducts.addProductBtn")}
           </Link>
         </div>
 
@@ -215,9 +213,9 @@ const AdminProductsPage =
               <path d="M3 6h18" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
               <path d="M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <h2>No Products Found</h2>
-            <p>Start adding products to populate your catalog.</p>
-            <Link to="/admin/products/add" className="admin-products-empty-state__button">Add Product</Link>
+            <h2>{t("adminProducts.emptyTitle")}</h2>
+            <p>{t("adminProducts.emptySubtitle")}</p>
+            <Link to="/admin/products/add" className="admin-products-empty-state__button">{t("adminProducts.addProductBtn")}</Link>
           </div>
 
         ) : filteredProducts.length === 0 ? (
@@ -226,9 +224,9 @@ const AdminProductsPage =
             <div className="admin-products-empty-state__icon">
               <HiOutlineSearch />
             </div>
-            <h2>No matching products found.</h2>
-            <p>Try another keyword or clear the search to view all products.</p>
-            <Link to="/admin/products/add" className="admin-products-empty-state__button">Add Product</Link>
+            <h2>{t("adminProducts.noMatchTitle")}</h2>
+            <p>{t("adminProducts.noMatchSubtitle")}</p>
+            <Link to="/admin/products/add" className="admin-products-empty-state__button">{t("adminProducts.addProductBtn")}</Link>
           </div>
 
         ) : (
@@ -243,19 +241,23 @@ const AdminProductsPage =
 
                   <div className="product-media">
                     <img
-                      src={product.images?.[0]?.url || product.images?.[0] || "/no-image.png"}
+                      src={getProductImageUrl(product.images?.[0])}
                       alt={product.name}
                       className="product-image admin-products-image"
+                      onError={onImageError}
                     />
                   </div>
 
                   <div className="product-info">
                     <h3 className="product-name admin-products-name">{product.name}</h3>
                     <div className="product-meta admin-products-meta">
-                      <span className="badge muted">{product.category?.name || "No Category"}</span>
+                      <span className="badge muted">{product.category?.name || t("adminProducts.noCategory")}</span>
                       <span className="badge muted">{product.company?.name || "-"}</span>
+                      {product.isSoldOut && (
+                        <span className="badge badge--sold-out">{t("adminProducts.soldOut")}</span>
+                      )}
                     </div>
-                    <div className="product-price admin-products-price">{product.price} EGP</div>
+                    <div className="product-price admin-products-price">{product.price}{t("adminOrders.currency")}</div>
                   </div>
 
                 </div>
@@ -263,7 +265,7 @@ const AdminProductsPage =
                 <div className="admin-products-actions">
                   <Link to={`/admin/products/${product._id}/edit`} className="admin-products-action-button">
                     <HiOutlinePencil className="admin-products-action-button__icon" />
-                    Edit
+                    {t("adminProducts.actionEdit")}
                   </Link>
 
                   <button
@@ -273,11 +275,11 @@ const AdminProductsPage =
                     aria-disabled={deleteLoadingId === product._id}
                   >
                     {deleteLoadingId === product._id ? (
-                      "Deleting..."
+                      t("adminProducts.actionDeleting")
                     ) : (
                       <>
                         <HiOutlineTrash className="admin-products-action-button__icon" />
-                        Delete
+                        {t("adminProducts.actionDelete")}
                       </>
                     )}
                   </button>

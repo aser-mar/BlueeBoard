@@ -83,11 +83,7 @@ const HomeBanner = () => {
   if (
     banners.length === 0
   ) {
-    return (
-      <div className="bb-banner">
-        <div className="bb-banner__viewport bb-banner__viewport--empty" />
-      </div>
-    );
+    return null;
   }
 
   return (

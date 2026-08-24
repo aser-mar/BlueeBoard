@@ -5,7 +5,7 @@
   color: #f8fafc;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   position: sticky;
   top: 0;
   border-right: 1px solid rgba(148, 163, 184, 0.16);
@@ -286,6 +286,15 @@
   flex-direction: column;
   gap: 8px;
   margin: 8px 20px 20px;
+  order: 2;
+}
+
+.sidebar__bottom-actions .sidebar__preview-btn {
+  order: 1;
+}
+
+.sidebar__bottom-actions .sidebar__logout {
+  order: 2;
 }
 
 .sidebar__preview-btn {
@@ -322,4 +331,41 @@
 .sidebar.collapsed .sidebar__preview-btn svg {
   font-size: 1.2rem;
   margin: 0 auto;
+}
+
+/* ===== RTL Support ===== */
+[dir="rtl"] .sidebar {
+  border-right: none;
+  border-left: 1px solid rgba(148, 163, 184, 0.16);
+  box-shadow: -18px 0 40px rgba(2, 6, 23, 0.2);
+  order: 1; /* push sidebar to end = right in RTL flex row */
+}
+
+[dir="rtl"] .sidebar__nav a:hover {
+  transform: translateX(-2px);
+}
+
+[dir="rtl"] .sidebar__nav a.active::before {
+  left: auto;
+  right: 0;
+}
+
+@media (max-width: 992px) {
+  [dir="rtl"] .sidebar__logo {
+    padding-left: 0;
+    padding-right: 18px;
+  }
+}
+
+@media (max-width: 768px) {
+  [dir="rtl"] .sidebar {
+    transform: translateX(100%);
+  }
+  [dir="rtl"] .sidebar.open {
+    transform: translateX(0);
+  }
+  [dir="rtl"] .sidebar__hamburger {
+    left: auto;
+    right: 16px;
+  }
 }

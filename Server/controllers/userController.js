@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const Company = require("../models/Company");
+const { validatePassword } = require("../utils/passwordPolicy");
 
 // GET PROFILE
 const getUserProfile = async (req, res) => {
@@ -42,16 +43,35 @@ const updateUserProfile = async (req, res) => {
       req.body.email || user.email;
 
     // PASSWORD UPDATE
-    if (req.body.password) {
+    const newPassword = req.body.newPassword ?? req.body.password;
+    const currentPassword = req.body.currentPassword;
 
-      const hashedPassword =
-        await bcrypt.hash(
-          req.body.password,
-          10
-        );
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({
+          message: "Current password is required to change your password.",
+        });
+      }
 
-      user.password =
-        hashedPassword;
+      const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+
+      if (!isCurrentPasswordValid) {
+        return res.status(400).json({
+          message: "Current password is incorrect.",
+        });
+      }
+
+      const passwordValidation = validatePassword(newPassword);
+
+      if (!passwordValidation.valid) {
+        return res.status(400).json({
+          message: passwordValidation.message,
+        });
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      user.password = hashedPassword;
     }
 
     const updatedUser =

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   getMyCompanyOrders,
   updateMyCompanyOrderStatus,
@@ -14,6 +15,7 @@ import {
 import "../Admin/AdminOrdersPage.css";
 
 const CompanyManagerOrdersPage = () => {
+  const { t } = useTranslation();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -32,7 +34,7 @@ const CompanyManagerOrdersPage = () => {
         setOrders(data || []);
       } catch (err) {
         console.log(err);
-        setError("Failed to load orders");
+        setError(t("managerOrders.errLoad"));
       } finally {
         setLoading(false);
       }
@@ -53,7 +55,7 @@ const CompanyManagerOrdersPage = () => {
       );
     } catch (err) {
       console.log(err);
-      alert("Failed to update order status");
+      alert(t("managerOrders.errUpdate"));
     } finally {
       setUpdatingId(null);
     }
@@ -104,8 +106,8 @@ const CompanyManagerOrdersPage = () => {
             <HiOutlineClipboardList />
           </div>
           <div>
-            <h1 className="hero-title">My Company Orders</h1>
-            <p className="hero-sub">Track and update orders containing your company's products.</p>
+            <h1 className="hero-title">{t("managerOrders.title")}</h1>
+            <p className="hero-sub">{t("managerOrders.subtitle")}</p>
           </div>
         </div>
       </header>
@@ -115,19 +117,19 @@ const CompanyManagerOrdersPage = () => {
       <section className="stats-grid" aria-label="order statistics">
         <div className="stat-card">
           <div className="stat-value">{totalOrders}</div>
-          <div className="stat-label">Total Orders</div>
+          <div className="stat-label">{t("managerOrders.totalOrders")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{pendingOrders}</div>
-          <div className="stat-label">Pending Orders</div>
+          <div className="stat-label">{t("managerOrders.pendingOrders")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{deliveredOrders}</div>
-          <div className="stat-label">Delivered Orders</div>
+          <div className="stat-label">{t("managerOrders.deliveredOrders")}</div>
         </div>
         <div className="stat-card">
           <div className="stat-value">{cancelledOrders}</div>
-          <div className="stat-label">Cancelled Orders</div>
+          <div className="stat-label">{t("managerOrders.cancelledOrders")}</div>
         </div>
       </section>
 
@@ -136,7 +138,7 @@ const CompanyManagerOrdersPage = () => {
           <HiOutlineSearch className="search-icon" />
           <input
             aria-label="Search orders"
-            placeholder="Search by Order ID or Customer name"
+            placeholder={t("managerOrders.searchPlaceholder")}
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -145,12 +147,12 @@ const CompanyManagerOrdersPage = () => {
         <div className="filters">
           <HiOutlineFilter className="filter-icon" />
           {[
-            { key: "all", label: "All" },
-            { key: "pending", label: "Pending" },
-            { key: "confirmed", label: "Confirmed" },
-            { key: "shipped", label: "Shipped" },
-            { key: "delivered", label: "Delivered" },
-            { key: "cancelled", label: "Cancelled" },
+            { key: "all", label: t("managerOrders.filterAll") },
+            { key: "pending", label: t("managerOrders.filterPending") },
+            { key: "confirmed", label: t("managerOrders.filterConfirmed") },
+            { key: "shipped", label: t("managerOrders.filterShipped") },
+            { key: "delivered", label: t("managerOrders.filterDelivered") },
+            { key: "cancelled", label: t("managerOrders.filterCancelled") },
           ].map((s) => (
             <button
               key={s.key}
@@ -169,19 +171,19 @@ const CompanyManagerOrdersPage = () => {
         {filteredOrders.length === 0 ? (
           <div className="empty-state">
             <HiOutlineTruck className="empty-icon" />
-            <h3>No orders found</h3>
-            <p>There are no orders matching your criteria.</p>
+            <h3>{t("managerOrders.emptyTitle")}</h3>
+            <p>{t("managerOrders.emptySubtitle")}</p>
           </div>
         ) : (
           <table className="orders-table">
             <thead>
               <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>My Subtotal</th>
-                <th>Status</th>
-                <th>Date</th>
-                <th>Actions</th>
+                <th>{t("managerOrders.thId")}</th>
+                <th>{t("managerOrders.thCustomer")}</th>
+                <th>{t("managerOrders.thSubtotal")}</th>
+                <th>{t("managerOrders.thStatus")}</th>
+                <th>{t("managerOrders.thDate")}</th>
+                <th>{t("managerOrders.thActions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -196,7 +198,7 @@ const CompanyManagerOrdersPage = () => {
                   <td>
                     <span className={`status-badge ${order.status}`}>{order.status}</span>
                   </td>
-                  <td>{order.createdAt ? new Date(order.createdAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) : "N/A"}</td>
+                  <td>{order.createdAt ? new Date(order.createdAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true }) : t("managerOrders.na")}</td>
                   <td>
                     <div className="actions">
                       <button
@@ -214,13 +216,13 @@ const CompanyManagerOrdersPage = () => {
                         aria-label={`Change status for order ${order._id}`}
                         className="status-select"
                       >
-                        <option value="pending">Pending</option>
-                        <option value="confirmed">Confirmed</option>
-                        <option value="shipped">Shipped</option>
-                        <option value="delivered">Delivered</option>
-                        <option value="cancelled">Cancelled</option>
+                        <option value="pending">{t("managerOrders.filterPending")}</option>
+                        <option value="confirmed">{t("managerOrders.filterConfirmed")}</option>
+                        <option value="shipped">{t("managerOrders.filterShipped")}</option>
+                        <option value="delivered">{t("managerOrders.filterDelivered")}</option>
+                        <option value="cancelled">{t("managerOrders.filterCancelled")}</option>
                       </select>
-                      {updatingId === order._id && <span className="updating">Updating...</span>}
+                      {updatingId === order._id && <span className="updating">{t("managerOrders.updating")}</span>}
                     </div>
                   </td>
                 </tr>
@@ -239,7 +241,7 @@ const CompanyManagerOrdersPage = () => {
               <div className={`status-badge ${order.status}`}>{order.status}</div>
             </div>
             <div className="card-row muted">{order.customerName}</div>
-            <div className="card-row">My Subtotal: <strong>{order.companySubtotal?.toLocaleString()} EGP</strong></div>
+            <div className="card-row">{t("managerOrders.mySubtotalLabel")}<strong>{order.companySubtotal?.toLocaleString()} EGP</strong></div>
             <div className="card-actions">
               <button
                 type="button"
@@ -255,13 +257,13 @@ const CompanyManagerOrdersPage = () => {
                 onChange={(e) => handleStatusChange(order._id, e.target.value)}
                 className="status-select"
               >
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="shipped">Shipped</option>
-                <option value="delivered">Delivered</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="pending">{t("managerOrders.filterPending")}</option>
+                <option value="confirmed">{t("managerOrders.filterConfirmed")}</option>
+                <option value="shipped">{t("managerOrders.filterShipped")}</option>
+                <option value="delivered">{t("managerOrders.filterDelivered")}</option>
+                <option value="cancelled">{t("managerOrders.filterCancelled")}</option>
               </select>
-              {updatingId === order._id && <span className="updating">Updating...</span>}
+              {updatingId === order._id && <span className="updating">{t("managerOrders.updating")}</span>}
             </div>
           </article>
         ))}
@@ -271,7 +273,7 @@ const CompanyManagerOrdersPage = () => {
         <div className="order-details-overlay" onClick={() => setSelectedOrder(null)}>
           <div className="order-details-modal" onClick={(e) => e.stopPropagation()}>
             <div className="order-details-modal__header">
-              <h2>Order Details</h2>
+              <h2>{t("managerOrders.modalTitle")}</h2>
               <button
                 type="button"
                 className="order-details-modal__close"
@@ -284,39 +286,39 @@ const CompanyManagerOrdersPage = () => {
 
             <div className="order-details-modal__body">
               <div className="order-details-row">
-                <span className="order-details-label">Order ID</span>
+                <span className="order-details-label">{t("managerOrders.modalOrderId")}</span>
                 <span className="order-details-value mono">{selectedOrder._id}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Customer Name</span>
+                <span className="order-details-label">{t("managerOrders.modalCustomer")}</span>
                 <span className="order-details-value">{selectedOrder.customerName}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Phone</span>
+                <span className="order-details-label">{t("managerOrders.modalPhone")}</span>
                 <span className="order-details-value">{selectedOrder.phone}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Address</span>
+                <span className="order-details-label">{t("managerOrders.modalAddress")}</span>
                 <span className="order-details-value">{selectedOrder.address}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Payment Method</span>
+                <span className="order-details-label">{t("managerOrders.modalPayment")}</span>
                 <span className="order-details-value" style={{ textTransform: "capitalize" }}>
                   {selectedOrder.paymentMethod}
                 </span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Status</span>
+                <span className="order-details-label">{t("managerOrders.modalStatus")}</span>
                 <span className={`status-badge ${selectedOrder.status}`}>{selectedOrder.status}</span>
               </div>
 
               <div className="order-details-row">
-                <span className="order-details-label">Date</span>
+                <span className="order-details-label">{t("managerOrders.modalDate")}</span>
                 <span className="order-details-value">
                   {new Date(selectedOrder.createdAt).toLocaleString("en-US", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: true })}
                 </span>
@@ -324,12 +326,12 @@ const CompanyManagerOrdersPage = () => {
 
               <div className="order-details-divider" />
 
-              <h3 className="order-details-items-title">Items Ordered</h3>
+              <h3 className="order-details-items-title">{t("managerOrders.modalItems")}</h3>
               <div className="order-details-items-list">
                 {selectedOrder.items.map((item, index) => (
                   <div key={index} className="order-details-item-row">
-                    <span>{item.product?.name || "Unknown product"}</span>
-                    <span>Qty: {item.quantity}</span>
+                    <span>{item.product?.name || t("managerOrders.unknownProduct")}</span>
+                    <span>{t("managerOrders.modalQty")}{item.quantity}</span>
                     {item.product?.price && (
                       <span>{item.product.price * item.quantity} EGP</span>
                     )}
@@ -340,7 +342,7 @@ const CompanyManagerOrdersPage = () => {
               <div className="order-details-divider" />
 
               <div className="order-details-row order-details-row--total">
-                <span className="order-details-label">Total Price</span>
+                <span className="order-details-label">{t("managerOrders.modalTotalPrice")}</span>
                 <span className="order-details-value">{selectedOrder.companySubtotal} EGP</span>
               </div>
             </div>

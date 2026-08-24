@@ -27,7 +27,39 @@ const loginLimiter = rateLimit({
   },
 });
 
+// Register limiter
+const registerLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+
+  max: 5,
+
+  standardHeaders: true,
+  legacyHeaders: false,
+
+  message: {
+    message:
+      "Too many registration attempts. Try again in 15 minutes.",
+  },
+});
+
+// Forgot password limiter
+const forgotPasswordLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+
+  max: 5,
+
+  standardHeaders: true,
+  legacyHeaders: false,
+
+  message: {
+    message:
+      "Too many password reset requests. Please try again in 15 minutes.",
+  },
+});
+
 module.exports = {
   apiLimiter,
   loginLimiter,
+  registerLimiter,
+  forgotPasswordLimiter,
 };

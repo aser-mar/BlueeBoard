@@ -11,6 +11,8 @@ import { persistor } from "./redux/store";
 
 import App from "./App";
 
+import "./i18n/i18n"; // Import i18n before index.css and rendering
+
 import "./index.css";
 
 

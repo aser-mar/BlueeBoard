@@ -40,6 +40,12 @@ const createOrder =
                 "Product not found",
             });
         }
+
+        if (product.isSoldOut) {
+          return res.status(400).json({
+            message: `${product.name} is sold out and cannot be ordered`,
+          });
+        }
       }
 
       // CREATE ORDER

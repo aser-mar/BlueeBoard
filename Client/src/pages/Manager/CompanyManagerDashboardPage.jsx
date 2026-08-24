@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { getMyCompanyProducts } from "../../services/companyManagerProductService";
@@ -56,6 +57,7 @@ const CompanyManagerDashboardPage = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { token } = useSelector((state) => state.auth);
+  const { t, i18n } = useTranslation();
   const [analytics, setAnalytics] = useState({
     trend: [],
     totalRevenue: 0,
@@ -110,21 +112,18 @@ const CompanyManagerDashboardPage = () => {
     <div className="admin-dashboard">
       <div className="admin-dashboard__hero">
         <div className="admin-dashboard__hero-content">
-          <h1 className="admin-dashboard__title">Company Manager Dashboard</h1>
-          <p className="admin-dashboard__subtitle">Manage your company products and orders</p>
+          <h1 className="admin-dashboard__title">{t("managerDashboard.title")}</h1>
+          <p className="admin-dashboard__subtitle">{t("managerDashboard.subtitle")}</p>
         </div>
-        <Link to="/company-manager/products/add" className="admin-button">
-          Add Product
-        </Link>
       </div>
 
       {/* ===== ANALYTICS ===== */}
       <section className="admin-dashboard__analytics">
         <div className="admin-dashboard__section-header">
           <div>
-            <h2 className="admin-dashboard__section-title">Sales Insights</h2>
+            <h2 className="admin-dashboard__section-title">{t("managerDashboard.salesInsights")}</h2>
             <p className="admin-dashboard__section-subtitle">
-              A quick view of your company's recent order momentum and revenue.
+              {t("managerDashboard.salesInsightsSubtitle")}
             </p>
           </div>
         </div>
@@ -145,10 +144,10 @@ const CompanyManagerDashboardPage = () => {
             <article className="admin-card admin-analytics-card">
               <div className="admin-analytics-card__header">
                 <div>
-                  <p className="admin-card__label">Order Trend</p>
-                  <h3 className="admin-analytics-card__title">Daily orders</h3>
+                  <p className="admin-card__label">{t("managerDashboard.orderTrend")}</p>
+                  <h3 className="admin-analytics-card__title">{t("managerDashboard.dailyOrders")}</h3>
                 </div>
-                <span className="admin-analytics-card__badge">Last 7 days</span>
+                <span className="admin-analytics-card__badge">{t("managerDashboard.last7Days")}</span>
               </div>
               <div className="admin-analytics-card__chart">
                 <ResponsiveContainer width="100%" height="100%">
@@ -160,8 +159,8 @@ const CompanyManagerDashboardPage = () => {
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="rgba(148, 163, 184, 0.22)" vertical={false} />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} reversed={i18n.dir() === "rtl"} />
+                <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} orientation={i18n.dir() === "rtl" ? "right" : "left"} />
                     <Tooltip />
                     <Area type="monotone" dataKey="orders" stroke="#2563eb" fill="url(#cmOrdersFill)" strokeWidth={3} />
                   </AreaChart>
@@ -172,8 +171,8 @@ const CompanyManagerDashboardPage = () => {
             <article className="admin-card admin-analytics-card">
               <div className="admin-analytics-card__header">
                 <div>
-                  <p className="admin-card__label">Revenue Trend</p>
-                  <h3 className="admin-analytics-card__title">Daily revenue</h3>
+                  <p className="admin-card__label">{t("managerDashboard.revenueTrend")}</p>
+                  <h3 className="admin-analytics-card__title">{t("managerDashboard.dailyRevenue")}</h3>
                 </div>
                 <span className="admin-analytics-card__badge">{analytics.totalRevenue.toLocaleString()} EGP</span>
               </div>
@@ -187,8 +186,8 @@ const CompanyManagerDashboardPage = () => {
                       </linearGradient>
                     </defs>
                     <CartesianGrid stroke="rgba(148, 163, 184, 0.22)" vertical={false} />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
-                    <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} />
+                <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} reversed={i18n.dir() === "rtl"} />
+                <YAxis tickLine={false} axisLine={false} tick={{ fill: "#64748b", fontSize: 12 }} orientation={i18n.dir() === "rtl" ? "right" : "left"} />
                     <Tooltip formatter={(value) => [`${value} EGP`, "Revenue"]} />
                     <Area type="monotone" dataKey="revenue" stroke="#06b6d4" fill="url(#cmRevenueFill)" strokeWidth={3} />
                   </AreaChart>
@@ -198,10 +197,10 @@ const CompanyManagerDashboardPage = () => {
           </div>
         ) : (
           <article className="admin-card admin-analytics-card admin-analytics-card--empty">
-            <p className="admin-card__label">Analytics</p>
-            <h3 className="admin-analytics-card__title">No order activity yet</h3>
+            <p className="admin-card__label">{t("managerDashboard.analyticsLabel")}</p>
+            <h3 className="admin-analytics-card__title">{t("managerDashboard.noOrderActivity")}</h3>
             <p className="admin-dashboard__section-subtitle">
-              Orders will appear here as soon as customers purchase your products.
+              {t("managerDashboard.noOrderActivityNote")}
             </p>
           </article>
         )}
@@ -213,9 +212,9 @@ const CompanyManagerDashboardPage = () => {
             <path d="M3 6h18" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M8 6v12a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2V6" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <h2>No Products Found</h2>
-          <p>Start adding products to populate your catalog.</p>
-          <Link to="/company-manager/products/add" className="admin-products-empty-state__button">Add Product</Link>
+          <h2>{t("managerDashboard.emptyTitle")}</h2>
+          <p>{t("managerDashboard.emptyDesc")}</p>
+          <Link to="/company-manager/products/add" className="admin-products-empty-state__button">{t("managerDashboard.addProduct")}</Link>
         </div>
       ) : (
         <>
@@ -224,9 +223,9 @@ const CompanyManagerDashboardPage = () => {
               <table className="admin-products-table">
                 <thead>
                   <tr>
-                    <th>Product Name</th>
-                    <th>Category</th>
-                    <th>Price</th>
+                    <th>{t("managerDashboard.thProduct")}</th>
+                    <th>{t("managerDashboard.thCategory")}</th>
+                    <th>{t("managerDashboard.thPrice")}</th>
                   </tr>
                 </thead>
                 <tbody>

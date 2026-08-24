@@ -345,6 +345,12 @@
   right: 0;
 }
 
+.bb-companies-carousel-arrow--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .bb-companies-carousel-arrow:hover {
   background: var(--bb-blue);
   color: #fff;

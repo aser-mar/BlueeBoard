@@ -38,15 +38,24 @@ import {
   HiOutlineLogout,
   HiOutlineTag,
   HiOutlineEye,
+  HiOutlineGlobe,
 } from "react-icons/hi";
 
 import { HiOutlineUserCircle } from "react-icons/hi2";
+import { useTranslation } from "react-i18next";
 
 import Logo from "./Logo";
 
 import "./Sidebar.css";
 
 const AdminSidebar = () => {
+  const { t, i18n } = useTranslation();
+
+  const toggleLanguage = () => {
+    const newLang = i18n.language === 'en' ? 'ar' : 'en';
+    i18n.changeLanguage(newLang);
+    localStorage.setItem('bb-language', newLang);
+  };
 
   const dispatch = useDispatch();
 
@@ -121,7 +130,7 @@ const AdminSidebar = () => {
 
             <HiOutlineViewGrid />
 
-            Dashboard
+            {t("nav.dashboard")}
 
           </NavLink>
 
@@ -129,7 +138,7 @@ const AdminSidebar = () => {
 
             <HiOutlineUserCircle />
 
-            Profile
+            {t("nav.profile")}
 
           </NavLink>
 
@@ -137,7 +146,7 @@ const AdminSidebar = () => {
 
             <HiOutlineShoppingBag />
 
-            Products
+            {t("admin.products")}
 
           </NavLink>
 
@@ -145,7 +154,7 @@ const AdminSidebar = () => {
 
             <HiOutlineOfficeBuilding />
 
-            Companies
+            {t("admin.companies")}
 
           </NavLink>
 
@@ -153,7 +162,7 @@ const AdminSidebar = () => {
 
             <HiOutlineUsers />
 
-            Managers
+            {t("admin.managers")}
 
           </NavLink>
 
@@ -161,7 +170,7 @@ const AdminSidebar = () => {
 
             <HiOutlineCollection />
 
-            Categories
+            {t("admin.categories")}
 
           </NavLink>
 
@@ -169,7 +178,7 @@ const AdminSidebar = () => {
 
             <HiOutlineTag />
 
-            Sectors
+            {t("admin.sectors")}
 
           </NavLink>
 
@@ -177,7 +186,7 @@ const AdminSidebar = () => {
 
             <HiOutlinePhotograph />
 
-            Banners
+            {t("admin.banners")}
 
           </NavLink>
 
@@ -185,7 +194,7 @@ const AdminSidebar = () => {
 
             <HiOutlineClipboardList />
 
-            Orders
+            {t("admin.orders")}
 
           </NavLink>
 
@@ -194,12 +203,23 @@ const AdminSidebar = () => {
         <div className="sidebar__bottom-actions">
           <button
             className="sidebar__preview-btn"
+            onClick={toggleLanguage}
+          >
+
+            <HiOutlineGlobe />
+
+            {t("nav.languageToggle")}
+
+          </button>
+
+          <button
+            className="sidebar__preview-btn"
             onClick={enterPreview}
           >
 
             <HiOutlineEye />
 
-            View as User
+            {t("admin.viewAsUser")}
 
           </button>
 
@@ -210,7 +230,7 @@ const AdminSidebar = () => {
 
             <HiOutlineLogout />
 
-            Logout
+            {t("nav.logout")}
 
           </button>
         </div>

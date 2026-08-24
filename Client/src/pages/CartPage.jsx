@@ -18,10 +18,11 @@ import {
   Link,
   useNavigate,
 } from "react-router-dom";
-
-
+import { useTranslation } from "react-i18next";
+import { getProductImageUrl, onImageError } from "../utils/imageHelper";
 
 const CartPage = () => {
+  const { t } = useTranslation();
 
   const cartItems =
     useSelector(
@@ -55,6 +56,15 @@ const CartPage = () => {
           item.quantity,
       0
     );
+
+  const normalizeQuantity = (value) => {
+    if (value === "" || value === null || value === undefined) return 1;
+
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed < 1) return 1;
+
+    return Math.floor(parsed);
+  };
 
   return (
     <div className="bb-cart-wrapper">
@@ -478,11 +488,11 @@ const CartPage = () => {
       <div className="bb-cart-container">
         <div className="bb-cart-header">
           <h1 className="bb-cart-title">
-            Shopping Cart
+            {t("cart.title")}
           </h1>
           {cartItems.length > 0 && (
             <p className="bb-cart-count">
-              {cartItems.length} item{cartItems.length !== 1 ? 's' : ''} in cart
+              {cartItems.length === 1 ? t("cart.itemCountOne") : t("cart.itemCountOther", { count: cartItems.length })}
             </p>
           )}
         </div>
@@ -493,17 +503,17 @@ const CartPage = () => {
               🛒
             </div>
             <h2 className="bb-cart-empty-title">
-              Your Cart is Empty
+              {t("cart.emptyTitle")}
             </h2>
             <p className="bb-cart-empty-text">
-              Start adding products to your cart and enjoy a seamless shopping experience. Discover amazing deals and premium company products.
+              {t("cart.emptyDesc")}
             </p>
             <Link
               to="/"
               className="bb-continue-shopping-link"
             >
               <button className="bb-continue-shopping-btn">
-                Continue Shopping
+                {t("cart.continueShopping")}
               </button>
             </Link>
           </div>
@@ -516,13 +526,12 @@ const CartPage = () => {
                   key={item._id}
                   className="bb-cart-item"
                 >
-                  {item.images?.[0] && (
-                    <img
-                      src={item.images?.[0]?.url}
-                      alt={item.name}
-                      className="bb-cart-item-image"
-                    />
-                  )}
+                  <img
+                    src={getProductImageUrl(item.images?.[0])}
+                    alt={item.name}
+                    className="bb-cart-item-image"
+                    onError={onImageError}
+                  />
 
                   <div className="bb-cart-item-details">
                     <h3 className="bb-cart-item-name">
@@ -534,7 +543,7 @@ const CartPage = () => {
                       </p>
                     )}
                     <div className="bb-cart-item-price">
-                      {item.price} EGP
+                      {item.price} {t("common.currency")}
                     </div>
                   </div>
 
@@ -560,10 +569,13 @@ const CartPage = () => {
                         onChange={(e) => {
                           const value = e.target.value;
                           if (value === "") return;
+
+                          const nextQuantity = normalizeQuantity(value);
+
                           dispatch(
                             setQuantity({
                               id: item._id,
-                              quantity: value,
+                              quantity: nextQuantity,
                             })
                           );
                         }}
@@ -601,7 +613,7 @@ const CartPage = () => {
                       }
                       className="bb-cart-remove-btn"
                     >
-                      Remove
+                      {t("cart.remove")}
                     </button>
                   </div>
                 </div>
@@ -611,29 +623,29 @@ const CartPage = () => {
             {/* SUMMARY */}
             <div className="bb-cart-summary">
               <h2 className="bb-cart-summary-title">
-                Order Summary
+                {t("cart.orderSummary")}
               </h2>
 
               <div className="bb-cart-summary-row">
-                <span>Items ({cartItems.length})</span>
-                <span>{cartItems.length === 1 ? '1 item' : `${cartItems.length} items`}</span>
+                <span>{t("cart.itemsLength", { count: cartItems.length })}</span>
+                <span>{cartItems.length === 1 ? t("cart.itemsLabelOne") : t("cart.itemsLabelOther", { count: cartItems.length })}</span>
               </div>
 
               <div className="bb-cart-summary-row">
-                <span>Subtotal</span>
-                <span>{totalPrice} EGP</span>
+                <span>{t("cart.subtotal")}</span>
+                <span>{totalPrice} {t("common.currency")}</span>
               </div>
 
               <div className="bb-cart-summary-divider"></div>
 
               <div className="bb-cart-total">
-                <span>Total</span>
-                <span>{totalPrice} EGP</span>
+                <span>{t("cart.total")}</span>
+                <span>{totalPrice} {t("common.currency")}</span>
               </div>
 
               <Link to="/checkout">
                 <button className="bb-checkout-button">
-                  Proceed to Checkout
+                  {t("cart.proceedCheckout")}
                 </button>
               </Link>
             </div>

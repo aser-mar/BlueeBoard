@@ -359,6 +359,10 @@
   height: 10px;
 }
 
+.bb-product-card__badge--sold-out {
+  background: rgba(220, 38, 38, 0.92);
+}
+
 .bb-product-card__body {
   padding: 18px 20px 22px;
   display: flex;

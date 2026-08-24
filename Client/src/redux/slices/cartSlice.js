@@ -92,6 +92,11 @@ const cartSlice =
           const item =
             action.payload;
 
+          const quantityToAdd =
+            Number.isFinite(Number(item.quantity)) && Number(item.quantity) > 0
+              ? Math.floor(Number(item.quantity))
+              : 1;
+
           const existingItem =
             state.cartItems.find(
               (product) =>
@@ -99,18 +104,12 @@ const cartSlice =
                 item._id
             );
 
-            if (
-              existingItem
-            ) {
-
-              existingItem.quantity +=
-                1;
-
-            } else {
-
+          if (existingItem) {
+            existingItem.quantity += quantityToAdd;
+          } else {
             state.cartItems.push({
               ...item,
-              quantity: 1,
+              quantity: quantityToAdd,
             });
           }
 

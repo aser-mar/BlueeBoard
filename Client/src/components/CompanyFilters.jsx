@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import EGYPT_REGIONS from '../constants/egyptRegions';
 import { getSectors } from '../services/sectorService';
+import { getCompanies } from '../services/companyService';
+import { useTranslation } from 'react-i18next';
 import './CompanyFilters.css';
 
 const SearchableDropdown = ({ label, options, value, onChange, placeholder }) => {
+  const { t } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const wrapperRef = useRef(null);
@@ -63,11 +66,11 @@ const SearchableDropdown = ({ label, options, value, onChange, placeholder }) =>
                 className={`bb-dropdown-item ${opt === value ? 'selected' : ''}`}
                 onClick={() => handleSelect(opt)}
               >
-                {opt}
+                {opt === 'All' ? t("common.all") : opt}
               </li>
             ))
           ) : (
-            <li className="bb-dropdown-empty">No results found</li>
+            <li className="bb-dropdown-empty">{t("filters.noResults")}</li>
           )}
         </ul>
       )}
@@ -76,11 +79,15 @@ const SearchableDropdown = ({ label, options, value, onChange, placeholder }) =>
 };
 
 const CompanyFilters = ({ onFilterChange, companies }) => {
+  const { t } = useTranslation();
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [selectedGovernorate, setSelectedGovernorate] = useState("All");
   const [selectedSector, setSelectedSector] = useState("All");
   const [companySearch, setCompanySearch] = useState("");
   const [sectors, setSectors] = useState([]);
+  // Separate unfiltered company list for deriving available dropdown options
+  // (companies prop is already-filtered, so we can't use it for options derivation)
+  const [allCompaniesForOptions, setAllCompaniesForOptions] = useState([]);
 
   useEffect(() => {
     const fetchSectors = async () => {
@@ -94,21 +101,47 @@ const CompanyFilters = ({ onFilterChange, companies }) => {
     fetchSectors();
   }, []);
 
-  // Local auto-select effect based on search
+  // Fetch ALL companies (no filters) once on mount to power the dropdown options.
+  // This is independent of the filtered `companies` prop so options never shrink
+  // as the user applies filters (which would create a compounding-filter UX bug).
   useEffect(() => {
-    if (companySearch.trim() && companies && companies.length > 0) {
-      const matches = companies.filter(c => c.name.toLowerCase().includes(companySearch.toLowerCase()));
-      if (matches.length > 0) {
-        const firstMatch = matches[0];
-        if (firstMatch.region?.length > 0) {
-          setSelectedRegion(firstMatch.region[0]);
-        }
-        if (firstMatch.governorates?.length > 0) {
-          setSelectedGovernorate(firstMatch.governorates[0]);
-        }
+    const fetchAllCompanies = async () => {
+      try {
+        const data = await getCompanies();
+        setAllCompaniesForOptions(data || []);
+      } catch (err) {
+        console.error("Failed to fetch all companies for filter options", err);
       }
+    };
+    fetchAllCompanies();
+  }, []);
+
+  const handleCompanySearchChange = (value) => {
+    setCompanySearch(value);
+
+    const trimmedValue = value.trim();
+    if (!trimmedValue || !companies || companies.length === 0) {
+      return;
     }
-  }, [companySearch, companies]);
+
+    const matches = companies.filter((company) =>
+      company.name.toLowerCase().includes(trimmedValue.toLowerCase())
+    );
+
+    if (matches.length === 0) {
+      return;
+    }
+
+    const firstMatch = matches[0];
+
+    if (firstMatch.region?.length > 0) {
+      setSelectedRegion(firstMatch.region[0]);
+    }
+
+    if (firstMatch.governorates?.length > 0) {
+      setSelectedGovernorate(firstMatch.governorates[0]);
+    }
+  };
 
   // Sync state upward when any filter changes
   useEffect(() => {
@@ -122,22 +155,52 @@ const CompanyFilters = ({ onFilterChange, companies }) => {
     }
   }, [selectedRegion, selectedGovernorate, selectedSector, companySearch, onFilterChange]);
 
-  // Derive Region Options
-  const regionOptions = ["All", ...EGYPT_REGIONS.map(r => r.region)];
-  
-  // Derive Governorate Options
-  const governorateOptions = useMemo(() => {
-    let govs = [];
-    if (selectedRegion === "All") {
-      govs = EGYPT_REGIONS.flatMap(r => r.governorates);
-    } else {
-      const region = EGYPT_REGIONS.find(r => r.region === selectedRegion);
-      if (region) {
-        govs = region.governorates;
+  // Build a Set of region names that have at least one company
+  const populatedRegions = useMemo(() => {
+    const set = new Set();
+    allCompaniesForOptions.forEach(c => {
+      if (Array.isArray(c.region)) {
+        c.region.forEach(r => { if (r) set.add(r); });
       }
+    });
+    return set;
+  }, [allCompaniesForOptions]);
+
+  // Build a Set of governorate names that have at least one company
+  const populatedGovernorates = useMemo(() => {
+    const set = new Set();
+    allCompaniesForOptions.forEach(c => {
+      if (Array.isArray(c.governorates)) {
+        c.governorates.forEach(g => { if (g) set.add(g); });
+      }
+    });
+    return set;
+  }, [allCompaniesForOptions]);
+
+  // Derive Region Options — only regions that (a) exist in EGYPT_REGIONS and
+  // (b) have at least one company in the unfiltered list
+  const regionOptions = useMemo(() => {
+    const available = EGYPT_REGIONS
+      .map(r => r.region)
+      .filter(r => populatedRegions.has(r));
+    return ["All", ...available];
+  }, [populatedRegions]);
+
+  // Derive Governorate Options — only governorates with at least one company;
+  // when a region is selected, also filtered to that region's governorates
+  const governorateOptions = useMemo(() => {
+    let candidates;
+    if (selectedRegion === "All") {
+      // All governorates across all regions that have companies
+      candidates = EGYPT_REGIONS.flatMap(r => r.governorates);
+    } else {
+      // Only governorates belonging to the selected region
+      const region = EGYPT_REGIONS.find(r => r.region === selectedRegion);
+      candidates = region ? region.governorates : [];
     }
-    return ["All", ...govs];
-  }, [selectedRegion]);
+    const available = candidates.filter(g => populatedGovernorates.has(g));
+    return ["All", ...available];
+  }, [selectedRegion, populatedGovernorates]);
 
   // Derive Sector Options
   const sectorOptions = ["All", ...sectors.map(s => s.name)];
@@ -175,41 +238,43 @@ const CompanyFilters = ({ onFilterChange, companies }) => {
     <div className="bb-company-filters">
       <div className="bb-filters-row">
         <SearchableDropdown 
-          label="Region"
+          label={t("filters.region")}
           options={regionOptions}
           value={selectedRegion}
           onChange={handleRegionChange}
-          placeholder="All Regions"
+          placeholder={t("filters.allRegions")}
         />
         <SearchableDropdown 
-          label="Governorate"
+          label={t("filters.governorate")}
           options={governorateOptions}
           value={selectedGovernorate}
           onChange={handleGovernorateChange}
-          placeholder="All Governorates"
+          placeholder={t("filters.allGovernorates")}
         />
-        <SearchableDropdown 
-          label="Sector"
-          options={sectorOptions}
-          value={currentSectorName}
-          onChange={(name) => {
-            if (name === "All") {
-              setSelectedSector("All");
-            } else {
-              const s = sectors.find(sect => sect.name === name);
-              if (s) setSelectedSector(s._id);
-            }
-          }}
-          placeholder="All Sectors"
-        />
+        {sectors.length > 0 && (
+          <SearchableDropdown 
+            label={t("filters.sector")}
+            options={sectorOptions}
+            value={currentSectorName}
+            onChange={(name) => {
+              if (name === "All") {
+                setSelectedSector("All");
+              } else {
+                const s = sectors.find(sect => sect.name === name);
+                if (s) setSelectedSector(s._id);
+              }
+            }}
+            placeholder={t("filters.allSectors")}
+          />
+        )}
         <div className="bb-search-wrapper">
-          <label className="bb-dropdown-label">Search Company</label>
+          <label className="bb-dropdown-label">{t("filters.searchCompany")}</label>
           <input 
             type="text" 
             className="bb-search-input bb-dropdown-input"
-            placeholder="Search by name..."
+            placeholder={t("filters.searchPlaceholder")}
             value={companySearch}
-            onChange={(e) => setCompanySearch(e.target.value)}
+            onChange={(e) => handleCompanySearchChange(e.target.value)}
           />
         </div>
       </div>

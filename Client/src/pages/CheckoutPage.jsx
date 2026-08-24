@@ -29,11 +29,13 @@ import {
   HiOutlineUser,
   HiOutlineExclamationCircle,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import "./CheckoutPage.css";
 
 const CheckoutPage =
   () => {
+    const { t } = useTranslation();
 
     const {
   cartItems,
@@ -100,46 +102,28 @@ const { isPreviewMode } = useSelector(
   console.log("CART:", cartItems);
 
   if (cartItems.length === 0) {
-
     console.log("CART EMPTY");
-
-    setError("Your cart is empty");
-
+    setError(t("checkout.errCartEmpty"));
     return false;
   }
 
   if (name.trim().length < 3) {
-
     console.log("NAME ERROR");
-
-    setError(
-      "Name must be at least 3 characters"
-    );
-
+    setError(t("checkout.errName"));
     return false;
   }
 
   const phoneRegex = /^[0-9]{11}$/;
 
   if (!phoneRegex.test(phone)) {
-
     console.log("PHONE ERROR");
-
-    setError(
-      "Phone number must be 11 digits"
-    );
-
+    setError(t("checkout.errPhone"));
     return false;
   }
 
   if (address.trim().length < 10) {
-
     console.log("ADDRESS ERROR");
-
-    setError(
-      "Address must be at least 10 characters"
-    );
-
+    setError(t("checkout.errAddress"));
     return false;
   }
 
@@ -176,7 +160,7 @@ console.log(
         }
 
         if (isPreviewMode) {
-          alert("Checkout is disabled in Preview Mode.");
+          alert(t("errors.checkoutPreviewModeDisabled"));
           return;
         }
 
@@ -233,7 +217,7 @@ console.log(
           );
 
           alert(
-            "Order Created Successfully"
+            t("checkout.orderSuccess")
           );
 
           navigate("/");
@@ -247,7 +231,7 @@ console.log(
 console.log(error);
 
           setError(
-            "Something went wrong"
+            t("checkout.errSomething")
           );
 
         } finally {
@@ -264,9 +248,9 @@ console.log(error);
             <HiOutlineShoppingCart />
           </div>
           <div>
-            <h1 className="bb-checkout-title">Checkout</h1>
+            <h1 className="bb-checkout-title">{t("checkout.title")}</h1>
             <p className="bb-checkout-subtitle">
-              Finalize your order with secure payment and delivery details.
+              {t("checkout.subtitle")}
             </p>
           </div>
         </div>
@@ -283,15 +267,15 @@ console.log(error);
             <div className="bb-checkout-empty-icon">
               <HiOutlineShoppingCart />
             </div>
-            <h2 className="bb-checkout-empty-title">Your cart is empty</h2>
+            <h2 className="bb-checkout-empty-title">{t("cart.emptyTitle")}</h2>
             <p className="bb-checkout-empty-text">
-              Add products to your cart before checking out, and enjoy a premium shopping experience.
+              {t("checkout.emptyDesc")}
             </p>
             <button
               className="bb-checkout-empty-button"
               onClick={() => navigate("/")}
             >
-              Continue Shopping
+              {t("cart.continueShopping")}
             </button>
           </div>
         ) : (
@@ -308,23 +292,23 @@ console.log(error);
                     <HiOutlineUser />
                   </div>
                   <div>
-                    <h2 className="bb-checkout-card-title">Customer Information</h2>
+                    <h2 className="bb-checkout-card-title">{t("checkout.customerInfo")}</h2>
                     <p className="bb-checkout-card-copy">
-                      Provide details to complete delivery.
+                      {t("checkout.customerInfoDesc")}
                     </p>
                   </div>
                 </div>
 
                 <div className="bb-checkout-field">
                   <label className="bb-checkout-label" htmlFor="name">
-                    Full Name
+                    {t("checkout.fullName")}
                   </label>
                   <div className="bb-checkout-input-group">
                     <HiOutlineUser className="bb-checkout-input-icon" />
                     <input
                       id="name"
                       type="text"
-                      placeholder="Your Name"
+                      placeholder={t("checkout.namePlaceholder")}
                       value={name}
                       onChange={(e) =>
                         setName(
@@ -338,7 +322,7 @@ console.log(error);
 
                 <div className="bb-checkout-field">
                   <label className="bb-checkout-label" htmlFor="phone">
-                    Phone Number
+                    {t("checkout.phone")}
                   </label>
                   <div className="bb-checkout-input-group">
                     <HiOutlinePhone className="bb-checkout-input-icon" />
@@ -359,13 +343,13 @@ console.log(error);
 
                 <div className="bb-checkout-field">
                   <label className="bb-checkout-label" htmlFor="address">
-                    Address
+                    {t("checkout.address")}
                   </label>
                   <div className="bb-checkout-textarea-group">
                     <HiOutlineLocationMarker className="bb-checkout-input-icon bb-checkout-input-icon--textarea" />
                     <textarea
                       id="address"
-                      placeholder="Your Address"
+                      placeholder={t("checkout.addressPlaceholder")}
                       value={address}
                       onChange={(e) =>
                         setAddress(
@@ -380,7 +364,7 @@ console.log(error);
 
                 <div className="bb-checkout-field">
                   <label className="bb-checkout-label">
-                    Payment Method
+                    {t("checkout.paymentMethod")}
                   </label>
                   <div className="bb-checkout-payment-grid">
                     <label className={`bb-checkout-payment-card ${paymentMethod === "cash" ? "bb-checkout-payment-card--active" : ""}`}>
@@ -395,7 +379,7 @@ console.log(error);
                         <HiOutlineCash />
                       </div>
                       <div>
-                        <div className="bb-checkout-payment-title">Cash on Delivery</div>
+                        <div className="bb-checkout-payment-title">{t("checkout.cashOnDelivery")}</div>
                       </div>
                     </label>
 
@@ -411,7 +395,7 @@ console.log(error);
                         <HiOutlineCreditCard />
                       </div>
                       <div>
-                        <div className="bb-checkout-payment-title">Card</div>
+                        <div className="bb-checkout-payment-title">{t("checkout.card")}</div>
                       </div>
                     </label>
                   </div>
@@ -422,7 +406,7 @@ console.log(error);
                   disabled={loading}
                   className="bb-checkout-submit"
                 >
-                  {loading ? "Placing Order..." : "Place Order"}
+                  {loading ? t("checkout.placingOrder") : t("checkout.placeOrder")}
                 </button>
               </div>
             </form>
@@ -434,9 +418,9 @@ console.log(error);
                     <HiOutlineCreditCard />
                   </div>
                   <div>
-                    <h2 className="bb-checkout-card-title">Order Summary</h2>
+                    <h2 className="bb-checkout-card-title">{t("cart.orderSummary")}</h2>
                     <p className="bb-checkout-card-copy">
-                      Review your items before placing the order.
+                      {t("checkout.reviewItems")}
                     </p>
                   </div>
                 </div>
@@ -446,10 +430,10 @@ console.log(error);
                     <div key={item._id} className="bb-checkout-summary-item">
                       <div>
                         <div className="bb-checkout-summary-item-name">{item.name}</div>
-                        <div className="bb-checkout-summary-item-meta">Qty: {item.quantity}</div>
+                        <div className="bb-checkout-summary-item-meta">{t("checkout.qty")}: {item.quantity}</div>
                       </div>
                       <div className="bb-checkout-summary-item-price">
-                        {item.price * item.quantity} EGP
+                        {item.price * item.quantity} {t("common.currency")}
                       </div>
                     </div>
                   ))}
@@ -458,13 +442,13 @@ console.log(error);
                 <div className="bb-checkout-summary-divider"></div>
 
                 <div className="bb-checkout-total-row">
-                  <span>Subtotal</span>
-                  <span>{totalPrice} EGP</span>
+                  <span>{t("cart.subtotal")}</span>
+                  <span>{totalPrice} {t("common.currency")}</span>
                 </div>
 
                 <div className="bb-checkout-total-row bb-checkout-total-row--grand">
-                  <span>Total</span>
-                  <span>{totalPrice} EGP</span>
+                  <span>{t("cart.total")}</span>
+                  <span>{totalPrice} {t("common.currency")}</span>
                 </div>
               </div>
             </aside>

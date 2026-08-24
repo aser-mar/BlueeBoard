@@ -129,6 +129,52 @@
   color: var(--muted);
 }
 
+/* Password input — the PasswordInput component uses bb-login-field/wrapper classes;
+   override them here to match the form's native input style */
+.form-group .bb-login-field {
+  gap: 0;
+}
+
+.form-group .bb-login-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 8px;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.form-group .bb-login-input-wrapper {
+  position: relative;
+}
+
+.form-group .manager-password-input {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 14px;
+  color: #0f172a;
+  background: white;
+  transition: all 0.2s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+[dir="rtl"] .form-group .manager-password-input {
+  padding: 10px 12px 10px 40px;
+}
+
+.form-group .manager-password-input::placeholder {
+  color: var(--muted);
+}
+
+.form-group .manager-password-input:focus {
+  outline: none;
+  border-color: var(--bb-blue);
+  box-shadow: 0 0 0 3px rgba(8, 102, 214, 0.08);
+}
+
 .form-group input:focus,
 .form-group select:focus {
   outline: none;

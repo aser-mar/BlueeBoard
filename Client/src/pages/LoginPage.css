@@ -201,10 +201,12 @@
 .bb-login-alert {
   display: flex;
   gap: 12px;
+  align-items: flex-start;
   padding: 14px 16px;
   border-radius: 12px;
   margin-bottom: 28px;
   animation: bbLoginFadeIn 0.3s var(--bb-ease) both;
+  position: relative;
 }
 
 .bb-login-alert--error {
@@ -213,16 +215,40 @@
   color: var(--bb-error);
 }
 
+.bb-login-alert--success {
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #047857;
+}
+
 .bb-login-alert__icon {
   flex-shrink: 0;
   font-size: 16px;
   font-weight: 700;
+  margin-top: 1px;
 }
 
 .bb-login-alert__content {
   font-size: 13px;
   font-weight: 500;
   line-height: 1.5;
+  flex: 1;
+}
+
+.bb-login-alert__title {
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.bb-login-alert__close {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  margin-left: 8px;
 }
 
 /* ---------- Form ---------- */
@@ -290,6 +316,48 @@
 }
 
 .bb-login-input-wrapper:has(.bb-login-input:focus) .bb-login-input-icon {
+  color: var(--bb-blue);
+}
+
+/* ---------- Password Toggle ---------- */
+.bb-password-toggle {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--bb-text-muted);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  transition: color var(--bb-duration) var(--bb-ease), background-color var(--bb-duration) var(--bb-ease);
+}
+
+.bb-password-toggle:hover {
+  color: var(--bb-blue);
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.bb-password-toggle:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.24);
+  outline-offset: 2px;
+}
+
+.bb-password-toggle__icon {
+  width: 18px;
+  height: 18px;
+}
+
+.bb-password-toggle-inline {
+  right: 10px;
+}
+
+.bb-login-input-wrapper:has(.bb-login-input:focus) .bb-password-toggle {
   color: var(--bb-blue);
 }
 
@@ -495,4 +563,28 @@
   .bb-login-input {
     font-size: 16px;
   }
+}
+
+/* ---------- RTL Support ---------- */
+[dir="rtl"] .bb-login-input-icon {
+  left: auto;
+  right: 14px;
+}
+
+[dir="rtl"] .bb-login-input {
+  padding: 12px 44px 12px 14px;
+}
+
+[dir="rtl"] .bb-password-toggle,
+[dir="rtl"] .bb-password-toggle-inline {
+  right: auto;
+  left: 10px;
+}
+
+[dir="rtl"] .bb-login-button:hover .bb-login-button__icon {
+  transform: scaleX(-1) translateX(-3px);
+}
+
+[dir="rtl"] .bb-login-register-link:hover svg {
+  transform: scaleX(-1) translateX(-3px);
 }

@@ -15,10 +15,12 @@ import {
   HiOutlineShoppingBag,
   HiOutlineExclamationCircle,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import "./MyOrdersPage.css";
 
 const MyOrdersPage = () => {
+  const { t } = useTranslation();
   const { token, userInfo } = useSelector(
     (state) => state.auth
   );
@@ -48,7 +50,7 @@ const MyOrdersPage = () => {
         setOrders(data || []);
       } catch (error) {
         console.log(error);
-        setError("Failed to load orders");
+        setError(t("orders.errLoad"));
       } finally {
         setLoading(false);
       }
@@ -57,7 +59,7 @@ const MyOrdersPage = () => {
     if (token) {
       fetchOrders();
     }
-  }, [token]);
+  }, [token, t]);
 
   // cancel order
   const handleCancel = async (id) => {
@@ -75,7 +77,7 @@ const MyOrdersPage = () => {
       console.log(error);
       alert(
         error?.response?.data?.message ||
-          "Failed to cancel order"
+          t("orders.errCancel")
       );
     } finally {
       setUpdatingId(null);
@@ -104,8 +106,8 @@ const MyOrdersPage = () => {
       <div className="bb-orders-wrapper">
         <div className="bb-orders-container">
           <div className="bb-orders-header">
-            <h1 className="bb-orders-title">My Orders</h1>
-            <p className="bb-orders-subtitle">Track and manage your purchases</p>
+            <h1 className="bb-orders-title">{t("orders.title")}</h1>
+            <p className="bb-orders-subtitle">{t("orders.subtitle")}</p>
           </div>
 
           <div className="bb-orders-loading">
@@ -127,9 +129,9 @@ const MyOrdersPage = () => {
               <HiOutlineClipboardList />
             </div>
             <div>
-              <h1 className="bb-orders-title">My Orders</h1>
+              <h1 className="bb-orders-title">{t("orders.title")}</h1>
               <p className="bb-orders-subtitle">
-                Track and manage your purchases
+                {t("orders.subtitle")}
               </p>
             </div>
           </div>
@@ -147,12 +149,12 @@ const MyOrdersPage = () => {
             <div className="bb-orders-empty-icon">
               <HiOutlineShoppingBag />
             </div>
-            <h2 className="bb-orders-empty-title">No Orders Yet</h2>
+            <h2 className="bb-orders-empty-title">{t("orders.emptyTitle")}</h2>
             <p className="bb-orders-empty-text">
-              Start shopping and your orders will appear here. Explore our collection of premium products from trusted companies.
+              {t("orders.emptyDesc")}
             </p>
             <Link to="/" className="bb-orders-empty-link">
-              Start Shopping
+              {t("orders.startShopping")}
             </Link>
           </div>
         ) : (
@@ -165,21 +167,21 @@ const MyOrdersPage = () => {
                 <div className="bb-order-card-header">
                   <div className="bb-order-card-title-section">
                     <h3 className="bb-order-card-title">
-                      Order #{order._id.slice(-6).toUpperCase()}
+                      {t("orders.orderId", { id: order._id.slice(-6).toUpperCase() })}
                     </h3>
                     <span className={`bb-order-status bb-order-status--${order.status}`}>
                       <span className="bb-order-status-icon">
                         {getStatusIcon(order.status)}
                       </span>
                       <span className="bb-order-status-text">
-                        {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                        {t(`orders.status.${order.status}`)}
                       </span>
                     </span>
                   </div>
                   <div className="bb-order-card-price">
-                    <span className="bb-order-price-label">Total</span>
+                    <span className="bb-order-price-label">{t("cart.total")}</span>
                     <span className="bb-order-price-value">
-                      {order.totalPrice} EGP
+                      {order.totalPrice} {t("common.currency")}
                     </span>
                   </div>
                 </div>
@@ -187,7 +189,7 @@ const MyOrdersPage = () => {
                 <div className="bb-order-card-divider"></div>
 
                 <div className="bb-order-card-items">
-                  <h4 className="bb-order-items-title">Items Ordered</h4>
+                  <h4 className="bb-order-items-title">{t("orders.itemsOrdered")}</h4>
                   <div className="bb-order-items-list">
                     {order.items.map((item, index) => (
                       <div key={index} className="bb-order-item">
@@ -196,12 +198,12 @@ const MyOrdersPage = () => {
                             {item.product?.name}
                           </span>
                           <span className="bb-order-item-qty">
-                            Qty: {item.quantity}
+                            {t("checkout.qty")}: {item.quantity}
                           </span>
                         </div>
                         {item.product?.price && (
                           <span className="bb-order-item-price">
-                            {item.product.price * item.quantity} EGP
+                            {item.product.price * item.quantity} {t("common.currency")}
                           </span>
                         )}
                       </div>
@@ -221,8 +223,8 @@ const MyOrdersPage = () => {
                         className="bb-order-cancel-btn"
                       >
                         {updatingId === order._id
-                          ? "Cancelling..."
-                          : "Cancel Order"}
+                          ? t("orders.cancelling")
+                          : t("orders.cancelOrder")}
                       </button>
                     )}
                   {(order.status === "shipped" ||
@@ -231,15 +233,15 @@ const MyOrdersPage = () => {
                       <HiOutlineTruck className="bb-order-status-info-icon" />
                       <span>
                         {order.status === "shipped"
-                          ? "On its way to you"
-                          : "Delivered"}
+                          ? t("orders.statusShipped")
+                          : t("orders.statusDelivered")}
                       </span>
                     </div>
                   )}
                   {order.status === "cancelled" && (
                     <div className="bb-order-status-info bb-order-status-info--cancelled">
                       <HiOutlineXCircle className="bb-order-status-info-icon" />
-                      <span>Order Cancelled</span>
+                      <span>{t("orders.statusCancelled")}</span>
                     </div>
                   )}
                 </div>

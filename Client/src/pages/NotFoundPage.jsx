@@ -1,8 +1,10 @@
 import { useNavigate } from "react-router-dom";
 import { HiOutlineHome, HiOutlineSearch } from 'react-icons/hi';
+import { useTranslation } from 'react-i18next';
 import './NotFoundPage.css';
 
 const NotFoundPage = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
 const handleGoBack = () => {
@@ -22,7 +24,7 @@ const handleGoBack = () => {
       <div className="bb-not-found__card">
         <div className="bb-not-found__badge">
           <HiOutlineSearch className="bb-not-found__badge-icon" />
-          404 error
+          {t("errors.404")}
         </div>
 
         <div className="bb-not-found__hero">
@@ -31,9 +33,9 @@ const handleGoBack = () => {
           </div>
         </div>
 
-        <h1 className="bb-not-found__title">Oops! The page you're looking for doesn't exist.</h1>
+        <h1 className="bb-not-found__title">{t("errors.pageNotFound")}</h1>
         <p className="bb-not-found__description">
-          The route you tried to open may have moved, been removed, or never existed. Let’s get you back to the BlueeBoard experience.
+          {t("errors.pageNotFoundDesc")}
         </p>
 
         <div className="bb-not-found__actions">
@@ -43,7 +45,7 @@ const handleGoBack = () => {
             onClick={handleGoBack}
           >
             <HiOutlineHome className="bb-not-found__button-icon" />
-            Go Back
+            {t("errors.goBack")}
           </button>
         </div>
       </div>

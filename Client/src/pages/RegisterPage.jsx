@@ -1,17 +1,22 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Logo from "../components/Logo";
-
+import AuthAlert from "../components/AuthAlert";
+import PasswordInput from "../components/PasswordInput";
+import PasswordRequirementsUI from "../components/PasswordRequirementsUI";
+import { getPasswordRequirements, isPasswordValid } from "../utils/passwordUtils";
 import {
-  useNavigate,
   Link,
 } from "react-router-dom";
 
 import {
   registerUser,
+  resendVerificationEmail,
 } from "../services/authService";
+import { useTranslation } from "react-i18next";
 
 const RegisterPage = () => {
+  const { t } = useTranslation();
 
   const [name, setName] =
     useState("");
@@ -25,20 +30,50 @@ const RegisterPage = () => {
   const [error, setError] =
     useState("");
 
+  const [successMessage, setSuccessMessage] =
+    useState("");
+
   const [loading, setLoading] =
     useState(false);
 
-  const navigate =
-    useNavigate();
+  const [resendLoading, setResendLoading] =
+    useState(false);
+
+  const [countdown, setCountdown] =
+    useState(0);
+
+  const passwordRequirements = getPasswordRequirements(password, t);
+
+  useEffect(() => {
+    if (countdown <= 0) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => {
+      setCountdown((current) => current - 1);
+    }, 1000);
+
+    return () => window.clearTimeout(timer);
+  }, [countdown]);
 
   const submitHandler =
     async (e) => {
 
       e.preventDefault();
 
+      const isPasswordValidResult = isPasswordValid(passwordRequirements);
+
+      if (!isPasswordValidResult) {
+        setError(t("register.errPassword"));
+        return;
+      }
+
       try {
 
         setLoading(true);
+        setError("");
+        setSuccessMessage("");
+        setCountdown(0);
 
         await registerUser({
           name,
@@ -46,18 +81,16 @@ const RegisterPage = () => {
           password,
         });
 
-        alert(
-          "Account Created Successfully"
+        setSuccessMessage(
+          t("register.success")
         );
-
-        navigate("/login");
 
       } catch (error) {
 
         setError(
           error.response?.data
             ?.message ||
-            "Register Failed"
+            t("register.errFailed")
         );
 
       } finally {
@@ -65,6 +98,25 @@ const RegisterPage = () => {
         setLoading(false);
       }
     };
+
+  const resendHandler = async () => {
+    try {
+      setResendLoading(true);
+      setError("");
+
+      const data = await resendVerificationEmail({ email });
+
+      setSuccessMessage(data.message);
+      setCountdown(60);
+    } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          t("register.errResend")
+      );
+    } finally {
+      setResendLoading(false);
+    }
+  };
 
   return (
     <div className="bb-register-wrapper">
@@ -137,6 +189,59 @@ const RegisterPage = () => {
           line-height: 1.6;
         }
 
+        .bb-register-alert__actions {
+          margin-top: 12px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .bb-register-alert__body {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .bb-register-alert__email {
+          color: #0f172a;
+          font-weight: 700;
+          word-break: break-all;
+        }
+
+        .bb-register-alert__note {
+          color: #64748b;
+          font-size: 13px;
+          line-height: 1.55;
+        }
+
+        .bb-register-alert__helper {
+          color: #64748b;
+          font-size: 13px;
+        }
+
+        .bb-register-alert__button {
+          align-self: flex-start;
+          border: none;
+          border-radius: 999px;
+          background: #2563eb;
+          color: #ffffff;
+          cursor: pointer;
+          font-size: 13px;
+          font-weight: 700;
+          padding: 10px 16px;
+          transition: opacity 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .bb-register-alert__button:hover:not(:disabled) {
+          background: #1d4ed8;
+          transform: translateY(-1px);
+        }
+
+        .bb-register-alert__button:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
         .bb-register-form {
           display: grid;
           gap: 22px;
@@ -159,7 +264,7 @@ const RegisterPage = () => {
         .bb-register-input {
           width: 100%;
           min-height: 50px;
-          padding: 14px 16px;
+          padding: 14px 48px 14px 16px;
           border-radius: 14px;
           border: 1.5px solid rgba(148, 163, 184, 0.3);
           background: #f8fafc;
@@ -179,6 +284,32 @@ const RegisterPage = () => {
           box-shadow: 0 0 0 5px rgba(37, 99, 235, 0.08);
           transform: translateY(-1px);
           background: #fff;
+        }
+
+        .bb-register-password-toggle {
+          right: 10px;
+          top: 50%;
+          transform: translateY(-50%);
+          border: none;
+          background: transparent;
+          color: #64748b;
+          cursor: pointer;
+          padding: 6px;
+          border-radius: 10px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 2;
+        }
+
+        .bb-register-password-toggle:hover {
+          color: #2563eb;
+          background: rgba(37, 99, 235, 0.08);
+        }
+
+        .bb-register-password-toggle__icon {
+          width: 18px;
+          height: 18px;
         }
 
         .bb-register-button {
@@ -256,17 +387,58 @@ const RegisterPage = () => {
             <Logo variant="login" />
           </div>
           <h1 className="bb-register-title">
-            Create your BlueeBoard account
+            {t("register.title")}
           </h1>
           <p className="bb-register-copy">
-            Join the platform to discover premium company products, save favourites, and manage orders seamlessly.
+            {t("register.subtitle")}
           </p>
         </div>
 
         {error && (
-          <div className="bb-register-alert">
-            {error}
-          </div>
+          <AuthAlert
+            type="error"
+            message={error}
+          />
+        )}
+
+        {successMessage && (
+          <AuthAlert
+            type="success"
+            title={t("register.alertSuccessTitle")}
+            message={successMessage}
+            onDismiss={() => setSuccessMessage("")}
+          >
+            <div className="bb-register-alert__actions">
+              <div className="bb-register-alert__body">
+                <div className="bb-register-alert__note">
+                  {t("register.alertSentEmail")} <span className="bb-register-alert__email">{email}</span>
+                </div>
+                <div className="bb-register-alert__note">
+                  {t("register.alertVerify")}
+                </div>
+                <div className="bb-register-alert__note">
+                  {t("register.alertExpire")}
+                </div>
+                <div className="bb-register-alert__note">
+                  {t("register.alertSpam")}
+                </div>
+              </div>
+
+              <div className="bb-register-alert__helper">
+                {countdown > 0 ? t("register.alertWait", { count: countdown }) : t("register.alertNoEmail")}
+              </div>
+              {countdown > 0 ? null : (
+                <button
+                  type="button"
+                  className="bb-register-alert__button"
+                  onClick={resendHandler}
+                  disabled={resendLoading}
+                >
+                  {resendLoading ? t("register.sending") : t("register.resendEmail")}
+                </button>
+              )}
+            </div>
+          </AuthAlert>
         )}
 
         <form
@@ -278,12 +450,12 @@ const RegisterPage = () => {
               className="bb-register-label"
               htmlFor="name"
             >
-              Full name
+              {t("register.fullName")}
             </label>
             <input
               id="name"
               type="text"
-              placeholder="Enter your full name"
+              placeholder={t("register.namePlaceholder")}
               value={name}
               onChange={(e) =>
                 setName(
@@ -300,12 +472,12 @@ const RegisterPage = () => {
               className="bb-register-label"
               htmlFor="email"
             >
-              Email address
+              {t("register.email")}
             </label>
             <input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder={t("register.emailPlaceholder")}
               value={email}
               onChange={(e) =>
                 setEmail(
@@ -318,25 +490,19 @@ const RegisterPage = () => {
           </div>
 
           <div className="bb-register-field">
-            <label
-              className="bb-register-label"
-              htmlFor="password"
-            >
-              Password
-            </label>
-            <input
+            <PasswordInput
               id="password"
-              type="password"
-              placeholder="Create a strong password"
+              label={t("register.password")}
+              placeholder={t("register.passwordPlaceholder")}
               value={password}
-              onChange={(e) =>
-                setPassword(
-                  e.target.value
-                )
-              }
+              onChange={(e) => setPassword(e.target.value)}
               required
-              className="bb-register-input"
+              inputClassName="bb-register-input"
+              buttonClassName="bb-register-password-toggle"
+              iconClassName="bb-register-password-toggle__icon"
+              autoComplete="new-password"
             />
+            <PasswordRequirementsUI requirements={passwordRequirements} />
           </div>
 
           <button
@@ -344,17 +510,17 @@ const RegisterPage = () => {
             disabled={loading}
             className="bb-register-button"
           >
-            {loading ? "Creating Account..." : "Register"}
+            {loading ? t("register.creating") : t("register.registerBtn")}
           </button>
         </form>
 
         <div className="bb-register-footer">
-          Already have an account?{' '}
+          {t("register.alreadyHave")}{' '}
           <Link
             to="/login"
             className="bb-register-link"
           >
-            Login
+            {t("register.loginLink")}
           </Link>
         </div>
       </div>

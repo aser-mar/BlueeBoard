@@ -8,14 +8,13 @@ import {
   HiOutlineOfficeBuilding,
   HiOutlinePhotograph,
 } from "react-icons/hi";
+import { useTranslation } from "react-i18next";
 
 import "./AdminCompanyForm.css";
 
-const AdminEditCompanyPage =
-  () => {
-
-    const { id } =
-      useParams();
+const AdminEditCompanyPage = () => {
+  const { t } = useTranslation();
+  const { id } = useParams();
 
     const navigate =
       useNavigate();
@@ -169,7 +168,10 @@ const AdminEditCompanyPage =
         return false;
       }
 
-      if (selectedSectors.length === 0) {
+      if (sectors.length === 0) {
+        setError("No sectors are available. Please create at least one sector before adding or saving a company.");
+        return false;
+      } else if (selectedSectors.length === 0) {
         setError("Please select at least one sector");
         return false;
       }
@@ -193,8 +195,8 @@ const AdminEditCompanyPage =
             <HiOutlineOfficeBuilding />
           </div>
           <div className="company-hero-text">
-            <h1>Edit Company</h1>
-            <p>Update company information and branding details.</p>
+            <h1>{t("admin.editCompany")}</h1>
+            <p>{t("admin.editCompanyDescription")}</p>
           </div>
         </header>
 
@@ -205,23 +207,23 @@ const AdminEditCompanyPage =
           <section className="form-section">
             <div className="form-section-title">
               <span>📋</span>
-              Company Information
+              {t("admin.companyInformation")}
             </div>
             <div className="form-group">
-              <label htmlFor="name">Company Name</label>
+              <label htmlFor="name">{t("admin.companyName")}</label>
               <input
                 id="name"
                 type="text"
-                placeholder="Enter company name"
+                placeholder={t("admin.enterCompanyName")}
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
             <div className="form-group">
-              <label htmlFor="description">Description</label>
+              <label htmlFor="description">{t("admin.description")}</label>
               <textarea
                 id="description"
-                placeholder="Enter detailed company description"
+                placeholder={t("admin.enterCompanyDescription")}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
@@ -232,7 +234,7 @@ const AdminEditCompanyPage =
           <section className="form-section">
             <div className="form-section-title">
               <span>📍</span>
-              Governorates &amp; Regions
+              {t("admin.governoratesRegions")}
             </div>
             {EGYPT_REGIONS.map((regionObj) => (
               <div key={regionObj.region}>
@@ -263,7 +265,7 @@ const AdminEditCompanyPage =
           <section className="form-section">
             <div className="form-section-title">
               <span>🏷️</span>
-              Sectors
+              {t("admin.sectors")}
             </div>
             <div className="admin-categories-companies-list">
               {sectors.map((sector) => (
@@ -289,7 +291,7 @@ const AdminEditCompanyPage =
           <section className="form-section">
             <div className="form-section-title">
               <HiOutlinePhotograph />
-              Brand Assets
+              {t("admin.brandAssets")}
             </div>
             <div className="logo-section">
               {/* {logo?.url && !imgError ? (
@@ -314,7 +316,7 @@ const AdminEditCompanyPage =
           {/* Actions */}
           <div className="form-actions">
             <button type="submit" className="btn-submit">
-              Save Changes
+              {loading ? t("common.saving") : t("common.submit")}
             </button>
           </div>
         </form>

@@ -17,6 +17,11 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
 
+    isSoldOut: {
+      type: Boolean,
+      default: false,
+    },
+
     images: [
   {
     url: {
