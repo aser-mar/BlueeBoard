@@ -229,6 +229,12 @@
     }
   },
 
+  "login": {
+    "errInvalidCredentials": "Invalid credentials",
+    "errVerifyEmail": "Please verify your email before logging in.",
+    "errTooManyAttempts": "Too many login attempts. Try again in 15 minutes.",
+    "errFailed": "Login Failed"
+  },
   "register": {
     "title": "Create your BlueeBoard account",
     "subtitle": "Join the platform to discover premium company products, save favourites, and manage orders seamlessly.",

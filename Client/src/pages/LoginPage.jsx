@@ -39,7 +39,7 @@ import { useTranslation } from "react-i18next";
 import "./LoginPage.css";
 
 const LoginPage = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const [email, setEmail] =
     useState("");
@@ -49,6 +49,18 @@ const LoginPage = () => {
 
   const [error, setError] =
     useState("");
+
+  const getLocalizedError = () => {
+    if (!error) {
+      return "";
+    }
+
+    if (i18n.language === "ar") {
+      return t(error.translationKey);
+    }
+
+    return error.message || t("login.errFailed");
+  };
 
   const [loading, setLoading] =
     useState(false);
@@ -113,11 +125,22 @@ const LoginPage = () => {
 
         console.log(error);
 
-        setError(
-          error.response?.data
-            ?.message ||
-          t("login.errFailed")
-        );
+        const serverMessage =
+          error.response?.data?.message;
+
+        const translationKey =
+          serverMessage === "Invalid credentials"
+            ? "login.errInvalidCredentials"
+            : serverMessage === "Please verify your email before logging in."
+              ? "login.errVerifyEmail"
+              : serverMessage === "Too many login attempts. Try again in 15 minutes."
+                ? "login.errTooManyAttempts"
+                : "login.errFailed";
+
+        setError({
+          message: serverMessage,
+          translationKey,
+        });
 
       } finally {
 
@@ -146,7 +169,7 @@ const LoginPage = () => {
           {error && (
             <AuthAlert
               type="error"
-              message={error}
+              message={getLocalizedError()}
             />
           )}
 
