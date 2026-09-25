@@ -127,13 +127,13 @@ const CompanyProductsPage = () => {
               {(companyInfo?.region?.length > 0 || companyInfo?.governorates?.length > 0 || companyInfo?.sectors?.length > 0) && (
                 <div className="bb-company-meta-badges">
                   {companyInfo?.region?.map((r) => (
-                    <span key={r} className="bb-company-meta-badge">📍 {r}</span>
+                    <span key={r} className="bb-company-meta-badge">{r}</span>
                   ))}
                   {companyInfo?.governorates?.map((g) => (
-                    <span key={g} className="bb-company-meta-badge">🏛️ {g}</span>
+                    <span key={g} className="bb-company-meta-badge">{g}</span>
                   ))}
                   {companyInfo?.sectors?.map((s) => (
-                    <span key={s._id} className="bb-company-meta-badge">🏷️ {s.name}</span>
+                    <span key={s._id} className="bb-company-meta-badge">{s.name}</span>
                   ))}
                 </div>
               )}
